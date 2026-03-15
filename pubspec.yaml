@@ -1,18 +1,31 @@
 name: konapod
-description: Hyundai Konapod – Vehicle Dashboard
+description: Hyundai Konapod – Vehicle Dashboard with Solid Pod integration
 publish_to: 'none'
-version: 0.0.1+1
+version: 0.2.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.2.3 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.0
   shared_preferences: ^2.2.2
   provider: ^6.1.2
-  intl: ^0.19.0
+  intl: ^0.20.0
   cupertino_icons: ^1.0.6
+  solidpod: ^0.11.0
+  solidui: ^0.2.0
+
+dependency_overrides:
+  solidui:
+    git:
+      url: https://github.com/anusii/solidui.git
+      ref: dev
+  solidpod:
+    git:
+      url: https://github.com/anusii/solidpod.git
+      ref: dev
 
 dev_dependencies:
   flutter_test:

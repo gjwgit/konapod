@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'screens/dashboard_screen.dart';
-import 'screens/login_screen.dart';
+import 'package:solidui/solidui.dart';
 import 'services/app_provider.dart';
+import 'app_scaffold.dart.~1~';
+import 'constants/app.dart';
 import 'theme/hyundai_theme.dart';
 
 void main() {
@@ -15,34 +13,43 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (_) => AppProvider(),
-      child: const BluelinkApp(),
+      child: const KonapodApp(),
     ),
   );
 }
 
-class BluelinkApp extends StatelessWidget {
-  const BluelinkApp({super.key});
+class KonapodApp extends StatelessWidget {
+  const KonapodApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Use standard MaterialApp with light + dark themes.
+    // SolidThemeToggleConfig in SolidScaffold handles the runtime toggle
+    // via SolidThemeNotifier which drives themeMode from shared_preferences.
     return MaterialApp(
-      title: 'Hyundai Konapod',
+      title: appName,
+      theme: hyundaiLightTheme(),
+      darkTheme: hyundaiDarkTheme(),
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      theme: hyundaiTheme(),
-      home: const _SplashRouter(),
+      home: SolidLogin(
+        required: false,
+        appDirectory: appDirectory,
+        title: appName.toUpperCase(),
+        child: const _AutoLoginWrapper(),
+      ),
     );
   }
 }
 
-class _SplashRouter extends StatefulWidget {
-  const _SplashRouter();
-
+class _AutoLoginWrapper extends StatefulWidget {
+  const _AutoLoginWrapper();
   @override
-  State<_SplashRouter> createState() => _SplashRouterState();
+  State<_AutoLoginWrapper> createState() => _AutoLoginWrapperState();
 }
 
-class _SplashRouterState extends State<_SplashRouter> {
-  String _status = 'Starting…';
+class _AutoLoginWrapperState extends State<_AutoLoginWrapper> {
+  bool _initialized = false;
 
   @override
   void initState() {
@@ -52,76 +59,52 @@ class _SplashRouterState extends State<_SplashRouter> {
 
   Future<void> _init() async {
     final provider = context.read<AppProvider>();
-    final prefs = await SharedPreferences.getInstance();
-    final hasCreds = prefs.getString('bl_username') != null;
-    if (hasCreds && mounted) {
-      setState(() => _status = 'Fetching vehicle data…\n(this takes ~20s)');
+    // Try saved Bluelink credentials first; fall back to pod snapshot
+    final hasBluelink = await provider.tryAutoLogin();
+    if (!hasBluelink) {
+      await provider.loadFromPod();
     }
-    final success = await provider.tryAutoLogin();
-    if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => success ? const DashboardScreen() : const LoginScreen(),
-      ),
-    );
+    if (mounted) setState(() => _initialized = true);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: HyundaiColors.primary,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    if (!_initialized) {
+      return Scaffold(
+        backgroundColor: HyundaiColors.primary,
+        body: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
             Container(
-              width: 72,
-              height: 72,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: HyundaiColors.accent,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: const Center(
-                child: Text(
-                  'H',
-                  style: TextStyle(
+                child: Text('H',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900)),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(appName,
+                style: TextStyle(
                     color: Colors.white,
-                    fontSize: 40,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Bluelink',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800)),
             const SizedBox(height: 32),
             const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: Colors.white54,
-                strokeWidth: 2,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                _status,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54, fontSize: 13),
-              ),
-            ),
-          ],
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                    color: Colors.white54, strokeWidth: 2)),
+          ]),
         ),
-      ),
-    );
+      );
+    }
+    return const AppScaffold();
   }
 }

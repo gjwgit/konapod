@@ -14,6 +14,12 @@ We make this project available for free so if you appreciate the app
 then please show some ❤️ and tap on the star at
 [GitHub](https://github.com/gjwgit/konapod) to support our work.
 
+## 0.3 Support Saving and Loading Status/History
+
+## 0.2 Add SolidLogin and SolidScaffold
+
++ Initial solid implementation without save [0.2.0 20260316 claude]
+
 ## 0.1 Initial View Only App
 
 + Initial working app to view data [0.1.0 20260314 claude]
