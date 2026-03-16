@@ -24,8 +24,11 @@ ThemeData hyundaiTheme([Brightness brightness = Brightness.light]) {
       ? const ColorScheme.dark(
           primary: HyundaiColors.accent,
           secondary: HyundaiColors.primary,
-          surface: Color(0xFF1E1E2E),
+          surface: const Color(0xFF1E1E2E),
+          surfaceContainerHighest: const Color(0xFF2A2A3E),
           onSurface: Colors.white,
+          onSurfaceVariant: const Color(0xFFB0B7C3),
+          outlineVariant: const Color(0xFF3A3A52),
           error: HyundaiColors.error,
         )
       : ColorScheme.fromSeed(
@@ -47,7 +50,7 @@ ThemeData hyundaiTheme([Brightness brightness = Brightness.light]) {
       backgroundColor: HyundaiColors.primary,
       foregroundColor: Colors.white,
       elevation: 0,
-      titleTextStyle: TextStyle(
+      titleTextStyle: const TextStyle(
         color: Colors.white,
         fontSize: 20,
         fontWeight: FontWeight.w700,
@@ -70,19 +73,30 @@ ThemeData hyundaiTheme([Brightness brightness = Brightness.light]) {
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      filled: true,
+      filled: false,
       fillColor: isDark ? const Color(0xFF2A2A3E) : HyundaiColors.lightGrey,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+        borderSide: isDark
+            ? const BorderSide(color: Color(0xFF4A4A6A), width: 1)
+            : BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: isDark
+            ? const BorderSide(color: Color(0xFF4A4A6A), width: 1)
+            : BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: HyundaiColors.primary, width: 2),
+        borderSide: BorderSide(
+            color: isDark ? HyundaiColors.accent : HyundaiColors.primary,
+            width: 2),
       ),
-      labelStyle: TextStyle(
-        color: isDark ? Colors.white70 : HyundaiColors.darkGrey,
-      ),
+      labelStyle:
+          TextStyle(color: isDark ? Colors.white70 : HyundaiColors.darkGrey),
+      hintStyle:
+          TextStyle(color: isDark ? Colors.white38 : HyundaiColors.midGrey),
       prefixIconColor: isDark ? Colors.white54 : HyundaiColors.midGrey,
     ),
   );

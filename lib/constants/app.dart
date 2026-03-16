@@ -1,7 +1,7 @@
 /// App-wide constants.
 library;
 
-const String appName = 'Konapod';
+const String appName = 'Kona Pod - Capture and Store Car Statistics';
 const String appVersion = '1.0.0';
 const String appDescription =
     'Hyundai Bluelink vehicle dashboard with Solid Pod integration.';

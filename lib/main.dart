@@ -56,34 +56,54 @@ void main() {
   );
 }
 
-class KonapodApp extends StatelessWidget {
+class KonapodApp extends StatefulWidget {
   const KonapodApp({super.key});
+  @override
+  State<KonapodApp> createState() => _KonapodAppState();
+}
+
+class _KonapodAppState extends State<KonapodApp> {
+  final _themeNotifier = SolidThemeNotifier();
+
+  @override
+  void initState() {
+    super.initState();
+    // Load persisted theme and rebuild MaterialApp whenever it changes.
+    _themeNotifier.initialize();
+    _themeNotifier.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _themeNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Use standard MaterialApp with light + dark themes.
-    // SolidThemeToggleConfig in SolidScaffold handles the runtime toggle
-    // via SolidThemeNotifier which drives themeMode from shared_preferences.
     return MaterialApp(
       title: appName,
       theme: hyundaiLightTheme(),
       darkTheme: hyundaiDarkTheme(),
-      themeMode: ThemeMode.system,
+      // Drive themeMode from SolidThemeNotifier so the toggle in
+      // SolidScaffold actually changes the app theme.
+      themeMode: _themeNotifier.themeMode,
       debugShowCheckedModeBanner: false,
       home: SolidLogin(
         required: false,
         appDirectory: appDirectory,
         title: appName.toUpperCase(),
         image: const AssetImage('assets/images/app_image.jpg'),
-        logo: const AssetImage('assets/images/app_icon.png'),
-        child: const _AutoLoginWrapper(),
+        logo:  const AssetImage('assets/images/app_icon.png'),
+        child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
       ),
     );
   }
 }
 
 class _AutoLoginWrapper extends StatefulWidget {
-  const _AutoLoginWrapper();
+  final SolidThemeNotifier themeNotifier;
+  const _AutoLoginWrapper({required this.themeNotifier});
   @override
   State<_AutoLoginWrapper> createState() => _AutoLoginWrapperState();
 }
@@ -157,6 +177,6 @@ class _AutoLoginWrapperState extends State<_AutoLoginWrapper> {
         ),
       );
     }
-    return const AppScaffold();
+    return AppScaffold(themeNotifier: widget.themeNotifier);
   }
 }

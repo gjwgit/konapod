@@ -2,25 +2,31 @@ import 'package:flutter/material.dart';
 
 import '../theme/hyundai_theme.dart';
 
+/// Shared low-level primitive widgets.
+/// All colours are resolved from Theme so they work in light and dark mode.
+
 class DashboardCard extends StatelessWidget {
   final Widget child;
   const DashboardCard({super.key, required this.child});
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: child,
-      );
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
 }
 
 class StatusRow extends StatelessWidget {
@@ -36,71 +42,55 @@ class StatusRow extends StatelessWidget {
     super.key,
   });
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: active ? activeColor : HyundaiColors.midGrey,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: HyundaiColors.darkGrey,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: (active ? activeColor : HyundaiColors.midGrey)
-                    .withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                active ? 'On' : 'Off',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: active ? activeColor : HyundaiColors.midGrey,
-                ),
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final inactiveColor = cs.onSurfaceVariant;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(children: [
+        Icon(icon, size: 16, color: active ? activeColor : inactiveColor),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(label,
+              style: TextStyle(color: cs.onSurface, fontSize: 13)),
         ),
-      );
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: (active ? activeColor : inactiveColor).withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            active ? 'On' : 'Off',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: active ? activeColor : inactiveColor,
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
 }
 
 class KVRow extends StatelessWidget {
   final String k, val;
   const KVRow(this.k, this.val, {super.key});
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(top: 6),
-        child: Row(
-          children: [
-            Text(
-              k,
-              style:
-                  const TextStyle(color: HyundaiColors.midGrey, fontSize: 13),
-            ),
-            const Spacer(),
-            Text(
-              val,
-              style: const TextStyle(
-                color: HyundaiColors.darkGrey,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Row(children: [
+        Text(k, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
+        const Spacer(),
+        Text(val,
+            style: TextStyle(
+                color: cs.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
+      ]),
+    );
+  }
 }
 
 class StatChip extends StatelessWidget {
@@ -109,33 +99,22 @@ class StatChip extends StatelessWidget {
   final Color? color;
   const StatChip(this.label, this.value, this.icon, {super.key, this.color});
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color ?? HyundaiColors.midGrey),
-          const SizedBox(width: 4),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: HyundaiColors.midGrey,
-                  fontSize: 10,
-                ),
-              ),
-              Text(
-                value,
-                style: TextStyle(
-                  color: color ?? HyundaiColors.darkGrey,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      Icon(icon, size: 14, color: color ?? cs.onSurfaceVariant),
+      const SizedBox(width: 4),
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label,
+            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10)),
+        Text(value,
+            style: TextStyle(
+                color: color ?? cs.onSurface,
+                fontSize: 13,
+                fontWeight: FontWeight.w600)),
+      ]),
+    ]);
+  }
 }
 
 class SeatBadge extends StatelessWidget {
@@ -143,21 +122,25 @@ class SeatBadge extends StatelessWidget {
   final int level;
   const SeatBadge(this.label, this.level, {super.key});
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-        decoration: BoxDecoration(
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: level > 0
+            ? HyundaiColors.warning.withValues(alpha: 0.15)
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '$label:$level',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
           color: level > 0
-              ? HyundaiColors.warning.withValues(alpha: 0.15)
-              : HyundaiColors.lightGrey,
-          borderRadius: BorderRadius.circular(6),
+              ? HyundaiColors.warning
+              : Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-        child: Text(
-          '$label:$level',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            color: level > 0 ? HyundaiColors.warning : HyundaiColors.midGrey,
-          ),
-        ),
-      );
+      ),
+    );
+  }
 }

@@ -8,12 +8,14 @@ import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
 import 'services/app_provider.dart';
 import 'theme/hyundai_theme.dart';
+import 'widgets/sections_status.dart';
 import 'widgets/pages.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
 /// Provides left nav, top app bar, status bar, and per-section pages.
 class AppScaffold extends StatefulWidget {
-  const AppScaffold({super.key});
+  final SolidThemeNotifier themeNotifier;
+  const AppScaffold({super.key, required this.themeNotifier});
   @override
   State<AppScaffold> createState() => _AppScaffoldState();
 }
@@ -159,7 +161,11 @@ class _AppScaffoldState extends State<AppScaffold> {
       ),
 
       // ── Theme toggle ─────────────────────────────────────────────────────
-      themeToggle: const SolidThemeToggleConfig(enabled: true),
+      themeToggle: SolidThemeToggleConfig(
+        enabled: true,
+        currentThemeMode: widget.themeNotifier.themeMode,
+        onToggleTheme: widget.themeNotifier.toggleTheme,
+      ),
 
       // ── About ────────────────────────────────────────────────────────────
       aboutConfig: SolidAboutConfig(
