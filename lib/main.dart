@@ -1,4 +1,4 @@
-/// A Bluelink app for Hyundai
+/// App entry point: initialises providers, theme and SolidLogin wrapper.
 ///
 // Time-stamp: <Monday 2026-03-16 13:55:28 +1100 Graham Williams>
 ///

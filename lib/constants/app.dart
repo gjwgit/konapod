@@ -1,4 +1,4 @@
-/// A Bluelink app for Hyundai
+/// App-wide constants: name, version, description and pod path.
 ///
 // Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
 ///
@@ -24,6 +24,7 @@
 /// Authors: Claude, Graham Williams
 
 /// App-wide constants.
+
 library;
 
 const String appName = 'Kona Pod - Capture and Store Vehicle Stats';
@@ -31,6 +32,5 @@ const String appVersion = '1.0.0';
 const String appDescription =
     'Hyundai Bluelink vehicle dashboard with Solid Pod integration.';
 const String appDirectory = 'konapod';
-const String podStatusPath = 'konapod/';
 const String statusFilePrefix = 'status_';
 const String statusFileSuffix = '.ttl';

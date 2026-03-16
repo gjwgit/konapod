@@ -30,14 +30,14 @@ even better, fork the repository yourself, update the code, and submit
 a Pull Request. The app is implemented in
 [Flutter](https://flutter.dev). Thanks.
 
-# Introduction
+## Introduction
 
 A Flutter app to view your Hyundai Bluelink vehicle data (currently
 for Australia / NZ but please send in PRs for other regions).
 
 ---
 
-# Features
+## Features
 
 - **Login** with your Bluelink email, password & PIN (saved securely via `flutter_secure_storage`)
 - **Auto login** on relaunch — no need to re-enter credentials
@@ -60,14 +60,14 @@ for Australia / NZ but please send in PRs for other regions).
 
 ---
 
-# Setup
+## Setup
 
-## Prerequisites
+### Prerequisites
 
 - Flutter 3.x+ installed
 - `flutter doctor` passing for your target platform
 
-## Install
+### Install
 
 ```bash
 git clone git@github.com:gjwgit/konapod.git

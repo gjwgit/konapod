@@ -1,4 +1,4 @@
-/// A Bluelink app for Hyundai
+/// Bluelink service: spawns Python subprocess to fetch live vehicle data.
 ///
 // Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
 ///
@@ -22,6 +22,8 @@
 // this program.  If not, see <https://opensource.org/license/gpl-3-0>.
 ///
 /// Authors: Claude, Graham Williams
+
+library;
 
 import 'dart:convert';
 import 'dart:developer' as dev;

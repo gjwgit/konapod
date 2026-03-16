@@ -1,4 +1,4 @@
-/// A Bluelink app for Hyundai
+/// Main app scaffold with SolidScaffold, nav menu, app bar and actions.
 ///
 // Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
 ///
@@ -22,6 +22,8 @@
 // this program.  If not, see <https://opensource.org/license/gpl-3-0>.
 ///
 /// Authors: Claude, Graham Williams
+
+library;
 
 import 'dart:convert';
 import 'dart:io';
@@ -161,7 +163,7 @@ class _AppScaffoldState extends State<AppScaffold> {
             SolidAppBarAction(
               icon: Icons.cloud_upload_outlined,
               tooltip: 'Save snapshot to Solid Pod',
-              onPressed: () => _saveToPod(context, provider),
+              onPressed: () => _saveToPod(provider),
               color: Colors.white,
             ),
 
@@ -169,7 +171,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           SolidAppBarAction(
             icon: Icons.cloud_download_outlined,
             tooltip: 'Load latest snapshot from Solid Pod',
-            onPressed: () => _loadFromPod(context, provider),
+            onPressed: () => _loadFromPod(provider),
             color: Colors.white70,
           ),
 
@@ -177,8 +179,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           SolidAppBarAction(
             icon: Icons.download_for_offline_outlined,
             tooltip: 'Export current status to JSON file',
-            onPressed:
-                provider.hasData ? () => _exportJson(context, provider) : () {},
+            onPressed: provider.hasData ? () => _exportJson(provider) : () {},
             color: provider.hasData ? Colors.white : Colors.white30,
           ),
         ],
@@ -256,10 +257,11 @@ class _AppScaffoldState extends State<AppScaffold> {
     _controller.navigateToSubpage(const SettingsScreen());
   }
 
-  Future<void> _saveToPod(BuildContext ctx, AppProvider provider) async {
+  Future<void> _saveToPod(AppProvider provider) async {
+    final messenger = ScaffoldMessenger.of(context);
     final ok = await provider.saveToPod();
     if (!mounted) return;
-    ScaffoldMessenger.of(ctx).showSnackBar(
+    messenger.showSnackBar(
       SnackBar(
         content: Text(
           ok
@@ -271,11 +273,12 @@ class _AppScaffoldState extends State<AppScaffold> {
     );
   }
 
-  Future<void> _loadFromPod(BuildContext ctx, AppProvider provider) async {
+  Future<void> _loadFromPod(AppProvider provider) async {
+    final messenger = ScaffoldMessenger.of(context);
     final ok = await provider.loadFromPod();
     if (!mounted) return;
     if (!ok) {
-      ScaffoldMessenger.of(ctx).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text(provider.errorMessage ?? 'Load failed'),
           backgroundColor: HyundaiColors.error,
@@ -284,12 +287,13 @@ class _AppScaffoldState extends State<AppScaffold> {
     }
   }
 
-  Future<void> _exportJson(BuildContext ctx, AppProvider provider) async {
+  Future<void> _exportJson(AppProvider provider) async {
+    final messenger = ScaffoldMessenger.of(context);
     try {
       final rawJson = await provider.getRawJsonForExport();
       if (rawJson == null) {
         if (!mounted) return;
-        ScaffoldMessenger.of(ctx).showSnackBar(
+        messenger.showSnackBar(
           const SnackBar(
             content: Text('No data to export'),
             backgroundColor: HyundaiColors.error,
@@ -306,7 +310,7 @@ class _AppScaffoldState extends State<AppScaffold> {
       await file
           .writeAsString(const JsonEncoder.withIndent('  ').convert(rawJson));
       if (!mounted) return;
-      ScaffoldMessenger.of(ctx).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text('Exported to ${file.path}'),
           backgroundColor: HyundaiColors.success,
@@ -315,7 +319,7 @@ class _AppScaffoldState extends State<AppScaffold> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(ctx).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text('Export failed: $e'),
           backgroundColor: HyundaiColors.error,
