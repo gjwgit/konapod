@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
+
 import 'constants/app.dart';
+import 'screens/history_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/visuals_screen.dart';
 import 'services/app_provider.dart';
 import 'theme/hyundai_theme.dart';
-import 'widgets/sections_status.dart';
 import 'widgets/pages.dart';
-
-import 'screens/history_screen.dart';
-import 'screens/visuals_screen.dart';
-import 'screens/settings_screen.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
 /// Provides left nav, top app bar, status bar, and per-section pages.
@@ -76,31 +77,31 @@ class _AppScaffoldState extends State<AppScaffold> {
                 : NoDataPlaceholder(provider: provider),
           ),
         ),
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'Visuals',
           icon: Icons.bar_chart,
           tooltip: 'Charts and visualisations of historical driving data',
           child: _PageWrapper(
             title: 'Visuals',
-            child: const VisualsScreen(),
+            child: VisualsScreen(),
           ),
         ),
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'History',
           icon: Icons.history,
           tooltip: 'Browse and load archived snapshots from your Solid Pod',
           child: _PageWrapper(
             title: 'History',
-            child: const HistoryScreen(),
+            child: HistoryScreen(),
           ),
         ),
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'Settings',
           icon: Icons.settings,
           tooltip: 'Bluelink credentials and app preferences',
           child: _PageWrapper(
             title: 'Settings',
-            child: const SettingsScreen(),
+            child: SettingsScreen(),
           ),
         ),
       ],
@@ -109,7 +110,7 @@ class _AppScaffoldState extends State<AppScaffold> {
       appBar: SolidAppBarConfig(
         title: appName,
         backgroundColor: HyundaiColors.primary,
-        versionConfig: SolidVersionConfig(
+        versionConfig: const SolidVersionConfig(
           changelogUrl:
               'https://github.com/gjwgit/konapod/blob/dev/CHANGELOG.md',
         ),
@@ -117,9 +118,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           // Bluelink login/refresh button
           if (provider.isAuthenticated)
             SolidAppBarAction(
-              icon: provider.isRefreshing
-                  ? Icons.hourglass_top
-                  : Icons.refresh,
+              icon: provider.isRefreshing ? Icons.hourglass_top : Icons.refresh,
               tooltip: 'Refresh from Bluelink',
               onPressed: provider.isRefreshing ? () {} : provider.refresh,
               color: Colors.white,
@@ -133,8 +132,7 @@ class _AppScaffoldState extends State<AppScaffold> {
             ),
 
           // Save to pod button (only when bluelink data loaded)
-          if (provider.dataSource == DataSource.bluelink &&
-              provider.hasData)
+          if (provider.dataSource == DataSource.bluelink && provider.hasData)
             SolidAppBarAction(
               icon: Icons.cloud_upload_outlined,
               tooltip: 'Save snapshot to Solid Pod',
@@ -154,9 +152,8 @@ class _AppScaffoldState extends State<AppScaffold> {
           SolidAppBarAction(
             icon: Icons.download_for_offline_outlined,
             tooltip: 'Export current status to JSON file',
-            onPressed: provider.hasData
-                ? () => _exportJson(context, provider)
-                : () {},
+            onPressed:
+                provider.hasData ? () => _exportJson(context, provider) : () {},
             color: provider.hasData ? Colors.white : Colors.white30,
           ),
         ],
@@ -200,15 +197,21 @@ class _AppScaffoldState extends State<AppScaffold> {
         applicationName: appName,
         applicationVersion: appVersion,
         applicationIcon: Container(
-          width: 48, height: 48,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
             color: HyundaiColors.accent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: const Center(
-            child: Text('H',
-                style: TextStyle(color: Colors.white,
-                    fontSize: 26, fontWeight: FontWeight.w900)),
+            child: Text(
+              'H',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
         ),
         text: '**$appName** is a Hyundai Bluelink vehicle dashboard '
@@ -231,22 +234,28 @@ class _AppScaffoldState extends State<AppScaffold> {
   Future<void> _saveToPod(BuildContext ctx, AppProvider provider) async {
     final ok = await provider.saveToPod();
     if (!mounted) return;
-    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-      content: Text(ok
-          ? 'Snapshot saved to pod!'
-          : 'Save failed: ${provider.errorMessage}'),
-      backgroundColor: ok ? HyundaiColors.success : HyundaiColors.error,
-    ));
+    ScaffoldMessenger.of(ctx).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Snapshot saved to pod!'
+              : 'Save failed: ${provider.errorMessage}',
+        ),
+        backgroundColor: ok ? HyundaiColors.success : HyundaiColors.error,
+      ),
+    );
   }
 
   Future<void> _loadFromPod(BuildContext ctx, AppProvider provider) async {
     final ok = await provider.loadFromPod();
     if (!mounted) return;
     if (!ok) {
-      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-        content: Text(provider.errorMessage ?? 'Load failed'),
-        backgroundColor: HyundaiColors.error,
-      ));
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(provider.errorMessage ?? 'Load failed'),
+          backgroundColor: HyundaiColors.error,
+        ),
+      );
     }
   }
 
@@ -255,10 +264,12 @@ class _AppScaffoldState extends State<AppScaffold> {
       final rawJson = await provider.getRawJsonForExport();
       if (rawJson == null) {
         if (!mounted) return;
-        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-          content: Text('No data to export'),
-          backgroundColor: HyundaiColors.error,
-        ));
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(
+            content: Text('No data to export'),
+            backgroundColor: HyundaiColors.error,
+          ),
+        );
         return;
       }
       final filename =
@@ -270,25 +281,31 @@ class _AppScaffoldState extends State<AppScaffold> {
       await file
           .writeAsString(const JsonEncoder.withIndent('  ').convert(rawJson));
       if (!mounted) return;
-      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-        content: Text('Exported to ${file.path}'),
-        backgroundColor: HyundaiColors.success,
-        duration: const Duration(seconds: 4),
-      ));
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text('Exported to ${file.path}'),
+          backgroundColor: HyundaiColors.success,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-        content: Text('Export failed: $e'),
-        backgroundColor: HyundaiColors.error,
-      ));
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text('Export failed: $e'),
+          backgroundColor: HyundaiColors.error,
+        ),
+      );
     }
   }
 
   void _handlePodLoginTap(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => const SolidPopupLogin(),
-    ));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => const SolidPopupLogin(),
+      ),
+    );
   }
 }
 

@@ -47,29 +47,34 @@ class StatusRow extends StatelessWidget {
     final inactiveColor = cs.onSurfaceVariant;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(children: [
-        Icon(icon, size: 16, color: active ? activeColor : inactiveColor),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(label,
-              style: TextStyle(color: cs.onSurface, fontSize: 13)),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          decoration: BoxDecoration(
-            color: (active ? activeColor : inactiveColor).withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            active ? 'On' : 'Off',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: active ? activeColor : inactiveColor,
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: active ? activeColor : inactiveColor),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(color: cs.onSurface, fontSize: 13),
             ),
           ),
-        ),
-      ]),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: (active ? activeColor : inactiveColor)
+                  .withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              active ? 'On' : 'Off',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: active ? activeColor : inactiveColor,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -82,13 +87,20 @@ class KVRow extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(top: 6),
-      child: Row(children: [
-        Text(k, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
-        const Spacer(),
-        Text(val,
+      child: Row(
+        children: [
+          Text(k, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
+          const Spacer(),
+          Text(
+            val,
             style: TextStyle(
-                color: cs.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
-      ]),
+              color: cs.onSurface,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -101,19 +113,30 @@ class StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Icon(icon, size: 14, color: color ?? cs.onSurfaceVariant),
-      const SizedBox(width: 4),
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label,
-            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10)),
-        Text(value,
-            style: TextStyle(
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color ?? cs.onSurfaceVariant),
+        const SizedBox(width: 4),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10),
+            ),
+            Text(
+              value,
+              style: TextStyle(
                 color: color ?? cs.onSurface,
                 fontSize: 13,
-                fontWeight: FontWeight.w600)),
-      ]),
-    ]);
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 

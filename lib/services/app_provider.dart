@@ -1,34 +1,36 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/vehicle.dart';
 import 'bluelink_service.dart';
 import 'pod_service.dart';
 
 enum AppState { idle, loading, loaded, error }
+
 enum DataSource { bluelink, pod, none }
 
 class AppProvider extends ChangeNotifier {
   final BluelinkService _api = BluelinkService();
 
-  AppState   _state      = AppState.idle;
-  String?    _errorMessage;
+  AppState _state = AppState.idle;
+  String? _errorMessage;
   List<Vehicle> _vehicles = [];
-  int        _selectedVehicleIndex = 0;
-  bool       _isRefreshing = false;
-  DataSource _dataSource   = DataSource.none;
-  String?    _loadedFilename; // which pod file is currently loaded
+  int _selectedVehicleIndex = 0;
+  bool _isRefreshing = false;
+  DataSource _dataSource = DataSource.none;
+  String? _loadedFilename; // which pod file is currently loaded
 
-  AppState   get state           => _state;
-  String?    get errorMessage    => _errorMessage;
-  List<Vehicle> get vehicles     => _vehicles;
-  Vehicle?   get selectedVehicle =>
+  AppState get state => _state;
+  String? get errorMessage => _errorMessage;
+  List<Vehicle> get vehicles => _vehicles;
+  Vehicle? get selectedVehicle =>
       _vehicles.isNotEmpty ? _vehicles[_selectedVehicleIndex] : null;
-  bool       get isAuthenticated => _api.isAuthenticated;
-  bool       get isRefreshing    => _isRefreshing;
-  DataSource get dataSource      => _dataSource;
-  String?    get loadedFilename  => _loadedFilename;
-  bool       get hasData         => _vehicles.isNotEmpty;
+  bool get isAuthenticated => _api.isAuthenticated;
+  bool get isRefreshing => _isRefreshing;
+  DataSource get dataSource => _dataSource;
+  String? get loadedFilename => _loadedFilename;
+  bool get hasData => _vehicles.isNotEmpty;
 
   // ── Auto-login (desktop/bluelink) ────────────────────────────────────────
 
@@ -36,7 +38,7 @@ class AppProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('bl_username');
     final password = prefs.getString('bl_password');
-    final pin      = prefs.getString('bl_pin');
+    final pin = prefs.getString('bl_pin');
     if (username != null && password != null && pin != null) {
       return login(username: username, password: password, pin: pin);
     }
@@ -123,8 +125,10 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-  bool _loadVehicleFromMap(Map<String, dynamic> data,
-      {required DataSource source}) {
+  bool _loadVehicleFromMap(
+    Map<String, dynamic> data, {
+    required DataSource source,
+  }) {
     // data may be a single vehicle dict or {vehicles: [...]}
     List<Map<String, dynamic>> rawList;
     if (data.containsKey('vehicles')) {
@@ -162,23 +166,23 @@ class AppProvider extends ChangeNotifier {
     final v = selectedVehicle;
     if (v == null) return null;
     return {
-      'vehicleId':     v.id,
-      'vin':           v.vin,
-      'name':          v.nickname,
-      'model':         v.modelName,
-      'year':          v.modelYear,
-      'engine_type':   v.fuelType,
-      'color':         v.color,
-      'is_locked':     v.isLocked,
-      'odometer':      v.odometerKm,
+      'vehicleId': v.id,
+      'vin': v.vin,
+      'name': v.nickname,
+      'model': v.modelName,
+      'year': v.modelYear,
+      'engine_type': v.fuelType,
+      'color': v.color,
+      'is_locked': v.isLocked,
+      'odometer': v.odometerKm,
       'ev_battery_percentage': v.batteryLevelPercent,
-      'ev_driving_range':      v.evRangeKm,
+      'ev_driving_range': v.evRangeKm,
       'ev_battery_is_charging': v.isChargingOn,
       'ev_battery_is_plugged_in': v.isPluggedIn,
       'daily_driving_distance': v.dailyDrivenKm,
-      'total_driving_range':    v.totalDrivenKm,
+      'total_driving_range': v.totalDrivenKm,
       'last_updated_at': v.lastUpdated?.toIso8601String(),
-      'exportedAt':    DateTime.now().toIso8601String(),
+      'exportedAt': DateTime.now().toIso8601String(),
       ...v.extras,
     };
   }

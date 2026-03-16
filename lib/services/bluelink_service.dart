@@ -100,12 +100,14 @@ class BluelinkService {
     final stdout = (result.stdout as String).trim();
     final stderr = (result.stderr as String).trim();
     dev.log('[Bluelink] exit=${result.exitCode}', name: 'BluelinkService');
-    if (stderr.isNotEmpty)
+    if (stderr.isNotEmpty) {
       dev.log('[Bluelink] stderr=$stderr', name: 'BluelinkService');
+    }
 
     if (stdout.isEmpty) {
       throw BluelinkApiException(
-          'No output from Python script.\nstderr: $stderr');
+        'No output from Python script.\nstderr: $stderr',
+      );
     }
 
     Map<String, dynamic> data;
@@ -125,8 +127,9 @@ class BluelinkService {
 
     final rawList =
         (data['vehicles'] as List? ?? []).cast<Map<String, dynamic>>();
-    if (rawList.isEmpty)
+    if (rawList.isEmpty) {
       throw BluelinkApiException('No vehicles found on this account.');
+    }
 
     final fetchedAt = DateTime.now().toIso8601String();
     final vehicles = <Vehicle>[];
@@ -136,7 +139,8 @@ class BluelinkService {
       } catch (e, st) {
         dev.log('[Bluelink] Parse error: $e\n$st', name: 'BluelinkService');
         throw BluelinkApiException(
-            'Failed to parse vehicle data: $e\n\nRaw: $raw');
+          'Failed to parse vehicle data: $e\n\nRaw: $raw',
+        );
       }
     }
     _rawJson = {

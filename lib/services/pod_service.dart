@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
+
 import 'package:solidpod/solidpod.dart';
+
 import '../utils/pod_utils.dart';
 
 /// Service for reading and writing vehicle status to a Solid Pod.
@@ -31,11 +33,9 @@ class PodService {
   /// Extracts the first triple-quoted literal from a Turtle document.
   static String? _ttlToLiteral(String ttl) {
     final first = ttl.indexOf('"""');
-    final last  = ttl.lastIndexOf('"""');
+    final last = ttl.lastIndexOf('"""');
     if (first == -1 || last == first) return null;
-    return ttl
-        .substring(first + 3, last)
-        .replaceAll(r'\"\"\"', '"""');
+    return ttl.substring(first + 3, last).replaceAll(r'\"\"\"', '"""');
   }
 
   // ── Public API ────────────────────────────────────────────────────────
@@ -43,11 +43,12 @@ class PodService {
   /// Saves a status snapshot and updates latest.ttl + index.ttl.
   /// Returns null on success, or an error message on failure.
   static Future<String?> saveStatusWithIndex(
-      Map<String, dynamic> data) async {
+    Map<String, dynamic> data,
+  ) async {
     try {
       final filename = makeStatusFilename();
       final json = const JsonEncoder.withIndent('  ').convert(data);
-      final ttl  = _jsonToTtl('vehicleStatus', json);
+      final ttl = _jsonToTtl('vehicleStatus', json);
 
       dev.log('[Pod] Writing $filename...', name: 'PodService');
       await writePod(filename, ttl);
@@ -79,17 +80,18 @@ class PodService {
     } catch (_) {}
     try {
       final ttl = await readPod('latest.ttl');
-      if (ttl != null && ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
+      if (ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
     } catch (_) {}
     return null;
   }
 
   /// Loads a specific snapshot by filename.
   static Future<Map<String, dynamic>?> loadStatusFile(
-      String filename) async {
+    String filename,
+  ) async {
     try {
       final ttl = await readPod(filename);
-      if (ttl != null && ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
+      if (ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
     } catch (e) {
       dev.log('[Pod] Load error ($filename): $e', name: 'PodService');
     }
@@ -140,7 +142,7 @@ class PodService {
   static Future<List<String>> _readIndex() async {
     try {
       final ttl = await readPod('index.ttl');
-      if (ttl == null || ttl.isEmpty) return [];
+      if (ttl.isEmpty) return [];
       final literal = _ttlToLiteral(ttl);
       if (literal == null) return [];
       final list = List<String>.from(jsonDecode(literal) as List? ?? []);
