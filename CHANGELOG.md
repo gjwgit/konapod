@@ -16,6 +16,7 @@ then please show some ❤️ and tap on the star at
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Write and read now working [0.2.3 20260316 claude]
 + Add Version Widget [0.2.2 20260316 claude]
 + Add dark/light mode [0.2.1 20260316 claude]
 
