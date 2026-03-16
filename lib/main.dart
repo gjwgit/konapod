@@ -1,6 +1,6 @@
 /// A Bluelink app for Hyundai
 ///
-// Time-stamp: <Monday 2026-03-16 08:52:43 +1100 Graham Williams>
+// Time-stamp: <Monday 2026-03-16 13:55:28 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -92,9 +92,9 @@ class _KonapodAppState extends State<KonapodApp> {
       home: SolidLogin(
         required: false,
         appDirectory: appDirectory,
-        title: appName.toUpperCase(),
+        title: appName.toUpperCase().replaceAll(' - ', '\n'),
         image: const AssetImage('assets/images/app_image.jpg'),
-        logo:  const AssetImage('assets/images/app_icon.png'),
+        logo: const AssetImage('assets/images/app_icon.png'),
         child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
       ),
     );
