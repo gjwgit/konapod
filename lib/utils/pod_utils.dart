@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:intl/intl.dart';
+
 import '../constants/app.dart';
 
 /// Generates a status filename with the current timestamp.

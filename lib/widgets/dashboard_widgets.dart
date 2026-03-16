@@ -111,7 +111,9 @@ class BigStatusTile extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                      color: HyundaiColors.midGrey, fontSize: 11),
+                    color: HyundaiColors.midGrey,
+                    fontSize: 11,
+                  ),
                 ),
                 Text(
                   value,

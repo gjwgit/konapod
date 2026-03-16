@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import '../services/app_provider.dart';
 import '../services/pod_service.dart';
-import '../utils/pod_utils.dart';
 import '../theme/hyundai_theme.dart';
+import '../utils/pod_utils.dart';
 
 /// History screen — browse and load archived status snapshots from the pod.
 class HistoryScreen extends StatefulWidget {
@@ -25,12 +27,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _loadList() async {
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final files = await PodService.listStatusFiles();
-      setState(() { _files = files; _loading = false; });
+      setState(() {
+        _files = files;
+        _loading = false;
+      });
     } catch (e) {
-      setState(() { _error = 'Could not load history: $e'; _loading = false; });
+      setState(() {
+        _error = 'Could not load history: $e';
+        _loading = false;
+      });
     }
   }
 
@@ -39,8 +50,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final ok = await provider.loadPodFile(filename);
     if (mounted && ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Loaded $filename'),
-            backgroundColor: HyundaiColors.success),
+        SnackBar(
+          content: Text('Loaded $filename'),
+          backgroundColor: HyundaiColors.success,
+        ),
       );
     }
   }
@@ -58,36 +71,55 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
     if (_error != null) {
       return Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.error_outline, color: HyundaiColors.error, size: 48),
-          const SizedBox(height: 16),
-          Text(_error!,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline,
+                color: HyundaiColors.error, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              _error!,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: HyundaiColors.error)),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: _loadList,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
-          ),
-        ]),
+              style: const TextStyle(color: HyundaiColors.error),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _loadList,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
+        ),
       );
     }
     if (_files.isEmpty) {
       return Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.history, size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant
-                  .withValues(alpha: 0.3)),
-          const SizedBox(height: 16),
-          const Text('No snapshots saved yet.',
-              style: TextStyle(fontSize: 16)),
-          const SizedBox(height: 8),
-          Text('Log in to Bluelink and tap Save to Pod to create a snapshot.',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.history,
+              size: 64,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurfaceVariant
+                  .withValues(alpha: 0.3),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'No snapshots saved yet.',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Log in to Bluelink and tap Save to Pod to create a snapshot.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
-        ]),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
@@ -112,10 +144,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
               isLoaded ? Icons.radio_button_checked : Icons.history,
               color: isLoaded ? HyundaiColors.accent : null,
             ),
-            title: Text(_formatDate(f),
-                style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text(f,
-                style: const TextStyle(fontSize: 11)),
+            title: Text(
+              _formatDate(f),
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              f,
+              style: const TextStyle(fontSize: 11),
+            ),
             trailing: isLoaded
                 ? const Chip(
                     label: Text('Active'),

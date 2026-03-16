@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../theme/hyundai_theme.dart';
 
 class StatCard extends StatelessWidget {
@@ -45,7 +46,8 @@ class StatCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (iconColor ?? HyundaiColors.primary).withValues(alpha: 0.1),
+                  color: (iconColor ?? HyundaiColors.primary)
+                      .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -110,7 +112,8 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? (activeColor ?? HyundaiColors.success) : HyundaiColors.midGrey;
+    final color =
+        active ? (activeColor ?? HyundaiColors.success) : HyundaiColors.midGrey;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
+
 import '../models/vehicle.dart';
 
 /// Bluelink service — Linux/desktop only.
@@ -41,7 +42,8 @@ class BluelinkService {
       } catch (_) {}
     }
     throw BluelinkApiException(
-        'Python 3 not found.\nRun: sudo apt install python3 python3-pip');
+      'Python 3 not found.\nRun: sudo apt install python3 python3-pip',
+    );
   }
 
   Future<void> login({
@@ -71,30 +73,39 @@ class BluelinkService {
 
     if (!File(script).existsSync()) {
       throw BluelinkApiException(
-          'bluelink_fetch.py not found.\nExpected at: $script');
+        'bluelink_fetch.py not found.\nExpected at: $script',
+      );
     }
 
-    final check = await Process.run(python, ['-c', 'import hyundai_kia_connect_api']);
+    final check =
+        await Process.run(python, ['-c', 'import hyundai_kia_connect_api']);
     if (check.exitCode != 0) {
       throw BluelinkApiException(
-          'Python library not installed.\nRun: pip install hyundai-kia-connect-api');
+        'Python library not installed.\nRun: pip install hyundai-kia-connect-api',
+      );
     }
 
     dev.log('[Bluelink] Running Python script…', name: 'BluelinkService');
 
     final result = await Process.run(
-      python, [script, _username!, _password!, _pin!],
-      stdoutEncoding: utf8, stderrEncoding: utf8,
-    ).timeout(const Duration(seconds: 90),
-        onTimeout: () => throw BluelinkApiException('Timed out after 90s.'));
+      python,
+      [script, _username!, _password!, _pin!],
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    ).timeout(
+      const Duration(seconds: 90),
+      onTimeout: () => throw BluelinkApiException('Timed out after 90s.'),
+    );
 
     final stdout = (result.stdout as String).trim();
     final stderr = (result.stderr as String).trim();
     dev.log('[Bluelink] exit=${result.exitCode}', name: 'BluelinkService');
-    if (stderr.isNotEmpty) dev.log('[Bluelink] stderr=$stderr', name: 'BluelinkService');
+    if (stderr.isNotEmpty)
+      dev.log('[Bluelink] stderr=$stderr', name: 'BluelinkService');
 
     if (stdout.isEmpty) {
-      throw BluelinkApiException('No output from Python script.\nstderr: $stderr');
+      throw BluelinkApiException(
+          'No output from Python script.\nstderr: $stderr');
     }
 
     Map<String, dynamic> data;
@@ -102,16 +113,20 @@ class BluelinkService {
       data = jsonDecode(stdout) as Map<String, dynamic>;
     } catch (_) {
       throw BluelinkApiException(
-          'Could not parse output:\n${stdout.substring(0, stdout.length.clamp(0, 300))}');
+        'Could not parse output:\n${stdout.substring(0, stdout.length.clamp(0, 300))}',
+      );
     }
 
     if (data.containsKey('error')) {
       throw BluelinkApiException(
-          '${data['error']}${data['fix'] != null ? '\n\nFix: ${data['fix']}' : ''}');
+        '${data['error']}${data['fix'] != null ? '\n\nFix: ${data['fix']}' : ''}',
+      );
     }
 
-    final rawList = (data['vehicles'] as List? ?? []).cast<Map<String, dynamic>>();
-    if (rawList.isEmpty) throw BluelinkApiException('No vehicles found on this account.');
+    final rawList =
+        (data['vehicles'] as List? ?? []).cast<Map<String, dynamic>>();
+    if (rawList.isEmpty)
+      throw BluelinkApiException('No vehicles found on this account.');
 
     final vehicles = <Vehicle>[];
     for (final raw in rawList) {
@@ -119,7 +134,8 @@ class BluelinkService {
         vehicles.add(Vehicle.fromApiJson(raw));
       } catch (e, st) {
         dev.log('[Bluelink] Parse error: $e\n$st', name: 'BluelinkService');
-        throw BluelinkApiException('Failed to parse vehicle data: $e\n\nRaw: $raw');
+        throw BluelinkApiException(
+            'Failed to parse vehicle data: $e\n\nRaw: $raw');
       }
     }
     _rawJson = {
@@ -137,7 +153,8 @@ class BluelinkService {
     if (_rawJson != null) return _rawJson!;
     // Re-fetch if not cached
     await _fetchFromPython();
-    return _rawJson ?? {'vehicles': [], 'fetchedAt': DateTime.now().toIso8601String()};
+    return _rawJson ??
+        {'vehicles': [], 'fetchedAt': DateTime.now().toIso8601String()};
   }
 
   void logout() {

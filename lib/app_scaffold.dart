@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
-import 'constants/app.dart';
-import 'services/app_provider.dart';
-import 'theme/hyundai_theme.dart';
-import 'widgets/sections_status.dart';
-import 'widgets/pages.dart';
 
+import 'constants/app.dart';
 import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
+import 'services/app_provider.dart';
+import 'theme/hyundai_theme.dart';
+import 'widgets/pages.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
 /// Provides left nav, top app bar, status bar, and per-section pages.
@@ -23,6 +23,11 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   // Solid Pod login state
   String? _webId;
+
+  // Security key state — tracks whether the user's encryption key is saved.
+  // Updated via the onKeyStatusChanged callback from SolidSecurityKeyStatus.
+
+  bool _isKeySaved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -67,22 +72,22 @@ class _AppScaffoldState extends State<AppScaffold> {
                 : NoDataPlaceholder(provider: provider),
           ),
         ),
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'History',
           icon: Icons.history,
           tooltip: 'Browse and load archived snapshots from your Solid Pod',
           child: _PageWrapper(
             title: 'History',
-            child: const HistoryScreen(),
+            child: HistoryScreen(),
           ),
         ),
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'Settings',
           icon: Icons.settings,
           tooltip: 'Bluelink credentials and app preferences',
           child: _PageWrapper(
             title: 'Settings',
-            child: const SettingsScreen(),
+            child: SettingsScreen(),
           ),
         ),
       ],
@@ -135,6 +140,22 @@ class _AppScaffoldState extends State<AppScaffold> {
           loggedInText: 'Pod: Connected',
           loggedOutText: 'Pod: Not connected',
         ),
+
+        // SecurityKey widget — displays a key icon in the bottom-right corner.
+        // Tapping it opens the key management popup (view/forget/change key).
+        // onKeyStatusChanged keeps _isKeySaved in sync so the icon reflects
+        // the current state (key saved vs not saved).
+
+        securityKeyStatus: SolidSecurityKeyStatus(
+          isKeySaved: _isKeySaved,
+          title: 'KonaPod Security Keys',
+          onKeyStatusChanged: (hasKey) {
+            setState(() {
+              _isKeySaved = hasKey;
+            });
+          },
+          tooltip: 'Manage your Solid Pod encryption key',
+        ),
       ),
 
       // ── Theme toggle ─────────────────────────────────────────────────────
@@ -152,11 +173,14 @@ class _AppScaffoldState extends State<AppScaffold> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: const Center(
-            child: Text('H',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900)),
+            child: Text(
+              'H',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
         ),
         text: '**$appName** is a Hyundai Bluelink vehicle dashboard '
@@ -179,32 +203,40 @@ class _AppScaffoldState extends State<AppScaffold> {
   Future<void> _saveToPod(BuildContext ctx, AppProvider provider) async {
     final ok = await provider.saveToPod();
     if (!mounted) return;
-    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-      content: Text(ok
-          ? 'Snapshot saved to pod!'
-          : 'Save failed: ${provider.errorMessage}'),
-      backgroundColor: ok ? HyundaiColors.success : HyundaiColors.error,
-    ));
+    ScaffoldMessenger.of(ctx).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Snapshot saved to pod!'
+              : 'Save failed: ${provider.errorMessage}',
+        ),
+        backgroundColor: ok ? HyundaiColors.success : HyundaiColors.error,
+      ),
+    );
   }
 
   Future<void> _loadFromPod(BuildContext ctx, AppProvider provider) async {
     final ok = await provider.loadFromPod();
     if (!mounted) return;
     if (!ok) {
-      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-        content: Text(provider.errorMessage ?? 'Load failed'),
-        backgroundColor: HyundaiColors.error,
-      ));
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(provider.errorMessage ?? 'Load failed'),
+          backgroundColor: HyundaiColors.error,
+        ),
+      );
     }
   }
 
   void _handlePodLoginTap(BuildContext context) {
     // SolidPopupLogin triggers the pod OAuth flow from within the app.
     // It is a widget, so we push it as a full-screen dialog route.
-    Navigator.of(context).push(MaterialPageRoute(
-      fullscreenDialog: true,
-      builder: (_) => SolidPopupLogin(),
-    ));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => const SolidPopupLogin(),
+      ),
+    );
   }
 }
 

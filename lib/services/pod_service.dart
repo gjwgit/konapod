@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
+
 import 'package:solidpod/solidpod.dart';
+
 import '../constants/app.dart';
 import '../utils/pod_utils.dart';
 
@@ -45,7 +47,7 @@ class PodService {
     try {
       // Try to read the index file which lists available snapshots
       final indexContent = await readPod('${podStatusPath}index.json');
-      if (indexContent != null && indexContent.isNotEmpty) {
+      if (indexContent.isNotEmpty) {
         final index = jsonDecode(indexContent) as List;
         if (index.isNotEmpty) {
           // Sort by filename (timestamp embedded) desc
@@ -59,7 +61,7 @@ class PodService {
     // Fall back: try to read a file named 'latest.json'
     try {
       final content = await readPod('${podStatusPath}latest.json');
-      if (content != null && content.isNotEmpty) {
+      if (content.isNotEmpty) {
         return vehicleMapFromJson(content);
       }
     } catch (_) {}
@@ -71,7 +73,7 @@ class PodService {
     try {
       final path = '$podStatusPath$filename';
       final content = await readPod(path);
-      if (content != null && content.isNotEmpty) {
+      if (content.isNotEmpty) {
         return vehicleMapFromJson(content);
       }
     } catch (e) {
@@ -104,7 +106,9 @@ class PodService {
         index.sort((a, b) => b.compareTo(a)); // newest first
       }
       await writePod(
-          '${podStatusPath}index.json', jsonEncode(index));
+        '${podStatusPath}index.json',
+        jsonEncode(index),
+      );
 
       dev.log('[Pod] Saved $filename and updated index', name: 'PodService');
       return true;
