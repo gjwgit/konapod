@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -125,10 +126,8 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-  bool _loadVehicleFromMap(
-    Map<String, dynamic> data, {
-    required DataSource source,
-  }) {
+  bool _loadVehicleFromMap(Map<String, dynamic> data,
+      {required DataSource source}) {
     // data may be a single vehicle dict or {vehicles: [...]}
     List<Map<String, dynamic>> rawList;
     if (data.containsKey('vehicles')) {
@@ -157,9 +156,15 @@ class AppProvider extends ChangeNotifier {
     // Re-fetch raw data from Python to get full dict
     try {
       final rawJson = await _api.getRawVehicleJson();
-      return PodService.saveStatusWithIndex(rawJson);
+      final error = await PodService.saveStatusWithIndex(rawJson);
+      if (error != null) {
+        _errorMessage = error;
+        notifyListeners();
+        return false;
+      }
+      return true;
     } catch (e) {
-      _errorMessage = 'Save error: $e';
+      _errorMessage = e.toString();
       notifyListeners();
       return false;
     }

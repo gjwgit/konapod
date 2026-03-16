@@ -33,25 +33,23 @@ class HeroCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(v.modelName,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5)),
-                  if (v.color.isNotEmpty)
-                    Text(v.color,
-                        style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.65),
-                            fontSize: 13)),
-                ]),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(v.modelName,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5)),
+              if (v.color.isNotEmpty)
+                Text(v.color,
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.65),
+                        fontSize: 13)),
+            ]),
           ),
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: HyundaiColors.accent,
               borderRadius: BorderRadius.circular(20),
@@ -115,9 +113,7 @@ class HeroCard extends StatelessWidget {
                 ? '${NumberFormat('#,##0').format(v.odometerKm!.round())} km'
                 : '– km',
             style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 15),
+                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
           ),
           if (v.evRangeKm != null || v.fuelRangeKm != null) ...[
             const SizedBox(width: 16),
@@ -125,6 +121,19 @@ class HeroCard extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               '${(v.evRangeKm ?? v.fuelRangeKm)!.round()} km available',
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15),
+            ),
+          ],
+          if (v.batteryLevelPercent != null) ...[
+            const SizedBox(width: 16),
+            const Icon(Icons.battery_charging_full,
+                color: Colors.white54, size: 16),
+            const SizedBox(width: 6),
+            Text(
+              '${v.batteryLevelPercent!.round()}% charge',
               style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -260,8 +269,7 @@ class WarningsSection extends StatelessWidget {
     return DashboardCard(
       child: warnings.isEmpty
           ? const Row(children: [
-              Icon(Icons.check_circle,
-                  color: HyundaiColors.success, size: 20),
+              Icon(Icons.check_circle, color: HyundaiColors.success, size: 20),
               SizedBox(width: 10),
               Text('No active warnings',
                   style: TextStyle(
@@ -279,8 +287,7 @@ class WarningsSection extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(w,
                               style: const TextStyle(
-                                  color: HyundaiColors.error,
-                                  fontSize: 13)),
+                                  color: HyundaiColors.error, fontSize: 13)),
                         ]),
                       ))
                   .toList(),

@@ -8,4 +8,4 @@ const String appDescription =
 const String appDirectory = 'konapod';
 const String podStatusPath = 'konapod/';
 const String statusFilePrefix = 'status_';
-const String statusFileSuffix = '.json';
+const String statusFileSuffix = '.ttl';

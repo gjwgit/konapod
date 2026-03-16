@@ -7,114 +7,135 @@ import '../constants/app.dart';
 import '../utils/pod_utils.dart';
 
 /// Service for reading and writing vehicle status to a Solid Pod.
+///
+/// All files are stored as valid Turtle (.ttl) documents with the
+/// JSON payload embedded as a string literal, then encrypted by
+/// solidpod using the user's security key.
+///
+/// File layout (all relative to the app directory set in SolidLogin):
+///   status_YYYYMMDDTHHMMSS.ttl  -- individual snapshots
+///   latest.ttl                  -- copy of the most recent snapshot
+///   index.ttl                   -- list of all snapshot filenames
 
 class PodService {
-  /// Saves a vehicle data map to the pod as a timestamped JSON file.
-  static Future<bool> saveStatus(Map<String, dynamic> data) async {
+  // Turtle namespace prefixes used in every file we write.
+  static const _prefixes =
+      '@prefix konapod: <https://konapod.solidcommunity.au/ont/> .\n'
+      '@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .\n';
+
+  /// Wraps a JSON string in a Turtle document as a plain string literal.
+  /// The predicate is a konapod: term so the file is self-describing.
+  static String _jsonToTtl(String predicate, String json) {
+    // Triple-quote sequences inside the JSON must be escaped.
+    final safe = json.replaceAll('"""', r'\"\"\"');
+    return '$_prefixes\n<> konapod:$predicate """$safe""" .\n';
+  }
+
+  /// Extracts the first triple-quoted literal from a Turtle document.
+  static String? _ttlToLiteral(String ttl) {
+    final first = ttl.indexOf('"""');
+    final last  = ttl.lastIndexOf('"""');
+    if (first == -1 || last == first) return null;
+    return ttl
+        .substring(first + 3, last)
+        .replaceAll(r'\"\"\"', '"""');
+  }
+
+  // ── Public API ────────────────────────────────────────────────────────
+
+  /// Saves a status snapshot and updates latest.ttl + index.ttl.
+  /// Returns null on success, or an error message on failure.
+  static Future<String?> saveStatusWithIndex(
+      Map<String, dynamic> data) async {
     try {
       final filename = makeStatusFilename();
-      final path = '$podStatusPath$filename';
-      final content = vehicleMapToJson(data);
-      await writePod(path, content);
-      dev.log('[Pod] Saved status to $path', name: 'PodService');
-      return true;
-    } catch (e) {
-      dev.log('[Pod] Save error: $e', name: 'PodService');
-      return false;
+      final json = const JsonEncoder.withIndent('  ').convert(data);
+      final ttl  = _jsonToTtl('vehicleStatus', json);
+
+      dev.log('[Pod] Writing $filename...', name: 'PodService');
+      await writePod(filename, ttl);
+      dev.log('[Pod] Saved $filename', name: 'PodService');
+
+      await writePod('latest.ttl', ttl);
+      dev.log('[Pod] Updated latest.ttl', name: 'PodService');
+
+      final index = await _readIndex();
+      if (!index.contains(filename)) {
+        index.add(filename);
+        index.sort((a, b) => b.compareTo(a));
+      }
+      await _writeIndex(index);
+      dev.log('[Pod] Updated index.ttl', name: 'PodService');
+
+      return null;
+    } catch (e, st) {
+      dev.log('[Pod] Save error: $e\n$st', name: 'PodService');
+      return e.toString();
     }
   }
 
-  /// Lists all status files on the pod, sorted newest first.
+  /// Loads the latest status snapshot from the pod.
+  static Future<Map<String, dynamic>?> loadLatestStatus() async {
+    try {
+      final index = await _readIndex();
+      if (index.isNotEmpty) return loadStatusFile(index.first);
+    } catch (_) {}
+    try {
+      final ttl = await readPod('latest.ttl');
+      if (ttl != null && ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
+    } catch (_) {}
+    return null;
+  }
+
+  /// Loads a specific snapshot by filename.
+  static Future<Map<String, dynamic>?> loadStatusFile(
+      String filename) async {
+    try {
+      final ttl = await readPod(filename);
+      if (ttl != null && ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
+    } catch (e) {
+      dev.log('[Pod] Load error ($filename): $e', name: 'PodService');
+    }
+    return null;
+  }
+
+  /// Returns all snapshot filenames from index.ttl, newest first.
   static Future<List<String>> listStatusFiles() async {
     try {
-      // List files in the konapod directory
-      final listing = await readPod('$podStatusPath.acl');
-      // Parse the turtle listing to extract filenames
-      // solidpod returns a resource listing; filter for our status files
-      // Since solidpod doesn't expose a direct listDir, we use a workaround:
-      // we maintain an index file, or list known files.
-      // For now return empty — populate from index file approach below.
-      dev.log('[Pod] listStatusFiles placeholder', name: 'PodService');
-      return [];
+      return await _readIndex();
     } catch (e) {
       dev.log('[Pod] List error: $e', name: 'PodService');
       return [];
     }
   }
 
-  /// Loads the latest status file from the pod.
-  static Future<Map<String, dynamic>?> loadLatestStatus() async {
-    try {
-      // Try to read the index file which lists available snapshots
-      final indexContent = await readPod('${podStatusPath}index.json');
-      if (indexContent.isNotEmpty) {
-        final index = jsonDecode(indexContent) as List;
-        if (index.isNotEmpty) {
-          // Sort by filename (timestamp embedded) desc
-          final sorted = List<String>.from(index)
-            ..sort((a, b) => b.compareTo(a));
-          return loadStatusFile(sorted.first);
-        }
-      }
-    } catch (_) {}
+  // ── Private helpers ───────────────────────────────────────────────────
 
-    // Fall back: try to read a file named 'latest.json'
+  static Map<String, dynamic>? _parseTtlSnapshot(String ttl) {
+    final json = _ttlToLiteral(ttl);
+    if (json == null) return null;
     try {
-      final content = await readPod('${podStatusPath}latest.json');
-      if (content.isNotEmpty) {
-        return vehicleMapFromJson(content);
-      }
-    } catch (_) {}
-    return null;
+      return jsonDecode(json) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
   }
 
-  /// Loads a specific status file from the pod by filename.
-  static Future<Map<String, dynamic>?> loadStatusFile(String filename) async {
+  static Future<List<String>> _readIndex() async {
     try {
-      final path = '$podStatusPath$filename';
-      final content = await readPod(path);
-      if (content.isNotEmpty) {
-        return vehicleMapFromJson(content);
-      }
-    } catch (e) {
-      dev.log('[Pod] Load error: $e', name: 'PodService');
+      final ttl = await readPod('index.ttl');
+      if (ttl == null || ttl.isEmpty) return [];
+      final literal = _ttlToLiteral(ttl);
+      if (literal == null) return [];
+      final list = List<String>.from(jsonDecode(literal) as List? ?? []);
+      return list..sort((a, b) => b.compareTo(a));
+    } catch (_) {
+      return [];
     }
-    return null;
   }
 
-  /// Saves status and also updates the index + latest.json.
-  static Future<bool> saveStatusWithIndex(Map<String, dynamic> data) async {
-    try {
-      final filename = makeStatusFilename();
-      final path = '$podStatusPath$filename';
-      final content = vehicleMapToJson(data);
-
-      // Write the timestamped file
-      await writePod(path, content);
-
-      // Write/overwrite latest.json
-      await writePod('${podStatusPath}latest.json', content);
-
-      // Update index.json
-      String indexContent = '[]';
-      try {
-        indexContent = await readPod('${podStatusPath}index.json') ?? '[]';
-      } catch (_) {}
-      final index = List<String>.from(jsonDecode(indexContent) as List? ?? []);
-      if (!index.contains(filename)) {
-        index.add(filename);
-        index.sort((a, b) => b.compareTo(a)); // newest first
-      }
-      await writePod(
-        '${podStatusPath}index.json',
-        jsonEncode(index),
-      );
-
-      dev.log('[Pod] Saved $filename and updated index', name: 'PodService');
-      return true;
-    } catch (e) {
-      dev.log('[Pod] Save error: $e', name: 'PodService');
-      return false;
-    }
+  static Future<void> _writeIndex(List<String> index) async {
+    final ttl = _jsonToTtl('snapshotIndex', jsonEncode(index));
+    await writePod('index.ttl', ttl);
   }
 }
