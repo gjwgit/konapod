@@ -128,10 +128,11 @@ class BluelinkService {
     if (rawList.isEmpty)
       throw BluelinkApiException('No vehicles found on this account.');
 
+    final fetchedAt = DateTime.now().toIso8601String();
     final vehicles = <Vehicle>[];
     for (final raw in rawList) {
       try {
-        vehicles.add(Vehicle.fromApiJson(raw));
+        vehicles.add(Vehicle.fromApiJson({...raw, 'fetchedAt': fetchedAt}));
       } catch (e, st) {
         dev.log('[Bluelink] Parse error: $e\n$st', name: 'BluelinkService');
         throw BluelinkApiException(
@@ -140,7 +141,7 @@ class BluelinkService {
     }
     _rawJson = {
       'vehicles': rawList,
-      'fetchedAt': DateTime.now().toIso8601String(),
+      'fetchedAt': fetchedAt,
     };
     return vehicles;
   }

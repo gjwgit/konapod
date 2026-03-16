@@ -140,9 +140,6 @@ class InfoSection extends StatelessWidget {
         MapEntry('Address', v.locationAddress!),
       if (v.battery12VPercent != null)
         MapEntry('12V Battery', '${v.battery12VPercent}%'),
-      if (v.lastUpdated != null)
-        MapEntry('Last Updated',
-            DateFormat('dd MMM yyyy HH:mm').format(v.lastUpdated!)),
     ];
     return KVTable(rows);
   }

@@ -57,20 +57,58 @@ class BatterySection extends StatelessWidget {
             StatChip('Range', '${v.evRangeKm!.round()} km', Icons.route),
           if (v.batteryCapacityKwh != null) ...[
             const SizedBox(width: 20),
-            StatChip('Capacity',
-                '${v.batteryCapacityKwh!.toStringAsFixed(1)} kWh', Icons.bolt),
+            StatChip(
+                'Capacity',
+                '${(v.batteryCapacityKwh! / 1000).toStringAsFixed(1)} kWh',
+                Icons.bolt),
           ],
-          if (v.estimatedChargeCompletionMinutes != null &&
-              v.isChargingOn == true) ...[
+          if (v.batteryRemainKwh != null) ...[
             const SizedBox(width: 20),
             StatChip(
-              'Full in',
-              _fmtMin(v.estimatedChargeCompletionMinutes!),
-              Icons.timer,
-              color: HyundaiColors.accent,
-            ),
+                'Remain',
+                '${(v.batteryRemainKwh! / 1000).toStringAsFixed(1)} kWh',
+                Icons.battery_full),
+          ],
+          if (v.batterySohPercent != null) ...[
+            const SizedBox(width: 20),
+            StatChip('SOH', '${v.batterySohPercent!.toStringAsFixed(0)}%',
+                Icons.health_and_safety),
           ],
         ]),
+        if (v.chargingCurrentAc != null || v.chargingPowerKw != null ||
+            v.estimatedChargeCompletionMinutes != null ||
+            v.estimatedFastChargeMins != null ||
+            v.estimatedPortableChargeMins != null ||
+            v.estimatedStationChargeMins != null) ...[
+          const SizedBox(height: 10),
+          Wrap(spacing: 20, runSpacing: 8, children: [
+            if (v.chargingCurrentAc != null)
+              StatChip(
+                  'Current',
+                  '${v.chargingCurrentAc!.toStringAsFixed(0)} A',
+                  Icons.electric_bolt),
+            if (v.chargingPowerKw != null)
+              StatChip('Power', '${v.chargingPowerKw!.toStringAsFixed(1)} kW',
+                  Icons.flash_on),
+            if (v.estimatedChargeCompletionMinutes != null &&
+                v.estimatedChargeCompletionMinutes! > 0)
+              StatChip('Current Charge',
+                  _fmtMin(v.estimatedChargeCompletionMinutes!),
+                  Icons.timer,
+                  color: HyundaiColors.accent),
+            if (v.estimatedFastChargeMins != null)
+              StatChip('Fast Charge', _fmtMin(v.estimatedFastChargeMins!),
+                  Icons.bolt,
+                  color: HyundaiColors.accent),
+            if (v.estimatedPortableChargeMins != null)
+              StatChip('Portable', _fmtMin(v.estimatedPortableChargeMins!),
+                  Icons.power),
+            if (v.estimatedStationChargeMins != null)
+              StatChip('Station', _fmtMin(v.estimatedStationChargeMins!),
+                  Icons.ev_station,
+                  color: HyundaiColors.accent),
+          ]),
+        ],
         const SizedBox(height: 14),
         Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
         const SizedBox(height: 12),

@@ -115,6 +115,13 @@ class Vehicle {
   final bool? isPluggedIn;
   final double? estimatedChargeCompletionMinutes;
   final double? batteryCapacityKwh;
+  final double? batteryRemainKwh;
+  final double? batterySohPercent;
+  final double? chargingCurrentAc;
+  final double? chargingPowerKw;
+  final double? estimatedFastChargeMins;
+  final double? estimatedPortableChargeMins;
+  final double? estimatedStationChargeMins;
   final int? targetSocAC;
   final int? targetSocDC;
   final bool? isChargeScheduledOn;
@@ -158,6 +165,7 @@ class Vehicle {
 
   // ── Timestamps ───────────────────────────────────────────────────────────
   final DateTime? lastUpdated;
+  final DateTime? fetchedAt;
 
   const Vehicle({
     required this.id,
@@ -199,6 +207,13 @@ class Vehicle {
     this.isPluggedIn,
     this.estimatedChargeCompletionMinutes,
     this.batteryCapacityKwh,
+    this.batteryRemainKwh,
+    this.batterySohPercent,
+    this.chargingCurrentAc,
+    this.chargingPowerKw,
+    this.estimatedFastChargeMins,
+    this.estimatedPortableChargeMins,
+    this.estimatedStationChargeMins,
     this.targetSocAC,
     this.targetSocDC,
     this.isChargeScheduledOn,
@@ -226,6 +241,7 @@ class Vehicle {
     this.dailyStats = const [],
     this.extras = const {},
     this.lastUpdated,
+    this.fetchedAt,
   });
 
   bool get isEV  => fuelType == 'EV'  || fuelType == 'PHEV';
@@ -286,6 +302,11 @@ class Vehicle {
       'ev_target_range_charge_AC','ev_target_range_charge_DC',
       'ev_charge_limits_ac','ev_charge_limits_dc',
       'ev_charge_scheduled_on','ev_12v_percentage',
+      'ev_battery_remain','ev_battery_soh_percentage',
+      'ev_charging_current','ev_charging_power',
+      'ev_estimated_fast_charge_duration',
+      'ev_estimated_portable_charge_duration',
+      'ev_estimated_station_charge_duration',
       'battery_12v_percentage','battery_12v_warning_is_on',
       'odometer','location_latitude','location_longitude','location_name',
       'tire_pressure_front_left_warning_is_on','tire_pressure_front_right_warning_is_on',
@@ -296,7 +317,7 @@ class Vehicle {
       'smart_key_battery_warning_is_on','washer_fluid_warning_is_on',
       'brake_fluid_warning_is_on',
       'total_driving_range','daily_driving_distance','daily_stats',
-      'last_updated_at',
+      'last_updated_at','fetchedAt',
     };
     final extras = <String, dynamic>{};
     for (final entry in j.entries) {
@@ -352,6 +373,13 @@ class Vehicle {
       isPluggedIn:                      b(j['ev_battery_is_plugged_in']),
       estimatedChargeCompletionMinutes: d(j['ev_estimated_current_charge_duration']),
       batteryCapacityKwh:               d(j['ev_battery_capacity']),
+      batteryRemainKwh:   d(j['ev_battery_remain']),
+      batterySohPercent:  d(j['ev_battery_soh_percentage']),
+      chargingCurrentAc:  d(j['ev_charging_current']),
+      chargingPowerKw:    d(j['ev_charging_power']),
+      estimatedFastChargeMins:     d(j['ev_estimated_fast_charge_duration']),
+      estimatedPortableChargeMins: d(j['ev_estimated_portable_charge_duration']),
+      estimatedStationChargeMins:  d(j['ev_estimated_station_charge_duration']),
       targetSocAC:                      i(j['ev_target_range_charge_AC'] ?? j['ev_charge_limits_ac']),
       targetSocDC:                      i(j['ev_target_range_charge_DC'] ?? j['ev_charge_limits_dc']),
       isChargeScheduledOn:              b(j['ev_charge_scheduled_on']),
@@ -392,6 +420,9 @@ class Vehicle {
 
       lastUpdated: j['last_updated_at'] != null
           ? DateTime.tryParse(j['last_updated_at'].toString())
+          : null,
+      fetchedAt: j['fetchedAt'] != null
+          ? DateTime.tryParse(j['fetchedAt'].toString())
           : null,
     );
   }
