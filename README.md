@@ -1,11 +1,43 @@
 # Hyundai Bluelink AU — Flutter App
 
-A Flutter app to view your Hyundai Bluelink vehicle data (Australia / NZ).
-Styled with official Hyundai brand colours (navy + sky blue).
+[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/gjwgit/konapod)
+[![GitHub License](https://img.shields.io/github/license/gjwgit/konapod)](https://raw.githubusercontent.com/gjwgit/konapod/dev/LICENSE)
+[![Flutter Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/gjwgit/konapod/master/pubspec.yaml&query=$.version&label=version)](https://github.com/gjwgit/konapod/blob/dev/CHANGELOG.md)
+[![Last Updated](https://img.shields.io/github/last-commit/gjwgit/konapod?label=last%20updated)](https://github.com/gjwgit/konapod/commits/dev/)
+[![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/gjwgit/konapod/dev)](https://github.com/gjwgit/rattle/commits/dev/)
+[![GitHub Issues](https://img.shields.io/github/issues/gjwgit/konapod)](https://github.com/gjwgit/konapod/issues)
+
+KonaPod is a tool to collect your Hyundai or Kia's vehicle data
+together in one secure and private place. You can selectively share
+any parts of your life with others. The app itself presents the data
+and analyses of the data. It is being developed by
+[Togaware](https://togaware.com) and written by [Graham
+Williams](https://togaware.com/Graham.Williams.html) through Vibe
+programming with Claude Code.
+
+If you appreciate the app then please show some ❤️ and star the GitHub
+Repository to support the project.
+
+Installation details are available for all platforms from
+[github](https://github.com/gjwgit/konapod/blob/dev/installers/README.md).
+
+Contributions are welcome. Visit
+[github](https://github.com/gjwgit/konapod) to submit an issue or,
+even better, fork the repository yourself, update the code, and submit
+a Pull Request. The app is implemented in
+[Flutter](https://flutter.dev). Thanks.
+
+# Introduction
+
+A Flutter app to view your Hyundai Bluelink vehicle data (currently
+for Australia / NZ but please send in PRs for other regions).
 
 ---
 
-## Features
+# Features
 
 - **Login** with your Bluelink email, password & PIN (saved securely via `flutter_secure_storage`)
 - **Auto login** on relaunch — no need to re-enter credentials
@@ -28,31 +60,20 @@ Styled with official Hyundai brand colours (navy + sky blue).
 
 ---
 
-## Setup
+# Setup
 
-### Prerequisites
+## Prerequisites
 
 - Flutter 3.x+ installed
-- `flutter doctor` passing for your target platform (iOS or Android)
+- `flutter doctor` passing for your target platform
 
-### Install
+## Install
 
 ```bash
-cd bluelink_au
+git clone git@github.com:gjwgit/konapod.git
+cd konapod
 flutter pub get
 flutter run
-```
-
-### Build release APK (Android)
-
-```bash
-flutter build apk --release
-```
-
-### Build for iOS
-
-```bash
-flutter build ios --release
 ```
 
 ---
@@ -67,7 +88,7 @@ This app uses endpoints reverse-engineered by the community:
 - [hyundai_kia_connect_api](https://github.com/Hyundai-Kia-Connect/hyundai_kia_connect_api)
 - [blog.kumo.dev — Reverse engineering Bluelink](https://blog.kumo.dev/2024/05/22/reverse_engineering_hkg_apps.html)
 
-### Stamp Mechanism
+## Stamp Mechanism
 
 Hyundai's AU API requires a rotating "stamp" header.
 This app fetches stamps from the community stamp server:
@@ -75,13 +96,13 @@ This app fetches stamps from the community stamp server:
 
 If the stamp server is unavailable, some API calls may fail.
 
-### Rate Limits
+## Rate Limits
 
 Avoid refreshing too frequently — over-polling can drain your car's 12V battery.
 The app uses **cached status** (latest known state) by default, which is safe.
 Force-refresh directly queries the car's modem.
 
-### Android Network Config
+## Android Network Config
 
 Add to `android/app/src/main/AndroidManifest.xml` inside `<application>`:
 
@@ -101,7 +122,7 @@ And create `android/app/src/main/res/xml/network_security_config.xml`:
 </network-security-config>
 ```
 
-### iOS
+## iOS
 
 Add to `ios/Runner/Info.plist`:
 
