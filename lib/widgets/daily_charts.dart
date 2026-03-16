@@ -69,7 +69,9 @@ class _DailyDistanceChartState extends State<DailyDistanceChart> {
   }
 }
 
-// ── Daily Energy Consumption chart (stacked bars) ────────────────────────────
+// ── Daily Energy Consumption chart (stacked bars + regen overlay) ────────────
+
+const _colRegen = Color(0xFF6B8FBF); // pale tint of engine navy
 
 class DailyEnergyChart extends StatefulWidget {
   final List<DailyDrivingStat> stats;
@@ -87,16 +89,18 @@ class _DailyEnergyChartState extends State<DailyEnergyChart> {
     final maxY  = stats
         .map((d) => (d.totalConsumed ?? 0).toDouble())
         .reduce((a, b) => a > b ? a : b);
+    final chartMaxY = (maxY * 1.25).ceilToDouble();
+    final interval  = (maxY / 4).ceilToDouble().clamp(1.0, double.infinity);
+    final barW      = _barWidth(stats.length);
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _ChartCard(
         child: BarChart(BarChartData(
-          maxY: (maxY * 1.25).ceilToDouble(),
+          maxY: chartMaxY,
           barTouchData: BarTouchData(
             touchTooltipData: BarTouchTooltipData(
-              getTooltipItem: (g, _, rod, __) {
+              getTooltipItem: (g, _, rod, rodIndex) {
                 final d = stats[g.x];
-                final total = d.totalConsumed ?? 0;
                 return BarTooltipItem(
                   '${DateFormat('EEE d MMM').format(d.date)}\n',
                   TextStyle(color: cs.onSurface,
@@ -111,32 +115,54 @@ class _DailyEnergyChartState extends State<DailyEnergyChart> {
           titlesData: _bottomLeft(cs, stats.length,
               (i) => DateFormat('d/M').format(stats[i].date),
               (v) => '${(v / 1000).toStringAsFixed(1)}',
-              interval: (maxY / 4).ceilToDouble().clamp(1, double.infinity)),
-          gridData: _grid(cs, (maxY / 4).ceilToDouble().clamp(1, double.infinity)),
+              interval: interval),
+          gridData: _grid(cs, interval),
           borderData: FlBorderData(show: false),
           barGroups: List.generate(stats.length, (i) {
-            final d = stats[i];
-            final engine   = (d.engineConsumption ?? 0).toDouble();
-            final climate  = (d.climateConsumption ?? 0).toDouble();
-            final elec     = (d.electronicsConsumption ?? 0).toDouble();
-            final care     = (d.batteryCareConsumption ?? 0).toDouble();
-            final w = _barWidth(stats.length);
-            return BarChartGroupData(x: i, barRods: [
-              BarChartRodData(
-                toY: engine + climate + elec + care,
-                width: w,
-                borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(4)),
-                rodStackItems: [
-                  BarChartRodStackItem(0, engine, _colEngine),
-                  BarChartRodStackItem(engine, engine + climate, _colClimate),
-                  BarChartRodStackItem(engine + climate,
-                      engine + climate + elec, _colElectronics),
-                  BarChartRodStackItem(engine + climate + elec,
-                      engine + climate + elec + care, _colBatteryCare),
-                ],
-              ),
-            ]);
+            final d       = stats[i];
+            final engine  = (d.engineConsumption ?? 0).toDouble();
+            final climate = (d.climateConsumption ?? 0).toDouble();
+            final elec    = (d.electronicsConsumption ?? 0).toDouble();
+            final care    = (d.batteryCareConsumption ?? 0).toDouble();
+            final regen   = ((d.regeneratedEnergy ?? 0).toDouble())
+                .clamp(0.0, engine);
+
+            return BarChartGroupData(
+              x: i,
+              barsSpace: -barW, // overlap the two rods exactly
+              barRods: [
+                // Rod 1: stacked consumption
+                BarChartRodData(
+                  toY: engine + climate + elec + care,
+                  width: barW,
+                  borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(4)),
+                  rodStackItems: [
+                    BarChartRodStackItem(0, engine, _colEngine),
+                    BarChartRodStackItem(engine, engine + climate, _colClimate),
+                    BarChartRodStackItem(engine + climate,
+                        engine + climate + elec, _colElectronics),
+                    BarChartRodStackItem(engine + climate + elec,
+                        engine + climate + elec + care, _colBatteryCare),
+                  ],
+                ),
+                // Rod 2: regen hatch overlay — same width, drawn on top
+                if (regen > 0)
+                  BarChartRodData(
+                    toY: regen,
+                    width: barW,
+                    borderRadius: BorderRadius.zero,
+                    color: Colors.transparent,
+                    rodStackItems: [
+                      BarChartRodStackItem(0, regen,
+                          _colRegen.withValues(alpha: 0.45)),
+                    ],
+                    backDrawRodData: BackgroundBarChartRodData(
+                      show: false,
+                    ),
+                  ),
+              ],
+            );
           }),
         )),
       ),
@@ -213,15 +239,16 @@ class _DailyRegenChartState extends State<DailyRegenChart> {
 // ── Energy tooltip helper ─────────────────────────────────────────────────────
 
 List<TextSpan> _energySpans(DailyDrivingStat d) {
-  String kw(int? v) => '${((v ?? 0) / 1000).toStringAsFixed(2)} kWh';
+  String kw(num? v) => '${((v ?? 0) / 1000).toStringAsFixed(2)} kWh';
   TextSpan s(String t, Color c) =>
       TextSpan(text: t, style: TextStyle(color: c, fontSize: 11));
   return [
-    s('Total: ${kw(d.totalConsumed)}\n',           Colors.white),
-    s('Engine: ${kw(d.engineConsumption)}\n',       _colEngine),
-    s('Climate: ${kw(d.climateConsumption)}\n',     _colClimate),
-    s('Electronics: ${kw(d.electronicsConsumption)}\n', _colElectronics),
-    s('Battery care: ${kw(d.batteryCareConsumption)}',  _colBatteryCare),
+    s('Total: ${kw(d.totalConsumed)}\n',                Colors.white),
+    s('Engine: ${kw(d.engineConsumption)}\n',            _colEngine),
+    s('Climate: ${kw(d.climateConsumption)}\n',          _colClimate),
+    s('Electronics: ${kw(d.electronicsConsumption)}\n',  _colElectronics),
+    s('Battery care: ${kw(d.batteryCareConsumption)}\n', _colBatteryCare),
+    s('↺ Regen: ${kw(d.regeneratedEnergy)}',             _colRegen),
   ];
 }
 
@@ -296,10 +323,11 @@ class _Legend extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Wrap(spacing: 16, runSpacing: 6, children: [
-      _Dot('Engine',       _colEngine,      cs),
-      _Dot('Climate',      _colClimate,     cs),
-      _Dot('Electronics',  _colElectronics, cs),
-      _Dot('Battery care', _colBatteryCare, cs),
+      _Dot('Engine',       _colEngine,                        cs),
+      _Dot('Climate',      _colClimate,                       cs),
+      _Dot('Electronics',  _colElectronics,                   cs),
+      _Dot('Battery care', _colBatteryCare,                   cs),
+      _Dot('Regen',        _colRegen.withValues(alpha: 0.55), cs),
     ]);
   }
 }
