@@ -16,6 +16,7 @@ then please show some ❤️ and tap on the star at
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Combined energy/regen chart [0.2.6 20260317 claude]
 + Fine tune displayed data [0.2.5 20260317 claude]
 + Add visualisations feature [0.2.4 20260316 claude]
 + Write and read now working [0.2.3 20260316 claude]
