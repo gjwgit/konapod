@@ -75,20 +75,20 @@ class HeroCard extends StatelessWidget {
             inactiveLabel: 'Engine Off',
             activeColor: HyundaiColors.warning,
           ),
-          if (v.isChargingOn == true)
-            StatusBadge(
-              active: true,
-              activeLabel: 'Charging',
-              inactiveLabel: '',
-              activeColor: HyundaiColors.accent,
-            ),
-          if (v.isPluggedIn == true && v.isChargingOn != true)
-            StatusBadge(
-              active: true,
-              activeLabel: 'Plugged In',
-              inactiveLabel: '',
-              activeColor: const Color(0xFF6C63FF),
-            ),
+//          if (v.isChargingOn == true)
+          StatusBadge(
+            active: v.isChargingOn == true,
+            activeLabel: 'Charging',
+            inactiveLabel: 'Not Charging',
+            activeColor: HyundaiColors.accent,
+          ),
+//          if (v.isPluggedIn == true && v.isChargingOn != true)
+          StatusBadge(
+            active: v.isPluggedIn == true && v.isChargingOn != true,
+            activeLabel: 'Plugged In',
+            inactiveLabel: 'Not Plugged In',
+            activeColor: const Color(0xFF6C63FF),
+          ),
           if (v.isClimateOn == true)
             StatusBadge(
               active: true,
@@ -193,6 +193,40 @@ class DoorsSection extends StatelessWidget {
             ),
           ),
         ]),
+        if (v.isEV) ...[
+          const SizedBox(height: 12),
+          Row(children: [
+            Expanded(
+              child: BigStatusTile(
+                icon: Icons.power,
+                label: 'Charging',
+                value: v.isChargingOn == null
+                    ? '–'
+                    : v.isChargingOn!
+                        ? 'Charging'
+                        : 'Not charging',
+                color: v.isChargingOn == true
+                    ? HyundaiColors.accent
+                    : HyundaiColors.success,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: BigStatusTile(
+                icon: Icons.electrical_services,
+                label: 'Plug',
+                value: v.isPluggedIn == null
+                    ? '–'
+                    : v.isPluggedIn!
+                        ? 'Plugged in'
+                        : 'Unplugged',
+                color: v.isPluggedIn == true
+                    ? const Color(0xFF6C63FF)
+                    : HyundaiColors.success,
+              ),
+            ),
+          ]),
+        ],
         const SizedBox(height: 12),
         Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
         const SizedBox(height: 12),
