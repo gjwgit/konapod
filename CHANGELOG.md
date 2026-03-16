@@ -16,6 +16,8 @@ then please show some ❤️ and tap on the star at
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Add dark/light mode [0.2.1 20260316 claude]
+
 ## 0.2 Add SolidLogin and SolidScaffold
 
 + Initial solid implementation without save [0.2.0 20260316 claude]
