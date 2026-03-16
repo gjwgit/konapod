@@ -13,19 +13,11 @@ dependencies:
   intl: ^0.20.2
   provider: ^6.1.5
   shared_preferences: ^2.5.3
-  solidpod: any
-  solidui: any
+  solidpod: ^0.12.0
+  solidui: ^0.3.0
 
 dependency_overrides:
   intl: ^0.20.2
-  solidpod:
-    git:
-      url: https://github.com/anusii/solidpod.git
-      ref: dev
-  solidui:
-    git:
-      url: https://github.com/anusii/solidui.git
-      ref: dev
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
