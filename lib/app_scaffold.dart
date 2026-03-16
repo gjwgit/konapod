@@ -98,6 +98,10 @@ class _AppScaffoldState extends State<AppScaffold> {
       appBar: SolidAppBarConfig(
         title: appName,
         backgroundColor: HyundaiColors.primary,
+        versionConfig: SolidVersionConfig(
+          changelogUrl:
+              'https://github.com/gjwgit/konapod/blob/dev/CHANGELOG.md',
+        ),
         actions: [
           // Bluelink login/refresh button
           if (provider.isAuthenticated)
