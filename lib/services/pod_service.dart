@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
-
 import 'package:solidpod/solidpod.dart';
-
-import '../constants/app.dart';
 import '../utils/pod_utils.dart';
 
 /// Service for reading and writing vehicle status to a Solid Pod.
@@ -106,6 +103,25 @@ class PodService {
     } catch (e) {
       dev.log('[Pod] List error: $e', name: 'PodService');
       return [];
+    }
+  }
+
+  /// Permanently deletes a snapshot file from the pod and removes it
+  /// from index.ttl. Returns null on success, error string on failure.
+  static Future<String?> deleteStatusFile(String filename) async {
+    try {
+      await deleteFile(fileUrl: filename);
+      dev.log('[Pod] Deleted $filename', name: 'PodService');
+
+      final index = await _readIndex();
+      index.remove(filename);
+      await _writeIndex(index);
+      dev.log('[Pod] Removed $filename from index.ttl', name: 'PodService');
+
+      return null;
+    } catch (e, st) {
+      dev.log('[Pod] Delete error: $e\n$st', name: 'PodService');
+      return e.toString();
     }
   }
 

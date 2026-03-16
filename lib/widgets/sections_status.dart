@@ -106,21 +106,11 @@ class HeroCard extends StatelessWidget {
         ]),
         const SizedBox(height: 14),
         Row(children: [
-          const Icon(Icons.speed, color: Colors.white54, size: 16),
-          const SizedBox(width: 6),
-          Text(
-            v.odometerKm != null
-                ? '${NumberFormat('#,##0').format(v.odometerKm!.round())} km'
-                : '– km',
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
-          ),
           if (v.evRangeKm != null || v.fuelRangeKm != null) ...[
-            const SizedBox(width: 16),
             const Icon(Icons.route, color: Colors.white54, size: 16),
             const SizedBox(width: 6),
             Text(
-              '${(v.evRangeKm ?? v.fuelRangeKm)!.round()} km available',
+              '${(v.evRangeKm ?? v.fuelRangeKm)!.round()} km current range',
               style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -140,6 +130,16 @@ class HeroCard extends StatelessWidget {
                   fontSize: 15),
             ),
           ],
+          const SizedBox(width: 16),
+          const Icon(Icons.speed, color: Colors.white54, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            v.odometerKm != null
+                ? '${NumberFormat('#,##0').format(v.odometerKm!.round())} km total travelled'
+                : '– km',
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15),
+          ),
           const Spacer(),
           if (v.vin.isNotEmpty)
             Text(
