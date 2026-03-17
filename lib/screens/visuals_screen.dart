@@ -98,7 +98,7 @@ class VisualsScreen extends StatelessWidget {
           if (hasEnergy) ...[
             _ChartSection(
               title: 'Daily Energy Consumption',
-              subtitle: 'kWh · coloured by type',
+              subtitle: 'kWh · coloured by type · bar label is net (consumed − regenerated)',
               chart: DailyEnergyChart(stats: stats),
             ),
             const SizedBox(height: 24),

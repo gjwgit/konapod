@@ -87,11 +87,12 @@ class _DailyDistanceChartState extends State<DailyDistanceChart> {
             touchCallback: (_, r) =>
                 setState(() => _touched = r?.spot?.touchedBarGroupIndex),
           ),
-          titlesData: _bottomLeft(
+          titlesData: _bottomLeftWithTop(
             cs,
             stats.length,
             (i) => DateFormat('d/M').format(stats[i].date),
             (v) => '${v.toInt()}',
+            (i) => '${stats[i].distanceKm.round()}',
             interval: (maxY / 4).ceilToDouble().clamp(1, double.infinity),
           ),
           gridData:
@@ -168,9 +169,15 @@ class _DailyEnergyChartState extends State<DailyEnergyChart> {
               ),
               titlesData: _bottomLeftWithTop(
                 cs,
-                stats,
+                stats.length,
                 (i) => DateFormat('d/M').format(stats[i].date),
                 (v) => (v / 1000).toStringAsFixed(1),
+                (i) {
+                  final d = stats[i];
+                  final net = (d.totalConsumed ?? 0).toDouble() -
+                      (d.regeneratedEnergy ?? 0).toDouble();
+                  return net > 0 ? (net / 1000).toStringAsFixed(2) : null;
+                },
                 interval: interval,
               ),
               gridData: _grid(cs, interval),
@@ -320,12 +327,12 @@ FlGridData _grid(ColorScheme cs, double interval) => FlGridData(
 /// Like _bottomLeft but adds net consumption (total − regen) labels on top.
 FlTitlesData _bottomLeftWithTop(
   ColorScheme cs,
-  List<DailyDrivingStat> stats,
+  int count,
   String Function(int) bottomLabel,
-  String Function(double) leftLabel, {
+  String Function(double) leftLabel,
+  String? Function(int) topLabel, {
   required double interval,
 }) {
-  final count = stats.length;
   return FlTitlesData(
     leftTitles: AxisTitles(
       sideTitles: SideTitles(
@@ -364,15 +371,12 @@ FlTitlesData _bottomLeftWithTop(
         getTitlesWidget: (v, _) {
           final i = v.toInt();
           if (i < 0 || i >= count) return const SizedBox();
-          final d = stats[i];
-          final total = (d.totalConsumed ?? 0).toDouble();
-          final regen = (d.regeneratedEnergy ?? 0).toDouble();
-          final net = total - regen;
-          if (net <= 0) return const SizedBox();
+          final label = topLabel(i);
+          if (label == null) return const SizedBox();
           return Padding(
             padding: const EdgeInsets.only(bottom: 2),
             child: Text(
-              (net / 1000).toStringAsFixed(2),
+              label,
               style: TextStyle(
                 color: cs.onSurfaceVariant,
                 fontSize: 9,
