@@ -4,6 +4,23 @@ Noted here are the high level changes for the app.  Each update
 includes a short user-oriented description.  The next release is 0.1
 following incremental updates through the 0.0.n series.
 
+You can run the app in your browser from the
+[**web**](https://konapod.solidcommunity.au) or else download and
+install locally the latest version from the [Solid Community
+AU](https://solidcommunity.au) or directly: for **Android** as
+[aab](https://solidcommunity.au/installers/konapod.apk) or
+[apk](https://solidcommunity.au/installers/konapod.apk); for
+**GNU/Linux** as
+[deb](https://solidcommunity.au/installers/konapod_amd64.deb) or
+[snap](https://solidcommunity.au/installers/konapod_amd64.snap) or
+[zip](https://solidcommunity.au/installers/konapod-linux.zip); for
+**macOS** as
+[dmg](https://solidcommunity.au/installers/konapod-macos.dmg) or
+[zip](https://solidcommunity.au/installers/konapod-macos.zip); for
+**Windows** as
+[inno](https://solidcommunity.au/installers/konapod-windows-inno.exe)
+or [zip](https://solidcommunity.au/installers/konapod-windows.zip).
+
 Contributions are welcome. Visit
 [github](https://github.com/gjwgit/konapod) to submit an issue or, even
 better, fork the repository yourself, update the code, and submit a

@@ -10,7 +10,7 @@
 [![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/gjwgit/konapod/dev)](https://github.com/gjwgit/rattle/commits/dev/)
 [![GitHub Issues](https://img.shields.io/github/issues/gjwgit/konapod)](https://github.com/gjwgit/konapod/issues)
 
-KonaPod is a tool to collect your Hyundai or Kia's vehicle data
+KonaPod is a tool to collect your Hyundai vehicle data
 together in one secure and private place. You can selectively share
 any parts of your life with others. The app itself presents the data
 and analyses of the data. It is being developed by
@@ -20,6 +20,29 @@ programming with Claude Code.
 
 If you appreciate the app then please show some ❤️ and star the GitHub
 Repository to support the project.
+
+The latest version of the app can be run online at
+[konapod.solidcommunity.au](https://konapod.solidcommunity.au) with
+no installation required, or downloaded and installed for your
+platform from the [Solid Community AU](https://solidcommunity.au)
+repository:
+
+<!-- markdownlint-disable MD036 -->
++ **Web**
+  [solidcommunity](https://konapod.solidcommunity.au/);
++ **Android**
+  [aab](https://solidcommunity.au/installers/konapod.aab) or
+  [apk](https://solidcommunity.au/installers/konapod.apk);
++ **GNU/Linux**
+  [deb](https://solidcommunity.au/installers/konapod_amd64.deb) or
+  [snap](https://solidcommunity.au/installers/konapod_amd64.snap) or
+  [zip](https://solidcommunity.au/installers/konapod-linux.zip);
++ **macOS**
+  [dmg](https://solidcommunity.au/installers/konapod-macos.dmg) or
+  [zip](https://solidcommunity.au/installers/konapod-macos.zip);
++ **Windows**
+  [inno](https://solidcommunity.au/installers/konapod-windows-inno.exe) or
+  [zip](https://solidcommunity.au/installers/konapod-windows.zip).
 
 Installation details are available for all platforms from
 [github](https://github.com/gjwgit/konapod/blob/dev/installers/README.md).
@@ -39,24 +62,24 @@ for Australia / NZ but please send in PRs for other regions).
 
 ## Features
 
-- **Login** with your Bluelink email, password & PIN (saved securely via `flutter_secure_storage`)
-- **Auto login** on relaunch — no need to re-enter credentials
-- **Demo mode** — test the UI without real credentials
-- **Dashboard** showing:
-  - Vehicle nickname, model, year, colour & fuel type badge
-  - Lock status, engine status, charging status
-  - Battery level + range bar (EV/PHEV)
-  - Fuel level + range bar (ICE/HEV)
-  - Door, bonnet & boot open/close
-  - Defrost status
-  - Tyre pressure (all 4 corners, in kPa)
-  - External temperature
-  - Odometer reading
-  - GPS coordinates
-  - Full VIN & vehicle details
-  - Last updated timestamp
-- **Pull-to-refresh** and refresh button
-- **Sign out**
++ **Login** with your Bluelink email, password & PIN (saved securely via `flutter_secure_storage`)
++ **Auto login** on relaunch — no need to re-enter credentials
++ **Demo mode** — test the UI without real credentials
++ **Dashboard** showing:
+  + Vehicle nickname, model, year, colour & fuel type badge
+  + Lock status, engine status, charging status
+  + Battery level + range bar (EV/PHEV)
+  + Fuel level + range bar (ICE/HEV)
+  + Door, bonnet & boot open/close
+  + Defrost status
+  + Tyre pressure (all 4 corners, in kPa)
+  + External temperature
+  + Odometer reading
+  + GPS coordinates
+  + Full VIN & vehicle details
+  + Last updated timestamp
++ **Pull-to-refresh** and refresh button
++ **Sign out**
 
 ---
 
@@ -64,8 +87,8 @@ for Australia / NZ but please send in PRs for other regions).
 
 ### Prerequisites
 
-- Flutter 3.x+ installed
-- `flutter doctor` passing for your target platform
++ Flutter 3.x+ installed
++ `flutter doctor` passing for your target platform
 
 ### Install
 
@@ -85,8 +108,8 @@ flutter run
 The Bluelink Australia API is **not officially published** by Hyundai.
 This app uses endpoints reverse-engineered by the community:
 
-- [hyundai_kia_connect_api](https://github.com/Hyundai-Kia-Connect/hyundai_kia_connect_api)
-- [blog.kumo.dev — Reverse engineering Bluelink](https://blog.kumo.dev/2024/05/22/reverse_engineering_hkg_apps.html)
++ [hyundai_kia_connect_api](https://github.com/Hyundai-Kia-Connect/hyundai_kia_connect_api)
++ [blog.kumo.dev — Reverse engineering Bluelink](https://blog.kumo.dev/2024/05/22/reverse_engineering_hkg_apps.html)
 
 ## Stamp Mechanism
 
