@@ -2,7 +2,7 @@
 #
 # Generic Makefile
 #
-# Time-stamp: <Tuesday 2026-03-17 09:13:55 +1100 Graham Williams>
+# Time-stamp: <Wednesday 2026-03-18 09:47:13 +1100 Graham Williams>
 #
 # Copyright (c) Graham.Williams@togaware.com
 #
@@ -191,4 +191,5 @@ ginfo:
 
 .PHONY: zip
 zip:
-	zip -r lib.zip lib
+	rm -f ignore/lib.zip
+	zip -r ignore/lib.zip lib
