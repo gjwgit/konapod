@@ -25,8 +25,8 @@
 
 library;
 
-import 'daily_driving_stat.dart';
-import 'vehicle_parser.dart';
+import 'package:konapod/models/daily_driving_stat.dart';
+import 'package:konapod/models/vehicle_parser.dart';
 
 export 'daily_driving_stat.dart';
 export 'vehicle_parser.dart';

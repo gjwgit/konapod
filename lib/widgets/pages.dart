@@ -29,12 +29,12 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
-import '../models/vehicle.dart';
-import '../services/app_provider.dart';
-import '../theme/hyundai_theme.dart';
-import '../widgets/sections_comfort.dart';
-import '../widgets/sections_energy.dart';
-import '../widgets/sections_status.dart';
+import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/sections_comfort.dart';
+import 'package:konapod/widgets/sections_energy.dart';
+import 'package:konapod/widgets/sections_status.dart';
 
 // ── Status page ───────────────────────────────────────────────────────────────
 class StatusPage extends StatelessWidget {

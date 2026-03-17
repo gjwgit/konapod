@@ -1,6 +1,6 @@
 /// Visuals screen: daily distance and energy charts with summary table.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 08:18:54 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -30,10 +30,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../models/vehicle.dart';
-import '../services/app_provider.dart';
-import '../theme/hyundai_theme.dart';
-import '../widgets/daily_charts.dart';
+import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/daily_charts.dart';
 
 /// Visuals screen — charts of daily driving statistics from the
 /// currently displayed status snapshot.
@@ -268,113 +268,145 @@ class _DetailTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        color: cs.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Row(
-              children: [
-                _Head('Date', cs),
-                _Head('Dist', cs, align: TextAlign.right),
-                if (hasEnergy) _Head('Consumed', cs, align: TextAlign.right),
-                if (hasRegen) _Head('Regen', cs, align: TextAlign.right),
-              ],
+    return IntrinsicWidth(
+      child: Container(
+        decoration: BoxDecoration(
+          color: cs.surface,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-          Divider(height: 1, color: cs.outlineVariant),
-          ...stats.reversed.map(
-            (d) => Column(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          DateFormat('EEE d MMM yy').format(d.date),
-                          style: TextStyle(color: cs.onSurface, fontSize: 12),
+          ],
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 120,
+                    child: Text(
+                      'Date',
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 70,
+                    child: Text(
+                      'Dist',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  if (hasEnergy)
+                    SizedBox(
+                      width: 80,
+                      child: Text(
+                        'Consumed',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(
-                        width: 70,
-                        child: Text(
-                          '${d.distanceKm.toStringAsFixed(1)} km',
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
-                            color: HyundaiColors.accent,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
+                    ),
+                  if (hasRegen)
+                    SizedBox(
+                      width: 72,
+                      child: Text(
+                        'Regen',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      if (hasEnergy)
+                    ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: cs.outlineVariant),
+            ...stats.reversed.map(
+              (d) => Column(
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                         SizedBox(
-                          width: 80,
+                          width: 120,
                           child: Text(
-                            '${((d.totalConsumed ?? 0) / 1000).toStringAsFixed(2)} kWh',
-                            textAlign: TextAlign.right,
+                            DateFormat('EEE d MMM yy').format(d.date),
                             style: TextStyle(color: cs.onSurface, fontSize: 12),
                           ),
                         ),
-                      if (hasRegen)
                         SizedBox(
-                          width: 72,
+                          width: 70,
                           child: Text(
-                            '${((d.regeneratedEnergy ?? 0) / 1000).toStringAsFixed(2)} kWh',
+                            '${d.distanceKm.toStringAsFixed(1)} km',
                             textAlign: TextAlign.right,
                             style: const TextStyle(
-                              color: HyundaiColors.success,
+                              color: HyundaiColors.accent,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
                           ),
                         ),
-                    ],
+                        if (hasEnergy)
+                          SizedBox(
+                            width: 80,
+                            child: Text(
+                              '${((d.totalConsumed ?? 0) / 1000).toStringAsFixed(2)} kWh',
+                              textAlign: TextAlign.right,
+                              style:
+                                  TextStyle(color: cs.onSurface, fontSize: 12),
+                            ),
+                          ),
+                        if (hasRegen)
+                          SizedBox(
+                            width: 72,
+                            child: Text(
+                              '${((d.regeneratedEnergy ?? 0) / 1000).toStringAsFixed(2)} kWh',
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                color: HyundaiColors.success,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                Divider(
-                  height: 1,
-                  color: cs.outlineVariant,
-                  indent: 16,
-                  endIndent: 16,
-                ),
-              ],
+                  Divider(
+                    height: 1,
+                    color: cs.outlineVariant,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-}
-
-class _Head extends StatelessWidget {
-  final String text;
-  final ColorScheme cs;
-  final TextAlign align;
-  const _Head(this.text, this.cs, {this.align = TextAlign.left});
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: Text(
-          text,
-          textAlign: align,
-          style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      );
 }

@@ -27,7 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../theme/hyundai_theme.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
 
 /// Composite tile widgets — DoorTile, TyreTile, BigStatusTile, KVTable.
 /// All colours resolved from Theme for dark mode support.

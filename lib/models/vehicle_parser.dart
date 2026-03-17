@@ -25,7 +25,7 @@
 
 library;
 
-import 'vehicle.dart';
+import 'package:konapod/models/vehicle.dart';
 
 /// Parses a raw API JSON map into a [Vehicle].
 /// Separated from [Vehicle] to keep the model class under the line limit.

@@ -1,6 +1,6 @@
 /// Solid Pod service: read, write and delete TTL-wrapped vehicle snapshots.
 ///
-// Time-stamp: <Tuesday 2026-03-17 12:01:45 +1100 Graham Williams>
+// Time-stamp: <Tuesday 2026-03-17 19:53:36 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -30,7 +30,7 @@ import 'dart:developer' as dev;
 
 import 'package:solidpod/solidpod.dart';
 
-import '../utils/pod_utils.dart';
+import 'package:konapod/utils/pod_utils.dart';
 
 /// Service for reading and writing vehicle status to a Solid Pod.
 ///
@@ -140,7 +140,7 @@ class PodService {
   /// from index.ttl. Returns null on success, error string on failure.
   static Future<String?> deleteStatusFile(String filename) async {
     try {
-      await deleteFile(fileUrl: filename);
+      await deleteFile(fileUrl: await getFileUrl('konapod/data/$filename'));
       dev.log('[Pod] Deleted $filename', name: 'PodService');
 
       final index = await _readIndex();

@@ -1,6 +1,6 @@
 /// Main app scaffold with SolidScaffold, nav menu, app bar and actions.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 08:49:07 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -33,13 +33,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
 
-import 'constants/app.dart';
-import 'screens/history_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/visuals_screen.dart';
-import 'services/app_provider.dart';
-import 'theme/hyundai_theme.dart';
-import 'widgets/pages.dart';
+import 'package:konapod/constants/app.dart';
+import 'package:konapod/screens/history_screen.dart';
+import 'package:konapod/screens/settings_screen.dart';
+import 'package:konapod/screens/visuals_screen.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/pages.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
 /// Provides left nav, top app bar, status bar, and per-section pages.
@@ -68,6 +68,8 @@ class _AppScaffoldState extends State<AppScaffold> {
 
     return SolidScaffold(
       controller: _controller,
+
+      showLogout: false,
 
       // ── Left nav menu ────────────────────────────────────────────────────
       menu: [

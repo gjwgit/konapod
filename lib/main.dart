@@ -34,10 +34,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
 
-import 'app_scaffold.dart';
-import 'constants/app.dart';
-import 'services/app_provider.dart';
-import 'theme/hyundai_theme.dart';
+import 'package:konapod/app_scaffold.dart';
+import 'package:konapod/constants/app.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

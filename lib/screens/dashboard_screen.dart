@@ -30,14 +30,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../models/vehicle.dart';
-import '../services/app_provider.dart';
-import '../theme/hyundai_theme.dart';
-import '../widgets/sections_comfort.dart';
-import '../widgets/sections_energy.dart';
-import '../widgets/sections_status.dart';
-import '../widgets/stat_card.dart';
-import 'login_screen.dart';
+import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/screens/login_screen.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/sections_comfort.dart';
+import 'package:konapod/widgets/sections_energy.dart';
+import 'package:konapod/widgets/sections_status.dart';
+import 'package:konapod/widgets/stat_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

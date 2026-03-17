@@ -29,7 +29,7 @@ import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
 
-import '../models/vehicle.dart';
+import 'package:konapod/models/vehicle.dart';
 
 /// Bluelink service — Linux/desktop only.
 /// Spawns bluelink_fetch.py as a subprocess using hyundai_kia_connect_api.

@@ -30,8 +30,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../services/app_provider.dart';
-import '../theme/hyundai_theme.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
 
 /// Settings screen — Bluelink credentials and app preferences.
 class SettingsScreen extends StatefulWidget {

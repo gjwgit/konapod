@@ -27,7 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../theme/hyundai_theme.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
 
 /// Shared low-level primitive widgets.
 /// All colours are resolved from Theme so they work in light and dark mode.

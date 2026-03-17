@@ -27,7 +27,7 @@ library;
 
 import 'package:intl/intl.dart';
 
-import '../constants/app.dart';
+import 'package:konapod/constants/app.dart';
 
 /// Generates a status filename with the current timestamp.
 /// e.g. status_20240315T142300.ttl

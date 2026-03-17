@@ -27,7 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../theme/hyundai_theme.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
 
 class StatusBadge extends StatelessWidget {
   final bool active;

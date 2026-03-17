@@ -30,10 +30,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../services/app_provider.dart';
-import '../services/pod_service.dart';
-import '../theme/hyundai_theme.dart';
-import '../utils/pod_utils.dart';
+import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/services/pod_service.dart';
+import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/utils/pod_utils.dart';
 
 /// History screen — browse, load, and delete archived snapshots from the pod.
 class HistoryScreen extends StatefulWidget {

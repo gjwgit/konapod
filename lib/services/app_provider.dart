@@ -1,6 +1,6 @@
 /// Central ChangeNotifier: manages vehicle state, data source and actions.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 08:32:28 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -29,9 +29,9 @@ import 'package:flutter/foundation.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/vehicle.dart';
-import 'bluelink_service.dart';
-import 'pod_service.dart';
+import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/services/bluelink_service.dart';
+import 'package:konapod/services/pod_service.dart';
 
 enum AppState { idle, loading, loaded, error }
 
@@ -117,7 +117,9 @@ class AppProvider extends ChangeNotifier {
       if (data == null) {
         _state = AppState.error;
         _errorMessage = 'No status data found on your Solid Pod.\n'
-            'Log in to Bluelink and save a snapshot first.';
+            'Log in to Bluelink and save a snapshot first.\n'
+            'Provide credentials under Settings for Bluelink.\n'
+            'Alternatively ensure you have cached your Security Key.';
         notifyListeners();
         return false;
       }
