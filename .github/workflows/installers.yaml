@@ -44,7 +44,7 @@ on:
 env:
   APP: konapod
   RELEASE: dev
-  LINUX_PKGS:
+  LINUX_PKGS: libsecret-1-dev libjsoncpp-dev
   FLUTTER_VERSION: "3.41.4"
   MACOS_APP_RELEASE_UNSIGNED_PATH: build/macos/Build/Products/Release-unsigned
   MACOS_APP_RELEASE_STAGING_PATH: build/macos/Build/Products/Release-staging
