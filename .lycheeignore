@@ -60,3 +60,7 @@ https://api.login.yahoo.com/
 https://graph.facebook.com/
 https://login.microsoftonline.com/
 https://securetoken.google.com/
+
+# 20260317 gjw This gives a 403
+
+https://blog.kumo.dev/2024/05/22/reverse_engineering_hkg_apps.html
