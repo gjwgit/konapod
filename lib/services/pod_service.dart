@@ -1,6 +1,6 @@
 /// Solid Pod service: read, write and delete TTL-wrapped vehicle snapshots.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Tuesday 2026-03-17 12:01:45 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -45,9 +45,10 @@ import '../utils/pod_utils.dart';
 
 class PodService {
   // Turtle namespace prefixes used in every file we write.
-  static const _prefixes =
-      '@prefix konapod: <https://konapod.solidcommunity.au/ont/> .\n'
-      '@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .\n';
+  static const _prefixes = '@prefix konapod: <https://'
+      'konapod.solidcommunity.au/ont/> .\n'
+      '@prefix xsd:     <http://'
+      'www.w3.org/2001/XMLSchema#> .\n';
 
   /// Wraps a JSON string in a Turtle document as a plain string literal.
   /// The predicate is a konapod: term so the file is self-describing.
@@ -81,7 +82,7 @@ class PodService {
       await writePod(filename, ttl);
       dev.log('[Pod] Saved $filename', name: 'PodService');
 
-      await writePod('latest.ttl', ttl);
+      await writePod('latest.ttl', ttl, overwrite: true);
       dev.log('[Pod] Updated latest.ttl', name: 'PodService');
 
       final index = await _readIndex();
@@ -181,6 +182,6 @@ class PodService {
 
   static Future<void> _writeIndex(List<String> index) async {
     final ttl = _jsonToTtl('snapshotIndex', jsonEncode(index));
-    await writePod('index.ttl', ttl);
+    await writePod('index.ttl', ttl, overwrite: true);
   }
 }

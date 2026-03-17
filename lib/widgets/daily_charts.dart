@@ -1,6 +1,6 @@
 /// Daily distance, energy consumption and regen overlay bar charts.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Tuesday 2026-03-17 12:05:41 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -276,46 +276,46 @@ double _barWidth(int count) => count <= 7
         ? 14.0
         : 8.0;
 
-FlTitlesData _bottomLeft(
-  ColorScheme cs,
-  int count,
-  String Function(int) bottomLabel,
-  String Function(double) leftLabel, {
-  required double interval,
-}) =>
-    FlTitlesData(
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 42,
-          interval: interval,
-          getTitlesWidget: (v, _) => Text(
-            leftLabel(v),
-            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10),
-          ),
-        ),
-      ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 28,
-          interval: count <= 7 ? 1 : (count / 5).ceilToDouble(),
-          getTitlesWidget: (v, _) {
-            final i = v.toInt();
-            if (i < 0 || i >= count) return const SizedBox();
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                bottomLabel(i),
-                style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10),
-              ),
-            );
-          },
-        ),
-      ),
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-    );
+// FlTitlesData _bottomLeft(
+//   ColorScheme cs,
+//   int count,
+//   String Function(int) bottomLabel,
+//   String Function(double) leftLabel, {
+//   required double interval,
+// }) =>
+//     FlTitlesData(
+//       leftTitles: AxisTitles(
+//         sideTitles: SideTitles(
+//           showTitles: true,
+//           reservedSize: 42,
+//           interval: interval,
+//           getTitlesWidget: (v, _) => Text(
+//             leftLabel(v),
+//             style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10),
+//           ),
+//         ),
+//       ),
+//       bottomTitles: AxisTitles(
+//         sideTitles: SideTitles(
+//           showTitles: true,
+//           reservedSize: 28,
+//           interval: count <= 7 ? 1 : (count / 5).ceilToDouble(),
+//           getTitlesWidget: (v, _) {
+//             final i = v.toInt();
+//             if (i < 0 || i >= count) return const SizedBox();
+//             return Padding(
+//               padding: const EdgeInsets.only(top: 4),
+//               child: Text(
+//                 bottomLabel(i),
+//                 style: TextStyle(color: cs.onSurfaceVariant, fontSize: 10),
+//               ),
+//             );
+//           },
+//         ),
+//       ),
+//       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+//       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+//     );
 
 FlGridData _grid(ColorScheme cs, double interval) => FlGridData(
       drawVerticalLine: false,
