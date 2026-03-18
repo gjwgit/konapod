@@ -1,6 +1,6 @@
 /// DoorsSection widget showing lock, engine, charging and door states.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 09:56:35 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -28,7 +28,6 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:konapod/models/vehicle.dart';
-import 'package:konapod/theme/hyundai_theme.dart';
 import 'package:konapod/widgets/primitives.dart';
 import 'package:konapod/widgets/tiles.dart';
 
@@ -40,81 +39,81 @@ class DoorsSection extends StatelessWidget {
     return DashboardCard(
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: BigStatusTile(
-                  icon: v.isLocked == true ? Icons.lock : Icons.lock_open,
-                  label: 'Doors',
-                  value: v.isLocked == null
-                      ? '–'
-                      : v.isLocked!
-                          ? 'Locked'
-                          : 'Unlocked',
-                  color: v.isLocked == true
-                      ? HyundaiColors.success
-                      : HyundaiColors.warning,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: BigStatusTile(
-                  icon: Icons.directions_car,
-                  label: 'Engine',
-                  value: v.isEngineRunning == null
-                      ? '–'
-                      : v.isEngineRunning!
-                          ? 'Running'
-                          : 'Off',
-                  color: v.isEngineRunning == true
-                      ? HyundaiColors.warning
-                      : HyundaiColors.success,
-                ),
-              ),
-            ],
-          ),
-          if (v.isEV) ...[
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: BigStatusTile(
-                    icon: Icons.power,
-                    label: 'Charging',
-                    value: v.isChargingOn == null
-                        ? '–'
-                        : v.isChargingOn!
-                            ? 'Charging'
-                            : 'Not charging',
-                    color: v.isChargingOn == true
-                        ? HyundaiColors.accent
-                        : HyundaiColors.success,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: BigStatusTile(
-                    icon: Icons.electrical_services,
-                    label: 'Plug',
-                    value: v.isPluggedIn == null
-                        ? '–'
-                        : v.isPluggedIn!
-                            ? 'Plugged in'
-                            : 'Unplugged',
-                    color: v.isPluggedIn == true
-                        ? const Color(0xFF6C63FF)
-                        : HyundaiColors.success,
-                  ),
-                ),
-              ],
-            ),
-          ],
-          const SizedBox(height: 12),
-          Divider(
-            height: 1,
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
-          const SizedBox(height: 12),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: BigStatusTile(
+          //         icon: v.isLocked == true ? Icons.lock : Icons.lock_open,
+          //         label: 'Doors',
+          //         value: v.isLocked == null
+          //             ? '–'
+          //             : v.isLocked!
+          //                 ? 'Locked'
+          //                 : 'Unlocked',
+          //         color: v.isLocked == true
+          //             ? HyundaiColors.success
+          //             : HyundaiColors.warning,
+          //       ),
+          //     ),
+          //     const SizedBox(width: 12),
+          //     Expanded(
+          //       child: BigStatusTile(
+          //         icon: Icons.directions_car,
+          //         label: 'Engine',
+          //         value: v.isEngineRunning == null
+          //             ? '–'
+          //             : v.isEngineRunning!
+          //                 ? 'Running'
+          //                 : 'Off',
+          //         color: v.isEngineRunning == true
+          //             ? HyundaiColors.warning
+          //             : HyundaiColors.success,
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // if (v.isEV) ...[
+          //   const SizedBox(height: 12),
+          //   Row(
+          //     children: [
+          //       Expanded(
+          //         child: BigStatusTile(
+          //           icon: Icons.power,
+          //           label: 'Charging',
+          //           value: v.isChargingOn == null
+          //               ? '–'
+          //               : v.isChargingOn!
+          //                   ? 'Charging'
+          //                   : 'Not charging',
+          //           color: v.isChargingOn == true
+          //               ? HyundaiColors.accent
+          //               : HyundaiColors.success,
+          //         ),
+          //       ),
+          //       const SizedBox(width: 12),
+          //       Expanded(
+          //         child: BigStatusTile(
+          //           icon: Icons.electrical_services,
+          //           label: 'Plug',
+          //           value: v.isPluggedIn == null
+          //               ? '–'
+          //               : v.isPluggedIn!
+          //                   ? 'Plugged in'
+          //                   : 'Unplugged',
+          //           color: v.isPluggedIn == true
+          //               ? const Color(0xFF6C63FF)
+          //               : HyundaiColors.success,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ],
+          // const SizedBox(height: 12),
+          // Divider(
+          //   height: 1,
+          //   color: Theme.of(context).colorScheme.outlineVariant,
+          // ),
+          // const SizedBox(height: 12),
           Row(
             children: [
               Expanded(child: DoorTile('Front Left', v.isDoorFrontLeftOpen)),
