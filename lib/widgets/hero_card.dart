@@ -1,6 +1,6 @@
 /// HeroCard widget showing vehicle identity, status badges and range.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 13:47:41 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -42,7 +42,7 @@ class HeroCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [HyundaiColors.primary, Color(0xFF00497A)],
+          colors: [HyundaiColors.primary, Color(0xFFB5714A)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
