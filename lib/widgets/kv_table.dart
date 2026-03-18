@@ -27,8 +27,6 @@ library;
 
 import 'package:flutter/material.dart';
 
-import 'package:konapod/theme/hyundai_theme.dart';
-
 class KVTable extends StatelessWidget {
   final List<MapEntry<String, String>> rows;
   const KVTable(this.rows, {super.key});

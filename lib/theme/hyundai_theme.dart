@@ -42,44 +42,44 @@ class HyundaiColors {
   static const Color accent = Color(0xFFB5714A);
 
   // ── Neutrals (warm-grey family) ───────────────────────────────────────────
-  static const Color white      = Color(0xFFFFFFFF);
-  static const Color lightGrey  = Color(0xFFF5F2EE); // warm off-white
-  static const Color midGrey    = Color(0xFFAA9E95);  // warm mid-tone
-  static const Color darkGrey   = Color(0xFF3D342C);  // warm dark
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color lightGrey = Color(0xFFF5F2EE); // warm off-white
+  static const Color midGrey = Color(0xFFAA9E95); // warm mid-tone
+  static const Color darkGrey = Color(0xFF3D342C); // warm dark
 
   // ── Semantic ──────────────────────────────────────────────────────────────
-  static const Color success    = Color(0xFF5A8A5A);  // muted sage green
-  static const Color warning    = Color(0xFFCC8C30);  // warm amber
-  static const Color error      = Color(0xFFB03030);  // muted red
+  static const Color success = Color(0xFF5A8A5A); // muted sage green
+  static const Color warning = Color(0xFFCC8C30); // warm amber
+  static const Color error = Color(0xFFB03030); // muted red
 
   // ── Surface ───────────────────────────────────────────────────────────────
-  static const Color cardBg     = Color(0xFFFFFFFF);
-  static const Color scaffoldBg = Color(0xFFF0EBE4);  // warm fawn/sand
+  static const Color cardBg = Color(0xFFFFFFFF);
+  static const Color scaffoldBg = Color(0xFFF0EBE4); // warm fawn/sand
 }
 
 ThemeData hyundaiLightTheme() => hyundaiTheme(Brightness.light);
-ThemeData hyundaiDarkTheme()  => hyundaiTheme(Brightness.dark);
+ThemeData hyundaiDarkTheme() => hyundaiTheme(Brightness.dark);
 
 ThemeData hyundaiTheme([Brightness brightness = Brightness.light]) {
   final isDark = brightness == Brightness.dark;
 
   final colorScheme = isDark
       ? const ColorScheme.dark(
-          primary:                 HyundaiColors.accent,
-          secondary:               HyundaiColors.primary,
-          surface:                 Color(0xFF2A2218),  // dark warm brown
-          surfaceContainerHighest: Color(0xFF352D22),  // slightly lighter
-          onSurface:               Color(0xFFF0E8DC),  // warm off-white
-          onSurfaceVariant:        Color(0xFFAA9E95),
-          outlineVariant:          Color(0xFF4A3C30),
-          error:                   HyundaiColors.error,
+          primary: HyundaiColors.accent,
+          secondary: HyundaiColors.primary,
+          surface: Color(0xFF2A2218), // dark warm brown
+          surfaceContainerHighest: Color(0xFF352D22), // slightly lighter
+          onSurface: Color(0xFFF0E8DC), // warm off-white
+          onSurfaceVariant: Color(0xFFAA9E95),
+          outlineVariant: Color(0xFF4A3C30),
+          error: HyundaiColors.error,
         )
       : ColorScheme.fromSeed(
-          seedColor:  HyundaiColors.primary,
-          primary:    HyundaiColors.primary,
-          secondary:  HyundaiColors.accent,
-          surface:    HyundaiColors.cardBg,
-          error:      HyundaiColors.error,
+          seedColor: HyundaiColors.primary,
+          primary: HyundaiColors.primary,
+          secondary: HyundaiColors.accent,
+          surface: HyundaiColors.cardBg,
+          error: HyundaiColors.error,
           brightness: Brightness.light,
         );
 
@@ -110,12 +110,9 @@ ThemeData hyundaiTheme([Brightness brightness = Brightness.light]) {
         backgroundColor: HyundaiColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
-        padding:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        textStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -141,11 +138,12 @@ ThemeData hyundaiTheme([Brightness brightness = Brightness.light]) {
         ),
       ),
       labelStyle: TextStyle(
-          color: isDark ? Colors.white70 : HyundaiColors.darkGrey),
+        color: isDark ? Colors.white70 : HyundaiColors.darkGrey,
+      ),
       hintStyle: TextStyle(
-          color: isDark ? Colors.white38 : HyundaiColors.midGrey),
-      prefixIconColor:
-          isDark ? Colors.white54 : HyundaiColors.midGrey,
+        color: isDark ? Colors.white38 : HyundaiColors.midGrey,
+      ),
+      prefixIconColor: isDark ? Colors.white54 : HyundaiColors.midGrey,
     ),
   );
 }
