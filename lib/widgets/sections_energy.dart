@@ -1,6 +1,6 @@
 /// Energy section widgets: EV battery, charging status, fuel level.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 21:38:30 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -32,6 +32,7 @@ import 'package:gap/gap.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 import 'package:konapod/widgets/primitives.dart';
+import 'package:konapod/widgets/stat_card.dart';
 
 class BatterySection extends StatelessWidget {
   final Vehicle v;
@@ -52,151 +53,225 @@ class BatterySection extends StatelessWidget {
         : pct < 40
             ? HyundaiColors.warning
             : HyundaiColors.success;
-    return DashboardCard(
+
+    final hasCharge = v.evRangeKm != null ||
+        v.chargingCurrentAc != null ||
+        v.chargingPowerKw != null ||
+        (v.estimatedChargeCompletionMinutes != null &&
+            v.estimatedChargeCompletionMinutes! > 0);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [HyundaiColors.primary, Color(0xFF7A5C44)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: HyundaiColors.primary.withValues(alpha: 0.35),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Header ────────────────────────────────────────────────────────
           Row(
             children: [
               const Icon(
                 Icons.battery_charging_full,
-                color: HyundaiColors.accent,
+                color: Colors.white70,
                 size: 20,
               ),
               const Gap(8),
-              Text(
+              const Text(
                 'Battery',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  letterSpacing: 0.3,
                 ),
               ),
+              const Gap(12),
+              if (v.isPluggedIn == true)
+                const StatusBadge(
+                  active: true,
+                  activeLabel: 'Plugged In',
+                  inactiveLabel: '',
+                  activeColor: HyundaiColors.accent,
+                ),
+              if (v.isChargingOn == true) ...[
+                const Gap(8),
+                StatusBadge(
+                  active: true,
+                  activeLabel: 'Charging',
+                  inactiveLabel: '',
+                  activeColor: HyundaiColors.accent,
+                ),
+              ],
               const Spacer(),
               Text(
                 '${pct.round()}%',
                 style: TextStyle(
                   color: barColor,
-                  fontSize: 26,
+                  fontSize: 28,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ],
           ),
           const Gap(10),
+          // ── Progress bar ──────────────────────────────────────────────────
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: pct / 100,
               minHeight: 10,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerHighest,
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation(barColor),
             ),
           ),
           const Gap(14),
-          Row(
+          // ── Battery stats line ────────────────────────────────────────────
+          Wrap(
+            spacing: 20,
+            runSpacing: 8,
             children: [
-              if (v.evRangeKm != null)
-                StatChip('Range', '${v.evRangeKm!.round()} km', Icons.route),
-              if (v.batteryCapacityKwh != null) ...[
-                const Gap(20),
-                StatChip(
+              if (v.batteryCapacityKwh != null)
+                _HeroChip(
                   'Capacity',
                   '${(v.batteryCapacityKwh! / 1000).toStringAsFixed(1)} kWh',
                   Icons.bolt,
                 ),
-              ],
-              if (v.batteryRemainKwh != null) ...[
-                const Gap(20),
-                StatChip(
-                  'Remain',
+              if (v.batteryRemainKwh != null)
+                _HeroChip(
+                  'Remaining',
                   '${(v.batteryRemainKwh! / 1000).toStringAsFixed(1)} kWh',
                   Icons.battery_full,
                 ),
-              ],
-              if (v.batterySohPercent != null) ...[
-                const Gap(20),
-                StatChip(
-                  'SOH',
+              if (v.batterySohPercent != null)
+                _HeroChip(
+                  'State of Health',
                   '${v.batterySohPercent!.toStringAsFixed(0)}%',
                   Icons.health_and_safety,
                 ),
-              ],
             ],
           ),
-          if (v.chargingCurrentAc != null ||
-              v.chargingPowerKw != null ||
-              v.estimatedChargeCompletionMinutes != null ||
-              v.estimatedFastChargeMins != null ||
-              v.estimatedPortableChargeMins != null ||
-              v.estimatedStationChargeMins != null) ...[
+          // ── Charge line ───────────────────────────────────────────────────
+          if (hasCharge) ...[
+            const Gap(12),
+            Divider(
+              height: 1,
+              color: Colors.white.withValues(alpha: 0.2),
+            ),
             const Gap(10),
-            Wrap(
-              spacing: 20,
-              runSpacing: 8,
+            Row(
               children: [
-                if (v.chargingCurrentAc != null)
-                  StatChip(
-                    'Current',
-                    '${v.chargingCurrentAc!.toStringAsFixed(0)} A',
-                    Icons.electric_bolt,
+                const Text(
+                  'Charge',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.5,
                   ),
-                if (v.chargingPowerKw != null)
-                  StatChip(
-                    'Power',
-                    '${v.chargingPowerKw!.toStringAsFixed(1)} kW',
-                    Icons.flash_on,
+                ),
+                const Gap(16),
+                Expanded(
+                  child: Wrap(
+                    spacing: 20,
+                    runSpacing: 8,
+                    children: [
+                      if (v.evRangeKm != null)
+                        _HeroChip(
+                          'Range',
+                          '${v.evRangeKm!.round()} km',
+                          Icons.route,
+                        ),
+                      if (v.chargingCurrentAc != null)
+                        _HeroChip(
+                          'Current',
+                          '${v.chargingCurrentAc!.toStringAsFixed(0)} A',
+                          Icons.electric_bolt,
+                        ),
+                      if (v.chargingPowerKw != null)
+                        _HeroChip(
+                          'Power',
+                          '${v.chargingPowerKw!.toStringAsFixed(1)} kW',
+                          Icons.flash_on,
+                        ),
+                      if (v.estimatedChargeCompletionMinutes != null &&
+                          v.estimatedChargeCompletionMinutes! > 0)
+                        _HeroChip(
+                          'Time to 100%',
+                          _fmtMin(v.estimatedChargeCompletionMinutes!),
+                          Icons.timer,
+                          //color: HyundaiColors.accent,
+                        ),
+                    ],
                   ),
-                if (v.estimatedChargeCompletionMinutes != null &&
-                    v.estimatedChargeCompletionMinutes! > 0)
-                  StatChip(
-                    'Current Charge',
-                    _fmtMin(v.estimatedChargeCompletionMinutes!),
-                    Icons.timer,
-                    color: HyundaiColors.accent,
-                  ),
-                if (v.estimatedFastChargeMins != null)
-                  StatChip(
-                    'Fast Charge',
-                    _fmtMin(v.estimatedFastChargeMins!),
-                    Icons.bolt,
-                    color: HyundaiColors.accent,
-                  ),
-                if (v.estimatedPortableChargeMins != null)
-                  StatChip(
-                    'Portable',
-                    _fmtMin(v.estimatedPortableChargeMins!),
-                    Icons.power,
-                  ),
-                if (v.estimatedStationChargeMins != null)
-                  StatChip(
-                    'Station',
-                    _fmtMin(v.estimatedStationChargeMins!),
-                    Icons.ev_station,
-                    color: HyundaiColors.accent,
-                  ),
+                ),
               ],
             ),
           ],
-          const Gap(14),
-          Divider(
-            height: 1,
-            color: Theme.of(context).colorScheme.outlineVariant,
+        ],
+      ),
+    );
+  }
+}
+
+/// Compact stat chip styled for the hero card (white text on dark bg).
+class _HeroChip extends StatelessWidget {
+  final String label, value;
+  final IconData icon;
+  final Color? color;
+  const _HeroChip(this.label, this.value, this.icon, {this.color});
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color ?? Colors.white60),
+          const Gap(4),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white54,
+                  fontSize: 10,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  color: color ?? Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          const Gap(12),
-          StatusRow(
-            Icons.power,
-            'Charging',
-            v.isChargingOn == true,
-            HyundaiColors.accent,
-          ),
-          StatusRow(
-            Icons.electrical_services,
-            'Plugged In',
-            v.isPluggedIn == true,
-            const Color(0xFF6C63FF),
-          ),
+        ],
+      );
+}
+
+class BatteryStatusCard extends StatelessWidget {
+  final Vehicle v;
+  const BatteryStatusCard({required this.v});
+
+  @override
+  Widget build(BuildContext context) {
+    return DashboardCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           if (v.isChargeScheduledOn != null)
             StatusRow(
               Icons.schedule,

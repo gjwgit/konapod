@@ -1,6 +1,6 @@
 /// Top-level page widgets: Status, Energy, Comfort, and placeholder.
 ///
-// Time-stamp: <Wednesday 2026-03-18 10:10:41 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 21:41:13 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -50,6 +50,8 @@ class StatusPage extends StatelessWidget {
         children: [
           HeroCard(v: v),
           const Gap(16),
+          _TimestampRow(lastUpdated: v.lastUpdated, fetchedAt: v.fetchedAt),
+          const Gap(16),
           const SectionLabel('Doors & Security'),
           DoorsSection(v: v),
           const Gap(16),
@@ -58,8 +60,6 @@ class StatusPage extends StatelessWidget {
           const Gap(16),
           const SectionLabel('Warnings'),
           WarningsSection(v: v),
-          const Gap(16),
-          _TimestampRow(lastUpdated: v.lastUpdated, fetchedAt: v.fetchedAt),
           const Gap(16),
           const SectionLabel('Vehicle Info'),
           InfoSection(v: v),
@@ -84,31 +84,20 @@ class EnergyPage extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (v.isEV) ...[
-            const SectionLabel('Battery & Charging'),
-            FractionallySizedBox(
-              widthFactor: 0.5,
-              alignment: Alignment.centerLeft,
-              child: BatterySection(v: v),
-            ),
+            BatterySection(v: v),
+            const Gap(8),
+            BatteryStatusCard(v: v),
             const Gap(16),
             const SectionLabel('EV Efficiency'),
-            FractionallySizedBox(
-              widthFactor: 0.5,
-              alignment: Alignment.centerLeft,
-              child: EfficiencySection(v: v),
-            ),
+            EfficiencySection(v: v),
             const Gap(16),
           ],
           if (v.isICE && !v.isEV) ...[
             const SectionLabel('Fuel'),
-            FractionallySizedBox(
-              widthFactor: 0.5,
-              alignment: Alignment.centerLeft,
-              child: FuelSection(v: v),
-            ),
+            FuelSection(v: v),
             const Gap(16),
           ],
           const Gap(8),

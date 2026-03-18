@@ -1,6 +1,6 @@
 /// HeroCard widget showing vehicle identity, status badges and range.
 ///
-// Time-stamp: <Wednesday 2026-03-18 13:47:41 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 21:53:07 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -66,7 +66,7 @@ class HeroCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      v.modelName,
+                      '${v.nickname} ${v.modelName} ${v.color} ${v.trim}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 26,
@@ -120,6 +120,27 @@ class HeroCard extends StatelessWidget {
                 inactiveLabel: 'Engine Off',
                 activeColor: HyundaiColors.warning,
               ),
+//              if (v.isAccOn == true)
+              StatusBadge(
+                active: v.isAccOn == true,
+                activeLabel: 'Accessory On',
+                inactiveLabel: 'Accessory Off',
+                activeColor: HyundaiColors.warning,
+              ),
+//              if (v.isClimateOn == true)
+              StatusBadge(
+                active: v.isClimateOn == true,
+                activeLabel: 'Climate On',
+                inactiveLabel: 'Climate Off',
+                activeColor: Color(0xFF00B4D8),
+              ),
+//          if (v.isPluggedIn == true && v.isChargingOn != true)
+              StatusBadge(
+                active: v.isPluggedIn == true, // && v.isChargingOn != true,
+                activeLabel: 'Plugged In',
+                inactiveLabel: 'Not Plugged In',
+                activeColor: HyundaiColors.accent,
+              ),
 //          if (v.isChargingOn == true)
               StatusBadge(
                 active: v.isChargingOn == true,
@@ -127,27 +148,6 @@ class HeroCard extends StatelessWidget {
                 inactiveLabel: 'Not Charging',
                 activeColor: HyundaiColors.accent,
               ),
-//          if (v.isPluggedIn == true && v.isChargingOn != true)
-              StatusBadge(
-                active: v.isPluggedIn == true && v.isChargingOn != true,
-                activeLabel: 'Plugged In',
-                inactiveLabel: 'Not Plugged In',
-                activeColor: const Color(0xFF6C63FF),
-              ),
-              if (v.isClimateOn == true)
-                const StatusBadge(
-                  active: true,
-                  activeLabel: 'Climate On',
-                  inactiveLabel: '',
-                  activeColor: Color(0xFF00B4D8),
-                ),
-              if (v.isAccOn == true)
-                const StatusBadge(
-                  active: true,
-                  activeLabel: 'ACC On',
-                  inactiveLabel: '',
-                  activeColor: HyundaiColors.warning,
-                ),
             ],
           ),
           const Gap(14),
