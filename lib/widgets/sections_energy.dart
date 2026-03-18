@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -148,18 +149,45 @@ class BatterySection extends StatelessWidget {
                   'Capacity',
                   '${(v.batteryCapacityKwh! / 1000).toStringAsFixed(1)} kWh',
                   Icons.bolt,
+                  tooltip: '**Battery Capacity**\n\n'
+                      'The total amount of energy the battery can store, '
+                      'measured in kilowatt-hours (kWh).\n\n'
+                      'Think of it like the size of a fuel tank — a bigger number '
+                      'means more energy available for driving. '
+                      'The Kona EV has a 65.4 kWh gross capacity.\n\n'
+                      'Note: a small portion is reserved by the battery management '
+                      'system as a buffer, so usable capacity is slightly less.',
                 ),
               if (v.batteryRemainKwh != null)
                 _HeroChip(
                   'Remaining',
                   '${(v.batteryRemainKwh! / 1000).toStringAsFixed(1)} kWh',
                   Icons.battery_full,
+                  tooltip: '**Energy Remaining**\n\n'
+                      'How much energy is currently stored in the battery, '
+                      'in kilowatt-hours (kWh).\n\n'
+                      'This is your battery percentage expressed as actual energy. '
+                      'For example, 58% charge on a 65 kWh battery '
+                      '= roughly 38 kWh remaining.\n\n'
+                      'Divide this by your typical consumption (kWh/100km) '
+                      'to estimate how far you can drive.',
                 ),
               if (v.batterySohPercent != null)
                 _HeroChip(
                   'State of Health',
                   '${v.batterySohPercent!.toStringAsFixed(0)}%',
                   Icons.health_and_safety,
+                  tooltip: '**State of Health (SoH)**\n\n'
+                      'How much of the battery\'s *original* capacity it can '
+                      'still hold, as a percentage.\n\n'
+                      '**100%** means the battery performs like new. '
+                      'Over time, chemical changes inside the cells gradually '
+                      'reduce how much energy they can store — this is normal '
+                      'degradation that happens with all lithium-ion batteries.\n\n'
+                      'Most manufacturers guarantee batteries stay above **70% SoH** '
+                      'for 8 years or 160,000 km. Real-world data shows most EVs '
+                      'lose only 2–3% per year in normal use.\n\n'
+                      'A 90% SoH on a 65 kWh battery means it now holds ~58.5 kWh.',
                 ),
             ],
           ),
@@ -193,18 +221,42 @@ class BatterySection extends StatelessWidget {
                           'Range',
                           '${v.evRangeKm!.round()} km',
                           Icons.route,
+                          tooltip: '**Estimated Range**\n\n'
+                              'How far the car estimates it can travel on the '
+                              'current charge, in kilometres.\n\n'
+                              'Calculated by the car\'s onboard computer based on '
+                              'current battery level, recent driving style, speed, '
+                              'temperature, and climate control use. '
+                              'Highway driving and cold weather will reduce this figure.',
                         ),
                       if (v.chargingCurrentAc != null)
                         _HeroChip(
                           'Current',
                           '${v.chargingCurrentAc!.toStringAsFixed(0)} A',
                           Icons.electric_bolt,
+                          tooltip: '**Charging Current (Amps)**\n\n'
+                              'The rate of electrical current flowing into the battery, '
+                              'measured in amperes (A).\n\n'
+                              'Think of it like the *flow rate* of water through a hose — '
+                              'higher amps means more electricity per second, '
+                              'which means faster charging.\n\n'
+                              'A standard home wall charger typically delivers 8–16 A. '
+                              'The car\'s onboard charger limits how much it will accept '
+                              'regardless of what the charger can supply.',
                         ),
                       if (v.chargingPowerKw != null)
                         _HeroChip(
                           'Power',
                           '${v.chargingPowerKw!.toStringAsFixed(1)} kW',
                           Icons.flash_on,
+                          tooltip: '**Charging Power (kW)**\n\n'
+                              'The total rate at which energy is entering the battery, '
+                              'measured in kilowatts (kW).\n\n'
+                              'Power = Voltage × Current ÷ 1000. '
+                              'A 7.4 kW home charger adds roughly 40–50 km of range '
+                              'per hour. DC fast chargers deliver 50–100 kW, '
+                              'adding the same range in minutes.\n\n'
+                              'Charging slows above 80% to protect the battery.',
                         ),
                       if (v.estimatedChargeCompletionMinutes != null &&
                           v.estimatedChargeCompletionMinutes! > 0)
@@ -212,7 +264,13 @@ class BatterySection extends StatelessWidget {
                           'Time to 100%',
                           _fmtMin(v.estimatedChargeCompletionMinutes!),
                           Icons.timer,
-                          //color: HyundaiColors.accent,
+                          tooltip: '**Time to Full Charge**\n\n'
+                              'The car\'s estimate of how long until the battery '
+                              'reaches 100% at the current charging rate.\n\n'
+                              'This updates as charging progresses. '
+                              'The final 20% (80–100%) always takes proportionally '
+                              'longer because the car deliberately slows the charge '
+                              'rate to protect battery longevity.',
                         ),
                     ],
                   ),
@@ -231,35 +289,38 @@ class _HeroChip extends StatelessWidget {
   final String label, value;
   final IconData icon;
   final Color? color;
-  const _HeroChip(this.label, this.value, this.icon, {this.color});
+  final String? tooltip;
+  const _HeroChip(this.label, this.value, this.icon,
+      {this.color, this.tooltip});
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: color ?? Colors.white60),
-          const Gap(4),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white54,
-                  fontSize: 10,
-                ),
+  Widget build(BuildContext context) {
+    final chip = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: color ?? Colors.white60),
+        const Gap(4),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white54, fontSize: 10),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                color: color ?? Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
               ),
-              Text(
-                value,
-                style: TextStyle(
-                  color: color ?? Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
+            ),
+          ],
+        ),
+      ],
+    );
+    if (tooltip == null) return chip;
+    return MarkdownTooltip(message: tooltip!, child: chip);
+  }
 }
 
 class BatteryStatusCard extends StatelessWidget {
@@ -407,9 +468,39 @@ class EfficiencySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final rows = [
-      ('Overall', v.efficiencyOverall),
-      ('Since Charging', v.efficiencySinceCharging),
-      ('Latest Trip', v.efficiencyLatestTrip),
+      (
+        'Overall',
+        v.efficiencyOverall,
+        '**Overall Efficiency**\n\n'
+            'Your average energy consumption across *all* driving since the car '
+            'was new, measured in kilowatt-hours per 100 km (kWh/100km).\n\n'
+            'Lower is better — a smaller number means less energy used per km. '
+            'The Kona EV has a WLTP-rated efficiency of around 15.7 kWh/100km. '
+            'Real-world figures depend on driving style, speed, temperature '
+            'and how much you use the climate system.',
+      ),
+      (
+        'Since Charging',
+        v.efficiencySinceCharging,
+        '**Efficiency Since Last Charge**\n\n'
+            'Your average energy consumption since the battery was last charged, '
+            'in kWh/100km.\n\n'
+            'This resets each time you charge and gives a useful snapshot of '
+            'how efficiently you\'ve driven on the current charge cycle. '
+            'Compare it to *Overall* to see if you\'re driving better or worse '
+            'than your long-term average.',
+      ),
+      (
+        'Latest Trip',
+        v.efficiencyLatestTrip,
+        '**Latest Trip Efficiency**\n\n'
+            'Your energy consumption for the most recent trip, in kWh/100km.\n\n'
+            'This resets at the start of each trip and gives the most immediate '
+            'feedback on your driving style. '
+            'Urban stop-start driving is often *more* efficient than highway '
+            'driving because regenerative braking recovers energy each time '
+            'you slow down.',
+      ),
     ];
     return Container(
       decoration: BoxDecoration(
@@ -435,42 +526,47 @@ class EfficiencySection extends StatelessWidget {
           endIndent: 16,
         ),
         itemBuilder: (_, i) {
-          final (label, val) = rows[i];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      color: cs.onSurfaceVariant,
-                      fontSize: 13,
+          final (label, val, tip) = rows[i];
+          return MarkdownTooltip(
+            message: tip,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
-                ),
-                // Fixed-width number so decimals align
-                SizedBox(
-                  width: 36,
-                  child: Text(
-                    val != null ? val.toStringAsFixed(1) : '–',
-                    textAlign: TextAlign.right,
+                  // Fixed-width number so decimals align
+                  SizedBox(
+                    width: 36,
+                    child: Text(
+                      val != null ? val.toStringAsFixed(1) : '–',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: cs.onSurface,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
+                  Text(
+                    ' kWh/100km',
                     style: TextStyle(
-                      color: cs.onSurface,
-                      fontWeight: FontWeight.w600,
+                      color: cs.onSurfaceVariant,
                       fontSize: 13,
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
-                ),
-                Text(
-                  ' kWh/100km',
-                  style: TextStyle(
-                    color: cs.onSurfaceVariant,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

@@ -110,9 +110,10 @@ class HeroCard extends StatelessWidget {
             runSpacing: 8,
             children: [
               MarkdownTooltip(
-                message: '**Locked**\n\n'
-                    'This will be active when the car reports that it is locked. '
-                    'Below you can see specific objects that are locked or unlocked.',
+                message: '**Locked / Unlocked**\n\n'
+                    'Whether the car\'s central locking is engaged.\n\n'
+                    'The Body Control Module reports this state. '
+                    'See the *Doors* section below for individual door lock status.',
                 child: StatusBadge(
                   active: v.isLocked == true,
                   activeLabel: 'Locked',
@@ -120,39 +121,70 @@ class HeroCard extends StatelessWidget {
                   activeColor: HyundaiColors.success,
                 ),
               ),
-              StatusBadge(
-                active: v.isEngineRunning == true,
-                activeLabel: 'Engine On',
-                inactiveLabel: 'Engine Off',
-                activeColor: HyundaiColors.warning,
+              MarkdownTooltip(
+                message: '**Engine / Motor**\n\n'
+                    'Whether the drive motor is active and the car is in *Ready* mode.\n\n'
+                    'On an EV this is equivalent to the ignition being on — '
+                    'the car is ready to drive even though there is no combustion engine.',
+                child: StatusBadge(
+                  active: v.isEngineRunning == true,
+                  activeLabel: 'Engine On',
+                  inactiveLabel: 'Engine Off',
+                  activeColor: HyundaiColors.warning,
+                ),
               ),
-//              if (v.isAccOn == true)
-              StatusBadge(
-                active: v.isAccOn == true,
-                activeLabel: 'Accessory On',
-                inactiveLabel: 'Accessory Off',
-                activeColor: HyundaiColors.warning,
+              MarkdownTooltip(
+                message: '**Accessory Mode**\n\n'
+                    'The ignition is in the *accessory* position — electrical systems '
+                    'such as the radio and climate fan are powered, but the motor '
+                    'is not in Ready mode and the car cannot be driven.\n\n'
+                    'On the Kona EV this occurs when you press the Start button '
+                    'once without your foot on the brake.',
+                child: StatusBadge(
+                  active: v.isAccOn == true,
+                  activeLabel: 'Accessory On',
+                  inactiveLabel: 'Accessory Off',
+                  activeColor: HyundaiColors.warning,
+                ),
               ),
-//              if (v.isClimateOn == true)
-              StatusBadge(
-                active: v.isClimateOn == true,
-                activeLabel: 'Climate On',
-                inactiveLabel: 'Climate Off',
-                activeColor: Color(0xFF00B4D8),
+              MarkdownTooltip(
+                message: '**Climate Control**\n\n'
+                    'The heating or air conditioning system is currently running.\n\n'
+                    'Climate can be active while the car is parked, for example '
+                    'during a scheduled pre-conditioning session to warm or cool '
+                    'the cabin before you get in — useful in summer and winter.',
+                child: StatusBadge(
+                  active: v.isClimateOn == true,
+                  activeLabel: 'Climate On',
+                  inactiveLabel: 'Climate Off',
+                  activeColor: Color(0xFF00B4D8),
+                ),
               ),
-//          if (v.isPluggedIn == true && v.isChargingOn != true)
-              StatusBadge(
-                active: v.isPluggedIn == true, // && v.isChargingOn != true,
-                activeLabel: 'Plugged In',
-                inactiveLabel: 'Not Plugged In',
-                activeColor: HyundaiColors.accent,
+              MarkdownTooltip(
+                message: '**Plugged In**\n\n'
+                    'The charging cable is physically connected to the car.\n\n'
+                    'The car can be plugged in *without* actively charging — '
+                    'for example if a scheduled charge is set for off-peak hours, '
+                    'or the battery has already reached its target charge level.',
+                child: StatusBadge(
+                  active: v.isPluggedIn == true,
+                  activeLabel: 'Plugged In',
+                  inactiveLabel: 'Not Plugged In',
+                  activeColor: HyundaiColors.accent,
+                ),
               ),
-//          if (v.isChargingOn == true)
-              StatusBadge(
-                active: v.isChargingOn == true,
-                activeLabel: 'Charging',
-                inactiveLabel: 'Not Charging',
-                activeColor: HyundaiColors.accent,
+              MarkdownTooltip(
+                message: '**Charging**\n\n'
+                    'The battery is actively receiving charge from the grid.\n\n'
+                    'The car can be *Plugged In* but *Not Charging* if a charge '
+                    'schedule is set, the battery is at its target level, '
+                    'or charging has been paused by the car or charger.',
+                child: StatusBadge(
+                  active: v.isChargingOn == true,
+                  activeLabel: 'Charging',
+                  inactiveLabel: 'Not Charging',
+                  activeColor: HyundaiColors.accent,
+                ),
               ),
             ],
           ),
