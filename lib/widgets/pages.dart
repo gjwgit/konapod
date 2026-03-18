@@ -1,6 +1,6 @@
 /// Top-level page widgets: Status, Energy, Comfort, and placeholder.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 10:10:41 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -58,10 +58,10 @@ class StatusPage extends StatelessWidget {
           const SectionLabel('Warnings'),
           WarningsSection(v: v),
           const SizedBox(height: 16),
+          _TimestampRow(lastUpdated: v.lastUpdated, fetchedAt: v.fetchedAt),
+          const SizedBox(height: 16),
           const SectionLabel('Vehicle Info'),
           InfoSection(v: v),
-          const SizedBox(height: 16),
-          _TimestampRow(lastUpdated: v.lastUpdated, fetchedAt: v.fetchedAt),
           if (v.extras.isNotEmpty) ...[
             const SizedBox(height: 16),
             const SectionLabel('Additional Data'),
@@ -194,11 +194,12 @@ class _TimestampRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final fmt = DateFormat('dd MMM yyyy HH:mm:ss');
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (lastUpdated != null)
           _TsLine('Last updated', fmt.format(lastUpdated!), cs),
+        const SizedBox(width: 16),
         if (fetchedAt != null)
           _TsLine('Fetched at', fmt.format(fetchedAt!), cs),
       ],
