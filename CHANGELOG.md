@@ -32,6 +32,7 @@ then please show some ❤️ and tap on the star at
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Fine tuning the home page [0.2.8 20260318 gjw]
 + Further cleanup [0.2.7 20260317 gjw]
 + Combined energy/regen chart [0.2.6 20260317 claude]
 + Fine tune displayed data [0.2.5 20260317 claude]
