@@ -1,4 +1,4 @@
-/// Barrel export for all page and shared label widgets.
+/// SectionLabel — uppercase section heading used across dashboard pages.
 ///
 // Time-stamp: <Wednesday 2026-03-18 22:06:27 +1100 Graham Williams>
 ///
@@ -25,9 +25,22 @@
 
 library;
 
-export 'package:konapod/widgets/comfort_page.dart';
-export 'package:konapod/widgets/energy_page.dart';
-export 'package:konapod/widgets/no_data_placeholder.dart';
-export 'package:konapod/widgets/section_label.dart';
-export 'package:konapod/widgets/status_page.dart';
-export 'package:konapod/widgets/timestamp_row.dart';
+import 'package:flutter/material.dart';
+
+class SectionLabel extends StatelessWidget {
+  final String text;
+  const SectionLabel(this.text, {super.key});
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Text(
+          text.toUpperCase(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.2,
+          ),
+        ),
+      );
+}

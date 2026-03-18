@@ -1,4 +1,4 @@
-/// Barrel export for all page and shared label widgets.
+/// ComfortPage — climate and tyre sections.
 ///
 // Time-stamp: <Wednesday 2026-03-18 22:06:27 +1100 Graham Williams>
 ///
@@ -25,9 +25,32 @@
 
 library;
 
-export 'package:konapod/widgets/comfort_page.dart';
-export 'package:konapod/widgets/energy_page.dart';
-export 'package:konapod/widgets/no_data_placeholder.dart';
-export 'package:konapod/widgets/section_label.dart';
-export 'package:konapod/widgets/status_page.dart';
-export 'package:konapod/widgets/timestamp_row.dart';
+import 'package:flutter/material.dart';
+
+import 'package:gap/gap.dart';
+
+import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/widgets/sections_comfort.dart';
+import 'package:konapod/widgets/section_label.dart';
+
+class ComfortPage extends StatelessWidget {
+  final Vehicle v;
+  const ComfortPage({super.key, required this.v});
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionLabel('Climate'),
+          ClimateSection(v: v),
+          const Gap(16),
+          const SectionLabel('Tyres'),
+          TyreSection(v: v),
+          const Gap(24),
+        ],
+      ),
+    );
+  }
+}
