@@ -8,7 +8,6 @@ You can run the app in your browser from the
 [**web**](https://konapod.solidcommunity.au) or else download and
 install locally the latest version from the [Solid Community
 AU](https://solidcommunity.au) or directly: for **Android** as
-[aab](https://solidcommunity.au/installers/konapod.apk) or
 [apk](https://solidcommunity.au/installers/konapod.apk); for
 **GNU/Linux** as
 [deb](https://solidcommunity.au/installers/konapod_amd64.deb) or

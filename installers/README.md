@@ -17,7 +17,6 @@ Run the app online: [**web**](https://konapod.solidcommunity.au).
 Download the latest version:
 
 + **Android**
-  [aab](https://solidcommunity.au/installers/konapod.aab) or
   [apk](https://solidcommunity.au/installers/konapod.apk);
 + **GNU/Linux**
   [deb](https://solidcommunity.au/installers/konapod_amd64.deb) or
