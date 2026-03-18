@@ -25,8 +25,6 @@
 
 library;
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
@@ -334,9 +332,9 @@ class EfficiencySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final rows = [
-      ('Overall',        v.efficiencyOverall),
+      ('Overall', v.efficiencyOverall),
       ('Since Charging', v.efficiencySinceCharging),
-      ('Latest Trip',    v.efficiencyLatestTrip),
+      ('Latest Trip', v.efficiencyLatestTrip),
     ];
     return Container(
       decoration: BoxDecoration(

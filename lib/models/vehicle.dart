@@ -123,6 +123,7 @@ class Vehicle {
   final bool? tyrePressureWarningRearLeft;
   final bool? tyrePressureWarningRearRight;
   final bool? tyrePressureWarningAll;
+
   /// Actual tyre pressures in kPa (from data.Chassis.Axle).
   final double? tyrePressureFrontLeft;
   final double? tyrePressureFrontRight;

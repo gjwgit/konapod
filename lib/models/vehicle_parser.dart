@@ -209,11 +209,17 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
     isChargeScheduledOn: b(j['ev_charge_scheduled_on']),
     ev12vPercent: d(j['ev_12v_percentage']),
     efficiencyLatestTrip: d(
-        (((j['data'] as Map?)?['Drivetrain'] as Map?)?['FuelSystem'] as Map?)?['AverageFuelEconomy']?['Drive']),
+      (((j['data'] as Map?)?['Drivetrain'] as Map?)?['FuelSystem']
+          as Map?)?['AverageFuelEconomy']?['Drive'],
+    ),
     efficiencySinceCharging: d(
-        (((j['data'] as Map?)?['Drivetrain'] as Map?)?['FuelSystem'] as Map?)?['AverageFuelEconomy']?['AfterRefuel']),
+      (((j['data'] as Map?)?['Drivetrain'] as Map?)?['FuelSystem']
+          as Map?)?['AverageFuelEconomy']?['AfterRefuel'],
+    ),
     efficiencyOverall: d(
-        (((j['data'] as Map?)?['Drivetrain'] as Map?)?['FuelSystem'] as Map?)?['AverageFuelEconomy']?['Accumulated']),
+      (((j['data'] as Map?)?['Drivetrain'] as Map?)?['FuelSystem']
+          as Map?)?['AverageFuelEconomy']?['Accumulated'],
+    ),
     battery12VPercent: i(j['battery_12v_percentage']),
     is12VBatteryWarning: b(j['battery_12v_warning_is_on']),
     odometerKm: d(j['odometer']),
@@ -229,13 +235,21 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
         b(j['tire_pressure_rear_right_warning_is_on']),
     tyrePressureWarningAll: b(j['tire_pressure_all_warning_is_on']),
     tyrePressureFrontLeft: d(
-        (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row1']?['Left']?['Tire']?['Pressure']),
+      (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row1']
+          ?['Left']?['Tire']?['Pressure'],
+    ),
     tyrePressureFrontRight: d(
-        (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row1']?['Right']?['Tire']?['Pressure']),
+      (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row1']
+          ?['Right']?['Tire']?['Pressure'],
+    ),
     tyrePressureRearLeft: d(
-        (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row2']?['Left']?['Tire']?['Pressure']),
+      (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row2']
+          ?['Left']?['Tire']?['Pressure'],
+    ),
     tyrePressureRearRight: d(
-        (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row2']?['Right']?['Tire']?['Pressure']),
+      (((j['data'] as Map?)?['Chassis'] as Map?)?['Axle'] as Map?)?['Row2']
+          ?['Right']?['Tire']?['Pressure'],
+    ),
     isWindowFrontLeftOpen: b(j['front_left_window_is_open']),
     isWindowFrontRightOpen: b(j['front_right_window_is_open']),
     isWindowRearLeftOpen: b(j['back_left_window_is_open']),
