@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/theme/hyundai_theme.dart';
 
 /// Composite tile widgets — DoorTile, TyreTile, BigStatusTile, KVTable.
@@ -54,7 +56,7 @@ class BigStatusTile extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
+            const Gap(8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -106,7 +108,7 @@ class DoorTile extends StatelessWidget {
             size: 14,
             color: open ? HyundaiColors.error : HyundaiColors.success,
           ),
-          const SizedBox(width: 6),
+          const Gap(6),
           Text(
             label,
             style: TextStyle(fontSize: 12, color: cs.onSurface),
@@ -156,7 +158,7 @@ class TyreTile extends StatelessWidget {
             color: warn ? HyundaiColors.error : HyundaiColors.success,
             size: 16,
           ),
-          const SizedBox(width: 6),
+          const Gap(6),
           Expanded(
             child: Text(
               label,

@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -160,13 +161,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
               color: HyundaiColors.error,
               size: 48,
             ),
-            const SizedBox(height: 16),
+            const Gap(16),
             Text(
               _error!,
               textAlign: TextAlign.center,
               style: const TextStyle(color: HyundaiColors.error),
             ),
-            const SizedBox(height: 16),
+            const Gap(16),
             ElevatedButton.icon(
               onPressed: _loadList,
               icon: const Icon(Icons.refresh),
@@ -189,12 +190,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   .onSurfaceVariant
                   .withValues(alpha: 0.3),
             ),
-            const SizedBox(height: 16),
+            const Gap(16),
             const Text(
               'No snapshots saved yet.',
               style: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 8),
+            const Gap(8),
             Text(
               'Log in to Bluelink and tap Save to Pod to create a snapshot.',
               textAlign: TextAlign.center,
@@ -211,7 +212,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _files.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, __) => const Gap(8),
       itemBuilder: (_, i) {
         final f = _files[i];
         final isLoaded = provider.loadedFilename == f;

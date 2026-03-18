@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -98,7 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionTitle('Bluelink Credentials'),
-          const SizedBox(height: 4),
+          const Gap(4),
           Text(
             'Credentials are stored locally on this device. '
             'They are used to fetch live data via the bluelink_fetch.py script.',
@@ -107,7 +108,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               fontSize: 13,
             ),
           ),
-          const SizedBox(height: 16),
+          const Gap(16),
           TextField(
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
@@ -116,7 +117,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               prefixIcon: Icon(Icons.email_outlined),
             ),
           ),
-          const SizedBox(height: 12),
+          const Gap(12),
           TextField(
             controller: _passCtrl,
             obscureText: _obscurePass,
@@ -133,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const Gap(12),
           TextField(
             controller: _pinCtrl,
             obscureText: _obscurePin,
@@ -153,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const Gap(20),
           Row(
             children: [
               ElevatedButton.icon(
@@ -166,7 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   foregroundColor: Colors.white,
                 ),
               ),
-              const SizedBox(width: 12),
+              const Gap(12),
               OutlinedButton.icon(
                 onPressed: _clearAndLogout,
                 icon: const Icon(Icons.logout, size: 18),
@@ -178,9 +179,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const Gap(32),
           const _SectionTitle('Solid Pod'),
-          const SizedBox(height: 4),
+          const Gap(4),
           Text(
             'Vehicle snapshots are saved to your Solid Pod under konapod/. '
             'Log in to your pod using the pod login button in the app bar.',
@@ -189,9 +190,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               fontSize: 13,
             ),
           ),
-          const SizedBox(height: 32),
+          const Gap(32),
           const _SectionTitle('About bluelink_fetch.py'),
-          const SizedBox(height: 4),
+          const Gap(4),
           Text(
             'This app uses the hyundai_kia_connect_api Python library as a '
             'backend for live Bluelink data.\n\n'

@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
 import 'package:konapod/models/vehicle.dart';
@@ -48,26 +49,26 @@ class StatusPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           HeroCard(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
           const SectionLabel('Doors & Security'),
           DoorsSection(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
           const SectionLabel('Windows'),
           WindowsSection(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
           const SectionLabel('Warnings'),
           WarningsSection(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
           _TimestampRow(lastUpdated: v.lastUpdated, fetchedAt: v.fetchedAt),
-          const SizedBox(height: 16),
+          const Gap(16),
           const SectionLabel('Vehicle Info'),
           InfoSection(v: v),
           if (v.extras.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const Gap(16),
             const SectionLabel('Additional Data'),
             ExtrasSection(extras: v.extras),
           ],
-          const SizedBox(height: 24),
+          const Gap(24),
         ],
       ),
     );
@@ -88,14 +89,14 @@ class EnergyPage extends StatelessWidget {
           if (v.isEV) ...[
             const SectionLabel('Battery & Charging'),
             BatterySection(v: v),
-            const SizedBox(height: 16),
+            const Gap(16),
           ],
           if (v.isICE && !v.isEV) ...[
             const SectionLabel('Fuel'),
             FuelSection(v: v),
-            const SizedBox(height: 16),
+            const Gap(16),
           ],
-          const SizedBox(height: 8),
+          const Gap(8),
         ],
       ),
     );
@@ -115,10 +116,10 @@ class ComfortPage extends StatelessWidget {
         children: [
           const SectionLabel('Climate'),
           ClimateSection(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
           const SectionLabel('Tyres'),
           TyreSection(v: v),
-          const SizedBox(height: 24),
+          const Gap(24),
         ],
       ),
     );
@@ -148,12 +149,12 @@ class NoDataPlaceholder extends StatelessWidget {
                   .onSurfaceVariant
                   .withValues(alpha: 0.3),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
             Text(
               'No vehicle data',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            const SizedBox(height: 8),
+            const Gap(8),
             Text(
               'Log in to Bluelink to fetch live data,\n'
               'or load a snapshot from your Solid Pod.',
@@ -163,7 +164,7 @@ class NoDataPlaceholder extends StatelessWidget {
               ),
             ),
             if (provider.errorMessage != null) ...[
-              const SizedBox(height: 16),
+              const Gap(16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -199,7 +200,7 @@ class _TimestampRow extends StatelessWidget {
       children: [
         if (lastUpdated != null)
           _TsLine('Last updated', fmt.format(lastUpdated!), cs),
-        const SizedBox(width: 16),
+        const Gap(16),
         if (fetchedAt != null)
           _TsLine('Fetched at', fmt.format(fetchedAt!), cs),
       ],
@@ -221,7 +222,7 @@ class _TsLine extends StatelessWidget {
               size: 13,
               color: cs.onSurfaceVariant,
             ),
-            const SizedBox(width: 6),
+            const Gap(6),
             Text(
               '$label: ',
               style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),

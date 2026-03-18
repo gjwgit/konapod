@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -129,7 +130,7 @@ class DashboardScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(Icons.logout, size: 18),
-                  SizedBox(width: 8),
+                  Gap(8),
                   Text('Sign out'),
                 ],
               ),
@@ -151,40 +152,40 @@ class _DashboardBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         HeroCard(v: v),
-        const SizedBox(height: 16),
+        const Gap(16),
         if (v.isEV) ...[
           const SectionHeader('Battery & Charging'),
           BatterySection(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
         ],
         if (v.isICE && !v.isEV) ...[
           const SectionHeader('Fuel'),
           FuelSection(v: v),
-          const SizedBox(height: 16),
+          const Gap(16),
         ],
         const SectionHeader('Doors & Security'),
         DoorsSection(v: v),
-        const SizedBox(height: 16),
+        const Gap(16),
         const SectionHeader('Windows'),
         WindowsSection(v: v),
-        const SizedBox(height: 16),
+        const Gap(16),
         const SectionHeader('Climate'),
         ClimateSection(v: v),
-        const SizedBox(height: 16),
+        const Gap(16),
         const SectionHeader('Tyres'),
         TyreSection(v: v),
-        const SizedBox(height: 16),
+        const Gap(16),
         const SectionHeader('Warnings'),
         WarningsSection(v: v),
-        const SizedBox(height: 16),
+        const Gap(16),
         const SectionHeader('Vehicle Info'),
         InfoSection(v: v),
         if (v.extras.isNotEmpty) ...[
-          const SizedBox(height: 16),
+          const Gap(16),
           const SectionHeader('Additional Data'),
           ExtrasSection(extras: v.extras),
         ],
-        const SizedBox(height: 8),
+        const Gap(8),
         if (v.lastUpdated != null)
           Center(
             child: Text(
@@ -195,7 +196,7 @@ class _DashboardBody extends StatelessWidget {
               ),
             ),
           ),
-        const SizedBox(height: 24),
+        const Gap(24),
       ],
     );
   }

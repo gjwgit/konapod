@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/widgets/primitives.dart';
 import 'package:konapod/widgets/tiles.dart';
@@ -55,7 +57,7 @@ class DoorsSection extends StatelessWidget {
           //             : HyundaiColors.warning,
           //       ),
           //     ),
-          //     const SizedBox(width: 12),
+          //     const Gap(12),
           //     Expanded(
           //       child: BigStatusTile(
           //         icon: Icons.directions_car,
@@ -73,7 +75,7 @@ class DoorsSection extends StatelessWidget {
           //   ],
           // ),
           // if (v.isEV) ...[
-          //   const SizedBox(height: 12),
+          //   const Gap(12),
           //   Row(
           //     children: [
           //       Expanded(
@@ -90,7 +92,7 @@ class DoorsSection extends StatelessWidget {
           //               : HyundaiColors.success,
           //         ),
           //       ),
-          //       const SizedBox(width: 12),
+          //       const Gap(12),
           //       Expanded(
           //         child: BigStatusTile(
           //           icon: Icons.electrical_services,
@@ -108,32 +110,32 @@ class DoorsSection extends StatelessWidget {
           //     ],
           //   ),
           // ],
-          // const SizedBox(height: 12),
+          // const Gap(12),
           // Divider(
           //   height: 1,
           //   color: Theme.of(context).colorScheme.outlineVariant,
           // ),
-          // const SizedBox(height: 12),
+          // const Gap(12),
           Row(
             children: [
               Expanded(child: DoorTile('Front Left', v.isDoorFrontLeftOpen)),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(child: DoorTile('Front Right', v.isDoorFrontRightOpen)),
             ],
           ),
-          const SizedBox(height: 8),
+          const Gap(8),
           Row(
             children: [
               Expanded(child: DoorTile('Rear Left', v.isDoorRearLeftOpen)),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(child: DoorTile('Rear Right', v.isDoorRearRightOpen)),
             ],
           ),
-          const SizedBox(height: 8),
+          const Gap(8),
           Row(
             children: [
               Expanded(child: DoorTile('Boot', v.isTrunkOpen)),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(child: DoorTile('Bonnet', v.isBonnetOpen)),
             ],
           ),

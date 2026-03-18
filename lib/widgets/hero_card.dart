@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
 import 'package:konapod/models/vehicle.dart';
@@ -102,7 +103,7 @@ class HeroCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const Gap(16),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -149,12 +150,12 @@ class HeroCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 14),
+          const Gap(14),
           Row(
             children: [
               if (v.evRangeKm != null || v.fuelRangeKm != null) ...[
                 const Icon(Icons.route, color: Colors.white54, size: 16),
-                const SizedBox(width: 6),
+                const Gap(6),
                 Text(
                   '${(v.evRangeKm ?? v.fuelRangeKm)!.round()} km current range',
                   style: const TextStyle(
@@ -165,13 +166,13 @@ class HeroCard extends StatelessWidget {
                 ),
               ],
               if (v.batteryLevelPercent != null) ...[
-                const SizedBox(width: 16),
+                const Gap(16),
                 const Icon(
                   Icons.battery_charging_full,
                   color: Colors.white54,
                   size: 16,
                 ),
-                const SizedBox(width: 6),
+                const Gap(6),
                 Text(
                   '${v.batteryLevelPercent!.round()}% charge',
                   style: const TextStyle(
@@ -181,9 +182,9 @@ class HeroCard extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(width: 16),
+              const Gap(16),
               const Icon(Icons.speed, color: Colors.white54, size: 16),
-              const SizedBox(width: 6),
+              const Gap(6),
               Text(
                 v.odometerKm != null
                     ? '${NumberFormat('#,##0').format(v.odometerKm!.round())} km total travelled'

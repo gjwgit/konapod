@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/widgets/primitives.dart';
 import 'package:konapod/widgets/tiles.dart';
@@ -48,7 +50,7 @@ class WindowsSection extends StatelessWidget {
                   isWindow: true,
                 ),
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(
                 child: DoorTile(
                   'Front Right',
@@ -58,7 +60,7 @@ class WindowsSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const Gap(8),
           Row(
             children: [
               Expanded(
@@ -68,7 +70,7 @@ class WindowsSection extends StatelessWidget {
                   isWindow: true,
                 ),
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(
                 child: DoorTile(
                   'Rear Right',

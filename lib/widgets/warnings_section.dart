@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 import 'package:konapod/widgets/primitives.dart';
@@ -57,7 +59,7 @@ class WarningsSection extends StatelessWidget {
                   color: HyundaiColors.success,
                   size: 20,
                 ),
-                SizedBox(width: 10),
+                Gap(10),
                 Text(
                   'No active warnings',
                   style: TextStyle(
@@ -80,7 +82,7 @@ class WarningsSection extends StatelessWidget {
                             color: HyundaiColors.error,
                             size: 18,
                           ),
-                          const SizedBox(width: 8),
+                          const Gap(8),
                           Text(
                             w,
                             style: const TextStyle(

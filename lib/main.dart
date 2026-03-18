@@ -31,6 +31,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
 
@@ -154,7 +155,7 @@ class _AutoLoginWrapperState extends State<_AutoLoginWrapper> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const Gap(20),
               const Text(
                 appName,
                 style: TextStyle(
@@ -163,7 +164,7 @@ class _AutoLoginWrapperState extends State<_AutoLoginWrapper> {
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 32),
+              const Gap(32),
               const SizedBox(
                 width: 24,
                 height: 24,

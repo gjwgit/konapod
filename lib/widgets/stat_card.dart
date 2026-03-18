@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/theme/hyundai_theme.dart';
 
 class StatusBadge extends StatelessWidget {
@@ -64,7 +66,7 @@ class StatusBadge extends StatelessWidget {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 5),
+          const Gap(5),
           Text(
             active ? activeLabel : inactiveLabel,
             style: TextStyle(

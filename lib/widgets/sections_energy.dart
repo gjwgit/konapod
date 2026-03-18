@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 import 'package:konapod/widgets/primitives.dart';
@@ -61,7 +63,7 @@ class BatterySection extends StatelessWidget {
                 color: HyundaiColors.accent,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Text(
                 'Battery',
                 style: TextStyle(
@@ -81,7 +83,7 @@ class BatterySection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const Gap(10),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
@@ -92,13 +94,13 @@ class BatterySection extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation(barColor),
             ),
           ),
-          const SizedBox(height: 14),
+          const Gap(14),
           Row(
             children: [
               if (v.evRangeKm != null)
                 StatChip('Range', '${v.evRangeKm!.round()} km', Icons.route),
               if (v.batteryCapacityKwh != null) ...[
-                const SizedBox(width: 20),
+                const Gap(20),
                 StatChip(
                   'Capacity',
                   '${(v.batteryCapacityKwh! / 1000).toStringAsFixed(1)} kWh',
@@ -106,7 +108,7 @@ class BatterySection extends StatelessWidget {
                 ),
               ],
               if (v.batteryRemainKwh != null) ...[
-                const SizedBox(width: 20),
+                const Gap(20),
                 StatChip(
                   'Remain',
                   '${(v.batteryRemainKwh! / 1000).toStringAsFixed(1)} kWh',
@@ -114,7 +116,7 @@ class BatterySection extends StatelessWidget {
                 ),
               ],
               if (v.batterySohPercent != null) ...[
-                const SizedBox(width: 20),
+                const Gap(20),
                 StatChip(
                   'SOH',
                   '${v.batterySohPercent!.toStringAsFixed(0)}%',
@@ -129,7 +131,7 @@ class BatterySection extends StatelessWidget {
               v.estimatedFastChargeMins != null ||
               v.estimatedPortableChargeMins != null ||
               v.estimatedStationChargeMins != null) ...[
-            const SizedBox(height: 10),
+            const Gap(10),
             Wrap(
               spacing: 20,
               runSpacing: 8,
@@ -177,12 +179,12 @@ class BatterySection extends StatelessWidget {
               ],
             ),
           ],
-          const SizedBox(height: 14),
+          const Gap(14),
           Divider(
             height: 1,
             color: Theme.of(context).colorScheme.outlineVariant,
           ),
-          const SizedBox(height: 12),
+          const Gap(12),
           StatusRow(
             Icons.power,
             'Charging',
@@ -203,7 +205,7 @@ class BatterySection extends StatelessWidget {
               HyundaiColors.accent,
             ),
           if (v.targetSocAC != null) ...[
-            const SizedBox(height: 8),
+            const Gap(8),
             KVRow('Target SOC (AC)', '${v.targetSocAC}%'),
           ],
           if (v.targetSocDC != null)
@@ -222,7 +224,7 @@ class BatterySection extends StatelessWidget {
                       ? HyundaiColors.error
                       : HyundaiColors.midGrey,
                 ),
-                const SizedBox(width: 8),
+                const Gap(8),
                 Text(
                   '12V Battery: ${v.battery12VPercent}%',
                   style: TextStyle(
@@ -268,7 +270,7 @@ class FuelSection extends StatelessWidget {
                 color: HyundaiColors.warning,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Text(
                 'Fuel',
                 style: TextStyle(
@@ -288,7 +290,7 @@ class FuelSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const Gap(10),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
@@ -300,15 +302,15 @@ class FuelSection extends StatelessWidget {
             ),
           ),
           if (v.fuelRangeKm != null) ...[
-            const SizedBox(height: 10),
+            const Gap(10),
             StatChip('Range', '${v.fuelRangeKm!.round()} km', Icons.route),
           ],
           if (v.isLowFuelWarning == true) ...[
-            const SizedBox(height: 8),
+            const Gap(8),
             const Row(
               children: [
                 Icon(Icons.warning_amber, color: HyundaiColors.error, size: 16),
-                SizedBox(width: 6),
+                Gap(6),
                 Text(
                   'Low fuel warning',
                   style: TextStyle(color: HyundaiColors.error, fontSize: 13),

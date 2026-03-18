@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
 import 'package:konapod/models/vehicle.dart';
@@ -245,7 +246,7 @@ class _DailyEnergyChartState extends State<DailyEnergyChart> {
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        const Gap(10),
         _Legend(),
       ],
     );
@@ -450,7 +451,7 @@ class _Dot extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(width: 5),
+          const Gap(5),
           Text(
             label,
             style: TextStyle(

@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
 import 'package:konapod/screens/dashboard_screen.dart';
@@ -108,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const Gap(24),
                   const Text(
                     'Bluelink',
                     style: TextStyle(
@@ -118,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       letterSpacing: -1,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const Gap(4),
                   Text(
                     'Australia · Vehicle Dashboard',
                     style: TextStyle(
@@ -150,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const Gap(6),
                         const Text(
                           'Uses the hyundai_kia_connect_api Python library.\n'
                           'Ensure it is installed: pip install hyundai-kia-connect-api',
@@ -159,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: 12,
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const Gap(20),
                         TextFormField(
                           controller: _emailCtrl,
                           keyboardType: TextInputType.emailAddress,
@@ -171,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ? 'Enter a valid email'
                               : null,
                         ),
-                        const SizedBox(height: 14),
+                        const Gap(14),
                         TextFormField(
                           controller: _passCtrl,
                           obscureText: _obscurePass,
@@ -192,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ? 'Enter your password'
                               : null,
                         ),
-                        const SizedBox(height: 14),
+                        const Gap(14),
                         TextFormField(
                           controller: _pinCtrl,
                           obscureText: _obscurePin,
@@ -216,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ? 'Enter your PIN (min 4 digits)'
                               : null,
                         ),
-                        const SizedBox(height: 8),
+                        const Gap(8),
                         Consumer<AppProvider>(
                           builder: (_, p, __) {
                             if (p.errorMessage == null) {
@@ -238,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: HyundaiColors.error,
                                     size: 18,
                                   ),
-                                  const SizedBox(width: 8),
+                                  const Gap(8),
                                   Expanded(
                                     child: Text(
                                       p.errorMessage!,
@@ -253,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const Gap(16),
                         Consumer<AppProvider>(
                           builder: (_, p, __) {
                             final loading = p.state == AppState.loading;
@@ -272,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: 10),
+                        const Gap(10),
                         OutlinedButton(
                           onPressed: _demo,
                           style: OutlinedButton.styleFrom(
@@ -286,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: const Text('Demo Mode (no login)'),
                         ),
-                        const SizedBox(height: 20),
+                        const Gap(20),
                         const Center(
                           child: Text(
                             'Credentials are saved locally on this device only.',

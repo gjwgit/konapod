@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
 import 'package:konapod/models/vehicle.dart';
@@ -95,7 +96,7 @@ class ClimateSection extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 16,
                 ),
-                const SizedBox(width: 8),
+                const Gap(8),
                 Expanded(
                   child: Text(
                     'Seat Heat',
@@ -108,15 +109,15 @@ class ClimateSection extends StatelessWidget {
                 if (v.seatHeatFrontLeft != null)
                   SeatBadge('FL', v.seatHeatFrontLeft!),
                 if (v.seatHeatFrontRight != null) ...[
-                  const SizedBox(width: 4),
+                  const Gap(4),
                   SeatBadge('FR', v.seatHeatFrontRight!),
                 ],
                 if (v.seatHeatRearLeft != null) ...[
-                  const SizedBox(width: 4),
+                  const Gap(4),
                   SeatBadge('RL', v.seatHeatRearLeft!),
                 ],
                 if (v.seatHeatRearRight != null) ...[
-                  const SizedBox(width: 4),
+                  const Gap(4),
                   SeatBadge('RR', v.seatHeatRearRight!),
                 ],
               ],
@@ -149,7 +150,7 @@ class TyreSection extends StatelessWidget {
                 color: allOk ? HyundaiColors.success : HyundaiColors.error,
                 size: 18,
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Text(
                 allOk ? 'All tyres OK' : 'Tyre pressure warning',
                 style: TextStyle(
@@ -160,25 +161,25 @@ class TyreSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const Gap(12),
           Row(
             children: [
               Expanded(
                 child: TyreTile('Front Left', v.tyrePressureWarningFrontLeft),
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(
                 child: TyreTile('Front Right', v.tyrePressureWarningFrontRight),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const Gap(8),
           Row(
             children: [
               Expanded(
                 child: TyreTile('Rear Left', v.tyrePressureWarningRearLeft),
               ),
-              const SizedBox(width: 8),
+              const Gap(8),
               Expanded(
                 child: TyreTile('Rear Right', v.tyrePressureWarningRearRight),
               ),

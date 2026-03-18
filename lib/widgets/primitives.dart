@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+
 import 'package:konapod/theme/hyundai_theme.dart';
 
 /// Shared low-level primitive widgets.
@@ -77,7 +79,7 @@ class StatusRow extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, size: 16, color: active ? activeColor : inactiveColor),
-          const SizedBox(width: 10),
+          const Gap(10),
           Expanded(
             child: Text(
               label,
@@ -144,7 +146,7 @@ class StatChip extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: color ?? cs.onSurfaceVariant),
-        const SizedBox(width: 4),
+        const Gap(4),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

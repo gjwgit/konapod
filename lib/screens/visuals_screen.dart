@@ -27,6 +27,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -80,11 +81,11 @@ class VisualsScreen extends StatelessWidget {
               fontSize: 13,
             ),
           ),
-          const SizedBox(height: 20),
+          const Gap(20),
 
           // ── Summary cards ─────────────────────────────────────────────
           _SummaryRow(total: total, avg: avg, best: best, days: stats.length),
-          const SizedBox(height: 24),
+          const Gap(24),
 
           // ── Distance chart ────────────────────────────────────────────
           _ChartSection(
@@ -92,7 +93,7 @@ class VisualsScreen extends StatelessWidget {
             subtitle: 'km per day',
             chart: DailyDistanceChart(stats: stats),
           ),
-          const SizedBox(height: 24),
+          const Gap(24),
 
           // ── Energy consumption chart ──────────────────────────────────
           if (hasEnergy) ...[
@@ -102,7 +103,7 @@ class VisualsScreen extends StatelessWidget {
                   'kWh · coloured by type · bar label is net (consumed − regenerated)',
               chart: DailyEnergyChart(stats: stats),
             ),
-            const SizedBox(height: 24),
+            const Gap(24),
           ],
 
           // ── Regenerated energy chart ──────────────────────────────────
@@ -112,12 +113,12 @@ class VisualsScreen extends StatelessWidget {
           //     subtitle: 'kWh recovered via regenerative braking',
           //     chart: DailyRegenChart(stats: stats),
           //   ),
-          //   const SizedBox(height: 24),
+          //   const Gap(24),
           // ],
 
           // ── Detail table ──────────────────────────────────────────────
           _DetailTable(stats: stats, hasEnergy: hasEnergy, hasRegen: hasRegen),
-          const SizedBox(height: 24),
+          const Gap(24),
         ],
       ),
     );
@@ -137,9 +138,9 @@ class VisualsScreen extends StatelessWidget {
                     .onSurfaceVariant
                     .withValues(alpha: 0.3),
               ),
-              const SizedBox(height: 16),
+              const Gap(16),
               Text(title, style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 8),
+              const Gap(8),
               Text(
                 sub,
                 textAlign: TextAlign.center,
@@ -204,7 +205,7 @@ class _Cell extends StatelessWidget {
               label,
               style: TextStyle(color: cs.onSurfaceVariant, fontSize: 11),
             ),
-            const SizedBox(height: 2),
+            const Gap(2),
             Text(
               value,
               style: TextStyle(
@@ -240,7 +241,7 @@ class _ChartSection extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 2),
+          const Gap(2),
           Text(
             subtitle,
             style: TextStyle(
@@ -248,7 +249,7 @@ class _ChartSection extends StatelessWidget {
               fontSize: 12,
             ),
           ),
-          const SizedBox(height: 10),
+          const Gap(10),
           chart,
         ],
       );
