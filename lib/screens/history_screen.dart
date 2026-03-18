@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
 
 import 'package:konapod/services/app_provider.dart';
@@ -257,13 +258,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         )
                       else
                         IconButton(
-                          icon: const Icon(Icons.download_outlined),
-                          tooltip: 'Load this snapshot',
+                          icon: MarkdownTooltip(
+                            message: 'Load this snapshot into the dashboard.',
+                            child: const Icon(Icons.download_outlined),
+                          ),
                           onPressed: () => _loadFile(f),
                         ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        tooltip: 'Delete this snapshot',
+                        icon: MarkdownTooltip(
+                          message: '**Delete** this snapshot permanently\n\nThis cannot be undone.',
+                          child: const Icon(Icons.delete_outline),
+                        ),
                         color: HyundaiColors.error,
                         onPressed: isDeleting ? null : () => _confirmDelete(f),
                       ),

@@ -1,6 +1,6 @@
 /// HeroCard widget showing vehicle identity, status badges and range.
 ///
-// Time-stamp: <Wednesday 2026-03-18 21:53:07 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-03-19 09:06:02 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -108,11 +109,16 @@ class HeroCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              StatusBadge(
-                active: v.isLocked == true,
-                activeLabel: 'Locked',
-                inactiveLabel: 'Unlocked',
-                activeColor: HyundaiColors.success,
+              MarkdownTooltip(
+                message: '**Locked**\n\n'
+                    'This will be active when the car reports that it is locked. '
+                    'Below you can see specific objects that are locked or unlocked.',
+                child: StatusBadge(
+                  active: v.isLocked == true,
+                  activeLabel: 'Locked',
+                  inactiveLabel: 'Unlocked',
+                  activeColor: HyundaiColors.success,
+                ),
               ),
               StatusBadge(
                 active: v.isEngineRunning == true,

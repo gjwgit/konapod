@@ -1,6 +1,6 @@
 /// Energy section widgets: EV battery, charging status, fuel level.
 ///
-// Time-stamp: <Wednesday 2026-03-18 21:38:30 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-03-19 05:36:28 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///

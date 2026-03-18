@@ -136,7 +136,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         SolidMenuItem(
           title: 'Status',
           icon: Icons.directions_car,
-          tooltip: 'Vehicle status — locks, doors, engine',
+          tooltip: '**Status**\n\nVehicle status including locks, doors, and engine.',
           child: _PageWrapper(
             title: 'Status',
             child: v != null
@@ -147,7 +147,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         SolidMenuItem(
           title: 'Energy',
           icon: Icons.battery_charging_full,
-          tooltip: 'Battery, charging and fuel',
+          tooltip: '**Energy**\n\nEV battery, charging status and fuel.',
           child: _PageWrapper(
             title: 'Energy',
             child: v != null
@@ -158,7 +158,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         SolidMenuItem(
           title: 'Comfort',
           icon: Icons.thermostat,
-          tooltip: 'Climate, tyres and comfort systems',
+          tooltip: '**Comfort**\n\nClimate control, tyres and comfort systems.',
           child: _PageWrapper(
             title: 'Comfort',
             child: v != null
@@ -169,7 +169,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         const SolidMenuItem(
           title: 'Visuals',
           icon: Icons.bar_chart,
-          tooltip: 'Charts and visualisations of historical driving data',
+          tooltip: '**Visuals**\n\nCharts and visualisations of historical driving data.',
           child: _PageWrapper(
             title: 'Visuals',
             child: VisualsScreen(),
@@ -178,7 +178,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         const SolidMenuItem(
           title: 'History',
           icon: Icons.history,
-          tooltip: 'Browse and load archived snapshots from your Solid Pod',
+          tooltip: '**History**\n\nBrowse, load and delete archived snapshots\nfrom your Solid Pod.',
           child: _PageWrapper(
             title: 'History',
             child: HistoryScreen(),
@@ -187,7 +187,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         const SolidMenuItem(
           title: 'Settings',
           icon: Icons.settings,
-          tooltip: 'Bluelink credentials and app preferences',
+          tooltip: '**Settings**\n\nBluelink credentials and app preferences.',
           child: _PageWrapper(
             title: 'Settings',
             child: SettingsScreen(),
@@ -208,14 +208,14 @@ class _AppScaffoldState extends State<AppScaffold> {
           if (provider.isAuthenticated)
             SolidAppBarAction(
               icon: provider.isRefreshing ? Icons.hourglass_top : Icons.refresh,
-              tooltip: 'Refresh from Bluelink',
+              tooltip: '**Refresh**\n\nFetch the latest data from Bluelink.',
               onPressed: provider.isRefreshing ? () {} : provider.refresh,
               color: Colors.white,
             )
           else
             SolidAppBarAction(
               icon: Icons.car_rental,
-              tooltip: 'Login to Bluelink',
+              tooltip: '**Login**\n\nConnect to Bluelink to fetch live vehicle data.',
               onPressed: () => _showBluelinkLogin(context, provider),
               color: Colors.white70,
             ),
@@ -224,7 +224,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           if (provider.dataSource == DataSource.bluelink && provider.hasData)
             SolidAppBarAction(
               icon: Icons.cloud_upload_outlined,
-              tooltip: 'Save snapshot to Solid Pod',
+              tooltip: '**Save to Pod**\n\nArchive a snapshot of current vehicle status\nto your Solid Pod.',
               onPressed: () => _saveToPod(provider),
               color: Colors.white,
             ),
@@ -232,7 +232,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           // Load from pod button
           SolidAppBarAction(
             icon: Icons.cloud_download_outlined,
-            tooltip: 'Load latest snapshot from Solid Pod',
+            tooltip: '**Load from Pod**\n\nLoad the latest snapshot from your Solid Pod.',
             onPressed: () => _loadFromPod(provider),
             color: Colors.white70,
           ),
@@ -240,7 +240,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           // Export to JSON file
           SolidAppBarAction(
             icon: Icons.download_for_offline_outlined,
-            tooltip: 'Export current status to JSON file',
+            tooltip: '**Export JSON**\n\nSave current vehicle data as a JSON file\nto your Downloads folder.',
             onPressed: provider.hasData ? () => _exportJson(provider) : () {},
             color: provider.hasData ? Colors.white : Colors.white30,
           ),
@@ -269,7 +269,7 @@ class _AppScaffoldState extends State<AppScaffold> {
               _isKeySaved = hasKey;
             });
           },
-          tooltip: 'Manage your Solid Pod encryption key',
+          tooltip: '**Security Keys**\n\nManage your Solid Pod encryption key.\nTap to view, change or forget the key.',
         ),
       ),
 
