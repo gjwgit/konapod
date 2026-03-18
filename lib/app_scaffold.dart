@@ -30,6 +30,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
 
@@ -60,6 +61,65 @@ class _AppScaffoldState extends State<AppScaffold> {
   // Updated via the onKeyStatusChanged callback from SolidSecurityKeyStatus.
 
   bool _isKeySaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for errors from the provider and show a dialog.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<AppProvider>();
+      // Show any error that occurred before the scaffold was mounted
+      // (e.g. failed auto-login on startup).
+      if (provider.state == AppState.error && provider.errorMessage != null) {
+        _showErrorDialog(provider.errorMessage!);
+        provider.clearError();
+      }
+      // Listen for future errors.
+      provider.addListener(_onProviderChange);
+    });
+  }
+
+  @override
+  void dispose() {
+    context.read<AppProvider>().removeListener(_onProviderChange);
+    super.dispose();
+  }
+
+  void _onProviderChange() {
+    if (!mounted) return;
+    final provider = context.read<AppProvider>();
+    if (provider.state == AppState.error && provider.errorMessage != null) {
+      _showErrorDialog(provider.errorMessage!);
+      provider.clearError();
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.error_outline, color: Colors.red),
+            Gap(8),
+            Text('Could not fetch data'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            message,
+            style: const TextStyle(fontSize: 13),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

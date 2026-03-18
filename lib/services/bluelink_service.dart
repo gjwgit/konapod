@@ -1,6 +1,6 @@
 /// Bluelink service: spawns Python subprocess to fetch live vehicle data.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 16:39:17 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -28,6 +28,8 @@ library;
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:konapod/models/vehicle.dart';
 
@@ -65,8 +67,11 @@ class BluelinkService {
     for (final cmd in ['python3', 'python']) {
       try {
         final r = await Process.run(cmd, ['--version']);
+        print("PYTHON $r $cmd");
         if (r.exitCode == 0) return cmd;
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('[Bluelink] Python check failed for $cmd: $e');
+      }
     }
     throw BluelinkApiException(
       'Python 3 not found.\nRun: sudo apt install python3 python3-pip',
@@ -106,6 +111,7 @@ class BluelinkService {
 
     final check =
         await Process.run(python, ['-c', 'import hyundai_kia_connect_api']);
+    print("IMPORT $python hyundai_kia_connect_api");
     if (check.exitCode != 0) {
       throw BluelinkApiException(
         'Python library not installed.\nRun: pip install hyundai-kia-connect-api',
@@ -126,6 +132,8 @@ class BluelinkService {
 
     final stdout = (result.stdout as String).trim();
     final stderr = (result.stderr as String).trim();
+    print("STDOUT $stdout");
+    print("STDERR $stderr");
     dev.log('[Bluelink] exit=${result.exitCode}', name: 'BluelinkService');
     if (stderr.isNotEmpty) {
       dev.log('[Bluelink] stderr=$stderr', name: 'BluelinkService');
@@ -140,7 +148,8 @@ class BluelinkService {
     Map<String, dynamic> data;
     try {
       data = jsonDecode(stdout) as Map<String, dynamic>;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[Bluelink] JSON parse error: $e');
       throw BluelinkApiException(
         'Could not parse output:\n${stdout.substring(0, stdout.length.clamp(0, 300))}',
       );
@@ -164,6 +173,7 @@ class BluelinkService {
       try {
         vehicles.add(Vehicle.fromApiJson({...raw, 'fetchedAt': fetchedAt}));
       } catch (e, st) {
+        debugPrint('[Bluelink] Vehicle parse error: $e\n$st');
         dev.log('[Bluelink] Parse error: $e\n$st', name: 'BluelinkService');
         throw BluelinkApiException(
           'Failed to parse vehicle data: $e\n\nRaw: $raw',

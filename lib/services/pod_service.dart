@@ -28,6 +28,8 @@ library;
 import 'dart:convert';
 import 'dart:developer' as dev;
 
+import 'package:flutter/foundation.dart';
+
 import 'package:solidpod/solidpod.dart';
 
 import 'package:konapod/utils/pod_utils.dart';
@@ -95,6 +97,7 @@ class PodService {
 
       return null;
     } catch (e, st) {
+      debugPrint('[Pod] Save error: $e\n$st');
       dev.log('[Pod] Save error: $e\n$st', name: 'PodService');
       return e.toString();
     }
@@ -121,6 +124,7 @@ class PodService {
       final ttl = await readPod(filename);
       if (ttl.isNotEmpty) return _parseTtlSnapshot(ttl);
     } catch (e) {
+      debugPrint('[Pod] Load error ($filename): $e');
       dev.log('[Pod] Load error ($filename): $e', name: 'PodService');
     }
     return null;
@@ -131,6 +135,7 @@ class PodService {
     try {
       return await _readIndex();
     } catch (e) {
+      debugPrint('[Pod] List error: $e');
       dev.log('[Pod] List error: $e', name: 'PodService');
       return [];
     }
@@ -150,6 +155,7 @@ class PodService {
 
       return null;
     } catch (e, st) {
+      debugPrint('[Pod] Delete error: $e\n$st');
       dev.log('[Pod] Delete error: $e\n$st', name: 'PodService');
       return e.toString();
     }

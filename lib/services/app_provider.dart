@@ -94,11 +94,13 @@ class AppProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } on BluelinkApiException catch (e) {
+      debugPrint('[AppProvider] BluelinkApiException: ${e.message}');
       _state = AppState.error;
       _errorMessage = e.message;
       notifyListeners();
       return false;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('[AppProvider] Unexpected error: $e\n$st');
       _state = AppState.error;
       _errorMessage = 'Error: ${e.runtimeType}\n$e';
       notifyListeners();
@@ -124,7 +126,8 @@ class AppProvider extends ChangeNotifier {
         return false;
       }
       return _loadVehicleFromMap(data, source: DataSource.pod);
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('[AppProvider] loadFromPod error: $e\n$st');
       _state = AppState.error;
       _errorMessage = 'Pod load error: $e';
       notifyListeners();
@@ -146,7 +149,8 @@ class AppProvider extends ChangeNotifier {
       }
       _loadedFilename = filename;
       return _loadVehicleFromMap(data, source: DataSource.pod);
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('[AppProvider] loadPodFile error: $e\n$st');
       _state = AppState.error;
       _errorMessage = 'Pod load error: $e';
       notifyListeners();
@@ -229,7 +233,8 @@ class AppProvider extends ChangeNotifier {
         return false;
       }
       return true;
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('[AppProvider] saveToPod error: $e\n$st');
       _errorMessage = e.toString();
       notifyListeners();
       return false;
@@ -241,6 +246,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> refresh() async {
     if (_isRefreshing) return;
     _isRefreshing = true;
+    _errorMessage = null;
     notifyListeners();
     try {
       if (_dataSource == DataSource.bluelink && isAuthenticated) {
@@ -250,7 +256,15 @@ class AppProvider extends ChangeNotifier {
       } else if (_dataSource == DataSource.pod) {
         await loadFromPod();
       }
-    } catch (_) {}
+    } on BluelinkApiException catch (e) {
+      debugPrint('[AppProvider] refresh BluelinkApiException: ${e.message}');
+      _errorMessage = e.message;
+      _state = AppState.error;
+    } catch (e, st) {
+      debugPrint('[AppProvider] refresh error: $e\n$st');
+      _errorMessage = e.toString();
+      _state = AppState.error;
+    }
     _isRefreshing = false;
     notifyListeners();
   }
