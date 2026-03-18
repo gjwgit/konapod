@@ -84,16 +84,31 @@ class EnergyPage extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (v.isEV) ...[
             const SectionLabel('Battery & Charging'),
-            BatterySection(v: v),
+            FractionallySizedBox(
+              widthFactor: 0.5,
+              alignment: Alignment.centerLeft,
+              child: BatterySection(v: v),
+            ),
+            const Gap(16),
+            const SectionLabel('EV Efficiency'),
+            FractionallySizedBox(
+              widthFactor: 0.5,
+              alignment: Alignment.centerLeft,
+              child: EfficiencySection(v: v),
+            ),
             const Gap(16),
           ],
           if (v.isICE && !v.isEV) ...[
             const SectionLabel('Fuel'),
-            FuelSection(v: v),
+            FractionallySizedBox(
+              widthFactor: 0.5,
+              alignment: Alignment.centerLeft,
+              child: FuelSection(v: v),
+            ),
             const Gap(16),
           ],
           const Gap(8),

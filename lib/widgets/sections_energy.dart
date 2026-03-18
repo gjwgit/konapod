@@ -25,6 +25,8 @@
 
 library;
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
@@ -319,6 +321,86 @@ class FuelSection extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class EfficiencySection extends StatelessWidget {
+  final Vehicle v;
+  const EfficiencySection({super.key, required this.v});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final rows = [
+      ('Overall',        v.efficiencyOverall),
+      ('Since Charging', v.efficiencySinceCharging),
+      ('Latest Trip',    v.efficiencyLatestTrip),
+    ];
+    return Container(
+      decoration: BoxDecoration(
+        color: cs.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        itemCount: rows.length,
+        separatorBuilder: (_, __) => Divider(
+          height: 1,
+          color: cs.outlineVariant,
+          indent: 16,
+          endIndent: 16,
+        ),
+        itemBuilder: (_, i) {
+          final (label, val) = rows[i];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                // Fixed-width number so decimals align
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    val != null ? val.toStringAsFixed(1) : '–',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: cs.onSurface,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ),
+                Text(
+                  ' kWh/100km',
+                  style: TextStyle(
+                    color: cs.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

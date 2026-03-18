@@ -132,6 +132,12 @@ class ClimateSection extends StatelessWidget {
 class TyreSection extends StatelessWidget {
   final Vehicle v;
   const TyreSection({super.key, required this.v});
+
+  String _pressure(double? kpa) {
+    if (kpa == null || kpa == 255) return '–';
+    return '${kpa.round()} kPa';
+  }
+
   @override
   Widget build(BuildContext context) {
     final allOk = v.tyrePressureWarningAll != true &&
@@ -165,11 +171,19 @@ class TyreSection extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: TyreTile('Front Left', v.tyrePressureWarningFrontLeft),
+                child: TyreTile(
+                  'Front Left',
+                  v.tyrePressureWarningFrontLeft,
+                  pressure: _pressure(v.tyrePressureFrontLeft),
+                ),
               ),
               const Gap(8),
               Expanded(
-                child: TyreTile('Front Right', v.tyrePressureWarningFrontRight),
+                child: TyreTile(
+                  'Front Right',
+                  v.tyrePressureWarningFrontRight,
+                  pressure: _pressure(v.tyrePressureFrontRight),
+                ),
               ),
             ],
           ),
@@ -177,11 +191,19 @@ class TyreSection extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: TyreTile('Rear Left', v.tyrePressureWarningRearLeft),
+                child: TyreTile(
+                  'Rear Left',
+                  v.tyrePressureWarningRearLeft,
+                  pressure: _pressure(v.tyrePressureRearLeft),
+                ),
               ),
               const Gap(8),
               Expanded(
-                child: TyreTile('Rear Right', v.tyrePressureWarningRearRight),
+                child: TyreTile(
+                  'Rear Right',
+                  v.tyrePressureWarningRearRight,
+                  pressure: _pressure(v.tyrePressureRearRight),
+                ),
               ),
             ],
           ),

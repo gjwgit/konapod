@@ -97,6 +97,16 @@ class Vehicle {
   final bool? isChargeScheduledOn;
   final double? ev12vPercent;
 
+  // ── EV efficiency (kWh/100km) ─────────────────────────────────────────────
+  /// Latest trip efficiency in kWh/100km.
+  final double? efficiencyLatestTrip;
+
+  /// Since last charge efficiency in kWh/100km.
+  final double? efficiencySinceCharging;
+
+  /// Overall accumulated efficiency in kWh/100km.
+  final double? efficiencyOverall;
+
   // ── 12V battery ──────────────────────────────────────────────────────────
   final int? battery12VPercent;
   final bool? is12VBatteryWarning;
@@ -113,6 +123,11 @@ class Vehicle {
   final bool? tyrePressureWarningRearLeft;
   final bool? tyrePressureWarningRearRight;
   final bool? tyrePressureWarningAll;
+  /// Actual tyre pressures in kPa (from data.Chassis.Axle).
+  final double? tyrePressureFrontLeft;
+  final double? tyrePressureFrontRight;
+  final double? tyrePressureRearLeft;
+  final double? tyrePressureRearRight;
 
   // ── Windows ──────────────────────────────────────────────────────────────
   final bool? isWindowFrontLeftOpen;
@@ -188,6 +203,9 @@ class Vehicle {
     this.targetSocDC,
     this.isChargeScheduledOn,
     this.ev12vPercent,
+    this.efficiencyLatestTrip,
+    this.efficiencySinceCharging,
+    this.efficiencyOverall,
     this.battery12VPercent,
     this.is12VBatteryWarning,
     this.odometerKm,
@@ -199,6 +217,10 @@ class Vehicle {
     this.tyrePressureWarningRearLeft,
     this.tyrePressureWarningRearRight,
     this.tyrePressureWarningAll,
+    this.tyrePressureFrontLeft,
+    this.tyrePressureFrontRight,
+    this.tyrePressureRearLeft,
+    this.tyrePressureRearRight,
     this.isWindowFrontLeftOpen,
     this.isWindowFrontRightOpen,
     this.isWindowRearLeftOpen,

@@ -34,7 +34,8 @@ import 'package:konapod/theme/hyundai_theme.dart';
 class TyreTile extends StatelessWidget {
   final String label;
   final bool? warning;
-  const TyreTile(this.label, this.warning, {super.key});
+  final String? pressure;
+  const TyreTile(this.label, this.warning, {super.key, this.pressure});
   @override
   Widget build(BuildContext context) {
     final warn = warning == true;
@@ -68,6 +69,15 @@ class TyreTile extends StatelessWidget {
               ),
             ),
           ),
+          if (pressure != null)
+            Text(
+              pressure!,
+              style: TextStyle(
+                color: warn ? HyundaiColors.error : cs.onSurfaceVariant,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
         ],
       ),
     );
