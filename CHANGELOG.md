@@ -35,6 +35,7 @@ Williams.
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Add EV Efficiency [0.2.10 20260318 gjw]
 + Code update to use Gap() [0.2.9 20260318 gjw]
 + Fine tuning the home page [0.2.8 20260318 gjw]
 + Further cleanup [0.2.7 20260317 gjw]
