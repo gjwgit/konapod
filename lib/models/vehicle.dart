@@ -152,6 +152,7 @@ class Vehicle {
   // ── Timestamps ───────────────────────────────────────────────────────────
   final DateTime? lastUpdated;
   final DateTime? fetchedAt;
+  final DateTime? registrationDate;
 
   const Vehicle({
     required this.id,
@@ -235,6 +236,7 @@ class Vehicle {
     this.extras = const {},
     this.lastUpdated,
     this.fetchedAt,
+    this.registrationDate,
   });
 
   bool get isEV => fuelType == 'EV' || fuelType == 'PHEV';

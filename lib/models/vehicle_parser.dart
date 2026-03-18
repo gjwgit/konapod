@@ -1,6 +1,6 @@
 /// Parses raw Bluelink API JSON into a Vehicle; provides mock data.
 ///
-// Time-stamp: <Monday 2026-03-17 00:00:00 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 22:11:25 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -144,6 +144,7 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
     'daily_stats',
     'last_updated_at',
     'fetchedAt',
+    'registration_date',
   };
   final extras = <String, dynamic>{};
   for (final entry in j.entries) {
@@ -270,6 +271,9 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
         : null,
     fetchedAt: j['fetchedAt'] != null
         ? DateTime.tryParse(j['fetchedAt'].toString())
+        : null,
+    registrationDate: j['registration_date'] != null
+        ? DateTime.tryParse(j['registration_date'].toString())
         : null,
   );
 }

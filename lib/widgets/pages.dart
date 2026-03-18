@@ -1,6 +1,6 @@
 /// Top-level page widgets: Status, Energy, Comfort, and placeholder.
 ///
-// Time-stamp: <Wednesday 2026-03-18 21:41:13 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-03-18 22:06:27 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -50,7 +50,11 @@ class StatusPage extends StatelessWidget {
         children: [
           HeroCard(v: v),
           const Gap(16),
-          _TimestampRow(lastUpdated: v.lastUpdated, fetchedAt: v.fetchedAt),
+          _TimestampRow(
+            lastUpdated: v.lastUpdated,
+            fetchedAt: v.fetchedAt,
+            registrationDate: v.registrationDate,
+          ),
           const Gap(16),
           const SectionLabel('Doors & Security'),
           DoorsSection(v: v),
@@ -194,7 +198,12 @@ class NoDataPlaceholder extends StatelessWidget {
 class _TimestampRow extends StatelessWidget {
   final DateTime? lastUpdated;
   final DateTime? fetchedAt;
-  const _TimestampRow({this.lastUpdated, this.fetchedAt});
+  final DateTime? registrationDate;
+  const _TimestampRow({
+    this.lastUpdated,
+    this.fetchedAt,
+    this.registrationDate,
+  });
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -207,6 +216,9 @@ class _TimestampRow extends StatelessWidget {
         const Gap(16),
         if (fetchedAt != null)
           _TsLine('Fetched at', fmt.format(fetchedAt!), cs),
+        const Gap(16),
+        if (registrationDate != null)
+          _TsLine('Data collected since', fmt.format(registrationDate!), cs),
       ],
     );
   }
