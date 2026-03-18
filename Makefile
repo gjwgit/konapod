@@ -2,7 +2,7 @@
 #
 # Generic Makefile
 #
-# Time-stamp: <Wednesday 2026-03-18 09:47:13 +1100 Graham Williams>
+# Time-stamp: <Wednesday 2026-03-18 12:22:03 +1100 Graham Williams>
 #
 # Copyright (c) Graham.Williams@togaware.com
 #
@@ -191,5 +191,9 @@ ginfo:
 
 .PHONY: zip
 zip:
-	rm -f ignore/lib.zip
-	zip -r ignore/lib.zip lib
+	rm -f ignore/my_lib.zip
+	zip -r ignore/my_lib.zip lib
+
+.PHONY: claude
+claude:
+	bash support/meld_zip_from_claude.sh
