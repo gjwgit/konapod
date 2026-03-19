@@ -33,7 +33,9 @@ import 'package:intl/intl.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 import 'package:konapod/widgets/primitives.dart';
-import 'package:konapod/widgets/tiles.dart';
+import 'package:konapod/widgets/door_tile.dart';
+import 'package:konapod/widgets/kv_table.dart';
+import 'package:konapod/widgets/tyre_tile.dart';
 
 class ClimateSection extends StatelessWidget {
   final Vehicle v;

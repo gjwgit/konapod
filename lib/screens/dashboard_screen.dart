@@ -37,7 +37,10 @@ import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 import 'package:konapod/widgets/sections_comfort.dart';
 import 'package:konapod/widgets/sections_energy.dart';
-import 'package:konapod/widgets/sections_status.dart';
+import 'package:konapod/widgets/doors_section.dart';
+import 'package:konapod/widgets/hero_card.dart';
+import 'package:konapod/widgets/warnings_section.dart';
+import 'package:konapod/widgets/windows_section.dart';
 import 'package:konapod/widgets/stat_card.dart';
 
 class DashboardScreen extends StatelessWidget {

@@ -41,7 +41,12 @@ import 'package:konapod/screens/stats_screen.dart';
 import 'package:konapod/screens/visuals_screen.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
-import 'package:konapod/widgets/pages.dart';
+import 'package:konapod/pages/comfort.dart';
+import 'package:konapod/pages/energy.dart';
+import 'package:konapod/pages/no_data_placeholder.dart';
+import 'package:konapod/pages/section_label.dart';
+import 'package:konapod/pages/status.dart';
+import 'package:konapod/pages/timestamp_row.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
 /// Provides left nav, top app bar, status bar, and per-section pages.
