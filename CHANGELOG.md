@@ -36,6 +36,7 @@ Williams.
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Add stats page [0.2.13 20260319 gjw]
 + Refactor pages into class specific files [0.2.12 20260319 gjw]
 + Add registration date [0.2.11 20260319 gjw]
 + Add EV Efficiency [0.2.10 20260318 gjw]
