@@ -30,7 +30,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/vehicle.dart';
-import 'package:konapod/pages/section_label.dart';
+import 'package:konapod/widgets/section_label.dart';
 import 'package:konapod/widgets/sections_comfort.dart';
 
 class ComfortPage extends StatelessWidget {
