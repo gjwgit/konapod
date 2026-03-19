@@ -156,3 +156,29 @@ Add to `ios/Runner/Info.plist`:
     <true/>
 </dict>
 ```
+
+## Showcase
+
+Login Screen
+
+![](./assets/screenshots/login.png)
+
+Changelog Screen
+
+![](./assets/screenshots/changelog.png)
+
+Status Page
+
+![](./assets/screenshots/status.png)
+
+Energy Page
+
+![](./assets/screenshots/energy.png)
+
+Visuals Page
+
+![](./assets/screenshots/visuals.png)
+
+History Page
+
+![](./assets/screenshots/history.png)
