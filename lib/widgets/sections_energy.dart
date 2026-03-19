@@ -147,30 +147,32 @@ class BatterySection extends StatelessWidget {
               if (v.batteryCapacityKwh != null)
                 _HeroChip(
                   'Capacity',
-                  '${(v.batteryCapacityKwh! / 1000).toStringAsFixed(1)} kWh',
+                  '${(v.batteryCapacityKwh! / 3600).toStringAsFixed(1)} kWh',
                   Icons.bolt,
                   tooltip: '**Battery Capacity**\n\n'
                       'The total amount of energy the battery can store, '
-                      'measured in kilowatt-hours (kWh).\n\n'
+                      'shown here in kilowatt-hours (kWh).\n\n'
                       'Think of it like the size of a fuel tank — a bigger number '
                       'means more energy available for driving. '
-                      'The Kona EV has a 65.4 kWh gross capacity.\n\n'
-                      'Note: a small portion is reserved by the battery management '
-                      'system as a buffer, so usable capacity is slightly less.',
+                      'The Kona EV has a 64.8 kWh usable capacity.\n\n'
+                      '*Note: the API reports this in kilojoules (kJ); '
+                      'dividing by 3600 converts to kWh.*',
                 ),
               if (v.batteryRemainKwh != null)
                 _HeroChip(
                   'Remaining',
-                  '${(v.batteryRemainKwh! / 1000).toStringAsFixed(1)} kWh',
+                  '${(v.batteryRemainKwh! / 3600).toStringAsFixed(1)} kWh',
                   Icons.battery_full,
                   tooltip: '**Energy Remaining**\n\n'
                       'How much energy is currently stored in the battery, '
-                      'in kilowatt-hours (kWh).\n\n'
+                      'shown here in kilowatt-hours (kWh).\n\n'
                       'This is your battery percentage expressed as actual energy. '
-                      'For example, 58% charge on a 65 kWh battery '
-                      '= roughly 38 kWh remaining.\n\n'
-                      'Divide this by your typical consumption (kWh/100km) '
-                      'to estimate how far you can drive.',
+                      'For example, 58% of a 64.8 kWh battery '
+                      '= roughly 37.6 kWh remaining.\n\n'
+                      'Divide by your typical consumption (kWh/100km) '
+                      'to estimate how far you can drive.\n\n'
+                      '*Note: the API reports this in kilojoules (kJ); '
+                      'dividing by 3600 converts to kWh.*',
                 ),
               if (v.batterySohPercent != null)
                 _HeroChip(
@@ -187,7 +189,31 @@ class BatterySection extends StatelessWidget {
                       'Most manufacturers guarantee batteries stay above **70% SoH** '
                       'for 8 years or 160,000 km. Real-world data shows most EVs '
                       'lose only 2–3% per year in normal use.\n\n'
-                      'A 90% SoH on a 65 kWh battery means it now holds ~58.5 kWh.',
+                      'A 90% SoH on a 64.8 kWh battery means it now holds ~58.3 kWh.',
+                ),
+              if (v.totalPowerConsumedKwh != null)
+                _HeroChip(
+                  'Total Consumed',
+                  '${v.totalPowerConsumedKwh!} kWh',
+                  Icons.electric_meter,
+                  tooltip: '**Lifetime Total Consumed**\n\n'
+                      'The total energy drawn from the battery across all driving '
+                      'since the car was new, in kilowatt-hours (kWh).\n\n'
+                      'This is the cumulative odometer of energy use. '
+                      'Divide by total kilometres driven to get your lifetime '
+                      'average efficiency.',
+                ),
+              if (v.powerConsumption30dKwh != null)
+                _HeroChip(
+                  'Last 30 Days',
+                  '${v.powerConsumption30dKwh!} kWh',
+                  Icons.calendar_month,
+                  tooltip: '**Last 30 Days Consumption**\n\n'
+                      'Total energy consumed over the past 30 days, '
+                      'in kilowatt-hours (kWh).\n\n'
+                      'A useful measure of recent usage patterns. '
+                      'Divide by the distance driven in 30 days to see your '
+                      'recent average efficiency.',
                 ),
             ],
           ),
@@ -562,7 +588,6 @@ class EfficiencySection extends StatelessWidget {
                     style: TextStyle(
                       color: cs.onSurfaceVariant,
                       fontSize: 13,
-                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ],

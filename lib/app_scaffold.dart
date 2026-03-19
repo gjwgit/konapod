@@ -37,6 +37,7 @@ import 'package:solidui/solidui.dart';
 import 'package:konapod/constants/app.dart';
 import 'package:konapod/screens/history_screen.dart';
 import 'package:konapod/screens/settings_screen.dart';
+import 'package:konapod/screens/stats_screen.dart';
 import 'package:konapod/screens/visuals_screen.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -173,6 +174,17 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: _PageWrapper(
             title: 'Visuals',
             child: VisualsScreen(),
+          ),
+        ),
+        SolidMenuItem(
+          title: 'Stats',
+          icon: Icons.query_stats,
+          tooltip: '**Stats**\n\nDetailed consumption and efficiency statistics\nderived from your daily driving history.',
+          child: _PageWrapper(
+            title: 'Stats',
+            child: v != null
+                ? StatsScreen()
+                : NoDataPlaceholder(provider: provider),
           ),
         ),
         const SolidMenuItem(

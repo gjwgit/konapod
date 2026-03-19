@@ -142,6 +142,9 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
     'total_driving_range',
     'daily_driving_distance',
     'daily_stats',
+    'total_power_consumed',
+    'power_consumption_30d',
+    'total_power_regenerated',
     'last_updated_at',
     'fetchedAt',
     'registration_date',
@@ -205,8 +208,8 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
     estimatedFastChargeMins: d(j['ev_estimated_fast_charge_duration']),
     estimatedPortableChargeMins: d(j['ev_estimated_portable_charge_duration']),
     estimatedStationChargeMins: d(j['ev_estimated_station_charge_duration']),
-    targetSocAC: i(j['ev_target_range_charge_AC'] ?? j['ev_charge_limits_ac']),
-    targetSocDC: i(j['ev_target_range_charge_DC'] ?? j['ev_charge_limits_dc']),
+    targetSocAC: i(j['ev_charge_limits_ac']),
+    targetSocDC: i(j['ev_charge_limits_dc']),
     isChargeScheduledOn: b(j['ev_charge_scheduled_on']),
     ev12vPercent: d(j['ev_12v_percentage']),
     efficiencyLatestTrip: d(
@@ -265,6 +268,8 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
         .whereType<DailyDrivingStat>()
         .toList()
       ..sort((a, b) => a.date.compareTo(b.date)),
+    totalPowerConsumedKwh: i(j['total_power_consumed']),
+    powerConsumption30dKwh: i(j['power_consumption_30d']),
     extras: extras,
     lastUpdated: j['last_updated_at'] != null
         ? DateTime.tryParse(j['last_updated_at'].toString())

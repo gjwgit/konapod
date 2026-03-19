@@ -145,6 +145,10 @@ class Vehicle {
   final double? totalDrivenKm;
   final double? dailyDrivenKm;
   final List<DailyDrivingStat> dailyStats;
+  /// Lifetime total power consumed, in Wh (from API field total_power_consumed).
+  final int? totalPowerConsumedKwh;
+  /// Power consumed in the last 30 days, in Wh (from API field power_consumption_30d).
+  final int? powerConsumption30dKwh;
 
   // ── Raw extras (everything else non-null from API) ───────────────────────
   final Map<String, dynamic> extras;
@@ -233,6 +237,8 @@ class Vehicle {
     this.totalDrivenKm,
     this.dailyDrivenKm,
     this.dailyStats = const [],
+    this.totalPowerConsumedKwh,
+    this.powerConsumption30dKwh,
     this.extras = const {},
     this.lastUpdated,
     this.fetchedAt,
@@ -242,6 +248,47 @@ class Vehicle {
   bool get isEV => fuelType == 'EV' || fuelType == 'PHEV';
   bool get isICE =>
       fuelType == 'ICE' || fuelType == 'HEV' || fuelType == 'PHEV';
+
+  // ── Computed stats from dailyStats ───────────────────────────────────────
+  /// Total distance across all daily stats entries, in km.
+  double get statsTotalDistanceKm =>
+      dailyStats.fold(0.0, (s, d) => s + d.distanceKm);
+
+  /// Total energy consumed across all daily stats entries, in kWh.
+  double get statsTotalConsumedKwh =>
+      dailyStats.fold(0.0, (s, d) => s + (d.totalConsumed ?? 0)) / 1000;
+
+  /// Total energy regenerated across all daily stats entries, in kWh.
+  double get statsTotalRegenKwh =>
+      dailyStats.fold(0.0, (s, d) => s + (d.regeneratedEnergy ?? 0)) / 1000;
+
+  /// Net consumption (consumed − regen) across all daily stats entries, in kWh.
+  double get statsNetConsumedKwh => statsTotalConsumedKwh - statsTotalRegenKwh;
+
+  /// Average net efficiency across all daily stats entries, in kWh/100km.
+  double? get statsAvgEfficiency {
+    final km = statsTotalDistanceKm;
+    if (km == 0) return null;
+    return statsNetConsumedKwh / km * 100;
+  }
+
+  /// Best (lowest net kWh/100km) daily stat.
+  DailyDrivingStat? get statsBestDay {
+    final days = dailyStats.where((d) => d.distanceKm > 0).toList();
+    if (days.isEmpty) return null;
+    return days.reduce((a, b) => a.netEfficiencyKwhPer100km <
+            b.netEfficiencyKwhPer100km
+        ? a
+        : b);
+  }
+
+  /// Worst (highest net kWh/100km) daily stat.
+  DailyDrivingStat? get statsWorstDay {
+    final days = dailyStats.where((d) => d.distanceKm > 0).toList();
+    if (days.isEmpty) return null;
+    return days.reduce((a, b) =>
+        a.netEfficiencyKwhPer100km > b.netEfficiencyKwhPer100km ? a : b);
+  }
 
   factory Vehicle.fromApiJson(Map<String, dynamic> j) =>
       parseVehicleFromJson(j);
