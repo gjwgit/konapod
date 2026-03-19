@@ -36,6 +36,7 @@ Williams.
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Restructure in separate pages folder [0.2.14 20260319 gjw]
 + Add stats page [0.2.13 20260319 gjw]
 + Refactor pages into class specific files [0.2.12 20260319 gjw]
 + Add registration date [0.2.11 20260319 gjw]
