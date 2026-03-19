@@ -161,24 +161,24 @@ Add to `ios/Runner/Info.plist`:
 
 Login Screen
 
-![](./assets/screenshots/login.png)
+![Login Screen](./assets/screenshots/login.png)
 
 Changelog Screen
 
-![](./assets/screenshots/changelog.png)
+![Change Log](./assets/screenshots/changelog.png)
 
 Status Page
 
-![](./assets/screenshots/status.png)
+![Status Page](./assets/screenshots/status.png)
 
 Energy Page
 
-![](./assets/screenshots/energy.png)
+![Energy Page](./assets/screenshots/energy.png)
 
 Visuals Page
 
-![](./assets/screenshots/visuals.png)
+![Visuals Page](./assets/screenshots/visuals.png)
 
 History Page
 
-![](./assets/screenshots/history.png)
+![History Page](./assets/screenshots/history.png)
