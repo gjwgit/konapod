@@ -145,8 +145,10 @@ class Vehicle {
   final double? totalDrivenKm;
   final double? dailyDrivenKm;
   final List<DailyDrivingStat> dailyStats;
+
   /// Lifetime total power consumed, in Wh (from API field total_power_consumed).
   final int? totalPowerConsumedKwh;
+
   /// Power consumed in the last 30 days, in Wh (from API field power_consumption_30d).
   final int? powerConsumption30dKwh;
 
@@ -276,18 +278,18 @@ class Vehicle {
   DailyDrivingStat? get statsBestDay {
     final days = dailyStats.where((d) => d.distanceKm > 0).toList();
     if (days.isEmpty) return null;
-    return days.reduce((a, b) => a.netEfficiencyKwhPer100km <
-            b.netEfficiencyKwhPer100km
-        ? a
-        : b);
+    return days.reduce(
+      (a, b) => a.netEfficiencyKwhPer100km < b.netEfficiencyKwhPer100km ? a : b,
+    );
   }
 
   /// Worst (highest net kWh/100km) daily stat.
   DailyDrivingStat? get statsWorstDay {
     final days = dailyStats.where((d) => d.distanceKm > 0).toList();
     if (days.isEmpty) return null;
-    return days.reduce((a, b) =>
-        a.netEfficiencyKwhPer100km > b.netEfficiencyKwhPer100km ? a : b);
+    return days.reduce(
+      (a, b) => a.netEfficiencyKwhPer100km > b.netEfficiencyKwhPer100km ? a : b,
+    );
   }
 
   factory Vehicle.fromApiJson(Map<String, dynamic> j) =>

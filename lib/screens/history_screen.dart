@@ -258,16 +258,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         )
                       else
                         IconButton(
-                          icon: MarkdownTooltip(
+                          icon: const MarkdownTooltip(
                             message: 'Load this snapshot into the dashboard.',
-                            child: const Icon(Icons.download_outlined),
+                            child: Icon(Icons.download_outlined),
                           ),
                           onPressed: () => _loadFile(f),
                         ),
                       IconButton(
-                        icon: MarkdownTooltip(
-                          message: '**Delete** this snapshot permanently\n\nThis cannot be undone.',
-                          child: const Icon(Icons.delete_outline),
+                        icon: const MarkdownTooltip(
+                          message:
+                              '**Delete** this snapshot permanently\n\nThis cannot be undone.',
+                          child: Icon(Icons.delete_outline),
                         ),
                         color: HyundaiColors.error,
                         onPressed: isDeleting ? null : () => _confirmDelete(f),

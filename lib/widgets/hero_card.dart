@@ -157,7 +157,7 @@ class HeroCard extends StatelessWidget {
                   active: v.isClimateOn == true,
                   activeLabel: 'Climate On',
                   inactiveLabel: 'Climate Off',
-                  activeColor: Color(0xFF00B4D8),
+                  activeColor: const Color(0xFF00B4D8),
                 ),
               ),
               MarkdownTooltip(

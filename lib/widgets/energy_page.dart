@@ -30,8 +30,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/vehicle.dart';
-import 'package:konapod/widgets/sections_energy.dart';
 import 'package:konapod/widgets/section_label.dart';
+import 'package:konapod/widgets/sections_energy.dart';
 
 class EnergyPage extends StatelessWidget {
   final Vehicle v;

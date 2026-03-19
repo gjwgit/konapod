@@ -31,7 +31,6 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:konapod/models/daily_driving_stat.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -456,8 +455,12 @@ class _ConsumptionSummary extends StatelessWidget {
 
     final fmt = DateFormat('EEE d MMM');
 
-    Widget row(String label, String value,
-            {Color? valueColor, bool bold = false}) =>
+    Widget row(
+      String label,
+      String value, {
+      Color? valueColor,
+      bool bold = false,
+    }) =>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
           child: Row(
@@ -535,11 +538,17 @@ class _ConsumptionSummary extends StatelessWidget {
           divider(),
           row('Consumed', '${totalConsumed.toStringAsFixed(2)} kWh'),
           divider(),
-          row('Regenerated', '− ${totalRegen.toStringAsFixed(2)} kWh',
-              valueColor: HyundaiColors.success),
+          row(
+            'Regenerated',
+            '− ${totalRegen.toStringAsFixed(2)} kWh',
+            valueColor: HyundaiColors.success,
+          ),
           divider(),
-          row('Net Consumed', '${netConsumed.toStringAsFixed(2)} kWh',
-              bold: true),
+          row(
+            'Net Consumed',
+            '${netConsumed.toStringAsFixed(2)} kWh',
+            bold: true,
+          ),
 
           // Breakdown
           if (engineKwh > 0 ||
@@ -568,8 +577,11 @@ class _ConsumptionSummary extends StatelessWidget {
           // Efficiency
           heading('Efficiency'),
           if (avgEff != null) ...[
-            row('Average (net)', '${avgEff.toStringAsFixed(1)} kWh/100km',
-                bold: true),
+            row(
+              'Average (net)',
+              '${avgEff.toStringAsFixed(1)} kWh/100km',
+              bold: true,
+            ),
             divider(),
           ],
           if (best != null) ...[
@@ -592,13 +604,17 @@ class _ConsumptionSummary extends StatelessWidget {
               v.powerConsumption30dKwh != null) ...[
             heading('From Bluelink API'),
             if (v.powerConsumption30dKwh != null) ...[
-              row('Last 30 days',
-                  '${v.powerConsumption30dKwh!} kWh'),
+              row(
+                'Last 30 days',
+                '${v.powerConsumption30dKwh!} kWh',
+              ),
               divider(),
             ],
             if (v.totalPowerConsumedKwh != null)
-              row('Lifetime total',
-                  '${v.totalPowerConsumedKwh!} kWh'),
+              row(
+                'Lifetime total',
+                '${v.totalPowerConsumedKwh!} kWh',
+              ),
           ],
           const SizedBox(height: 8),
         ],

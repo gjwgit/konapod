@@ -1,6 +1,6 @@
 /// Energy section widgets: EV battery, charging status, fuel level.
 ///
-// Time-stamp: <Thursday 2026-03-19 05:36:28 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-03-19 15:05:46 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -109,7 +109,7 @@ class BatterySection extends StatelessWidget {
                 ),
               if (v.isChargingOn == true) ...[
                 const Gap(8),
-                StatusBadge(
+                const StatusBadge(
                   active: true,
                   activeLabel: 'Charging',
                   inactiveLabel: '',
@@ -314,10 +314,14 @@ class BatterySection extends StatelessWidget {
 class _HeroChip extends StatelessWidget {
   final String label, value;
   final IconData icon;
-  final Color? color;
+  final Color? color = Colors.white;
   final String? tooltip;
-  const _HeroChip(this.label, this.value, this.icon,
-      {this.color, this.tooltip});
+  const _HeroChip(
+    this.label,
+    this.value,
+    this.icon, {
+    this.tooltip,
+  });
   @override
   Widget build(BuildContext context) {
     final chip = Row(
@@ -351,7 +355,7 @@ class _HeroChip extends StatelessWidget {
 
 class BatteryStatusCard extends StatelessWidget {
   final Vehicle v;
-  const BatteryStatusCard({required this.v});
+  const BatteryStatusCard({super.key, required this.v});
 
   @override
   Widget build(BuildContext context) {
@@ -556,8 +560,7 @@ class EfficiencySection extends StatelessWidget {
           return MarkdownTooltip(
             message: tip,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
               child: Row(
                 children: [
                   Expanded(

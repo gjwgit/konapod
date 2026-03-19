@@ -1,6 +1,6 @@
 /// Bluelink service: spawns Python subprocess to fetch live vehicle data.
 ///
-// Time-stamp: <Wednesday 2026-03-18 16:39:17 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-03-19 15:02:59 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -67,7 +67,7 @@ class BluelinkService {
     for (final cmd in ['python3', 'python']) {
       try {
         final r = await Process.run(cmd, ['--version']);
-        print("PYTHON $r $cmd");
+        debugPrint('PYTHON $r $cmd');
         if (r.exitCode == 0) return cmd;
       } catch (e) {
         debugPrint('[Bluelink] Python check failed for $cmd: $e');
@@ -111,7 +111,7 @@ class BluelinkService {
 
     final check =
         await Process.run(python, ['-c', 'import hyundai_kia_connect_api']);
-    print("IMPORT $python hyundai_kia_connect_api");
+    debugPrint('IMPORT $python hyundai_kia_connect_api');
     if (check.exitCode != 0) {
       throw BluelinkApiException(
         'Python library not installed.\nRun: pip install hyundai-kia-connect-api',
@@ -132,8 +132,8 @@ class BluelinkService {
 
     final stdout = (result.stdout as String).trim();
     final stderr = (result.stderr as String).trim();
-    print("STDOUT $stdout");
-    print("STDERR $stderr");
+    debugPrint('STDOUT $stdout');
+    debugPrint('STDERR $stderr');
     dev.log('[Bluelink] exit=${result.exitCode}', name: 'BluelinkService');
     if (stderr.isNotEmpty) {
       dev.log('[Bluelink] stderr=$stderr', name: 'BluelinkService');

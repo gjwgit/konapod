@@ -32,7 +32,6 @@ import 'package:intl/intl.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
 
-import 'package:konapod/models/daily_driving_stat.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -61,15 +60,16 @@ class StatsScreen extends StatelessWidget {
                     .withValues(alpha: 0.3),
               ),
               const Gap(16),
-              const Text('No vehicle data',
-                  style: TextStyle(fontSize: 16)),
+              const Text(
+                'No vehicle data',
+                style: TextStyle(fontSize: 16),
+              ),
               const Gap(8),
               Text(
                 'Load data from Bluelink or your Solid Pod to see statistics.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -234,14 +234,25 @@ class _OverviewCard extends StatelessWidget {
                 'so this will be less than the odometer if the car was '
                 'driven before Bluelink was set up.',
           ),
-          Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+          Divider(
+            height: 1,
+            color: cs.outlineVariant,
+            indent: 16,
+            endIndent: 16,
+          ),
           _StatRow(
             'Average per day',
             '${avgDist.toStringAsFixed(1)} km',
-            tooltip: '**Average Daily Distance**\n\nTotal distance ÷ number of days.',
+            tooltip:
+                '**Average Daily Distance**\n\nTotal distance ÷ number of days.',
           ),
           if (v.odometerKm != null) ...[
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
             _StatRow(
               'Odometer (total)',
               '${NumberFormat('#,##0').format(v.odometerKm!.round())} km',
@@ -258,7 +269,12 @@ class _OverviewCard extends StatelessWidget {
                 'Total energy drawn from the battery across all recorded days. '
                 'Does not include any energy used before the registration date.',
           ),
-          Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+          Divider(
+            height: 1,
+            color: cs.outlineVariant,
+            indent: 16,
+            endIndent: 16,
+          ),
           _StatRow(
             'Regenerated',
             '− ${regen.toStringAsFixed(2)} kWh',
@@ -268,7 +284,12 @@ class _OverviewCard extends StatelessWidget {
                 'battery. The motor acts as a generator when you slow down, '
                 'converting kinetic energy back into electricity.',
           ),
-          Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+          Divider(
+            height: 1,
+            color: cs.outlineVariant,
+            indent: 16,
+            endIndent: 16,
+          ),
           _StatRow(
             'Net consumed',
             '${net.toStringAsFixed(2)} kWh',
@@ -287,7 +308,12 @@ class _OverviewCard extends StatelessWidget {
                   'directly by the Bluelink API.',
             ),
             if (v.totalPowerConsumedKwh != null) ...[
-              Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+              Divider(
+                height: 1,
+                color: cs.outlineVariant,
+                indent: 16,
+                endIndent: 16,
+              ),
               _StatRow(
                 'Lifetime total',
                 '${v.totalPowerConsumedKwh!} kWh',
@@ -322,9 +348,22 @@ class _EfficiencyCard extends StatelessWidget {
 
     // Percentile distribution: count days by efficiency band
     final driving = stats.where((d) => d.distanceKm > 0).toList();
-    final excellent = driving.where((d) => d.netEfficiencyKwhPer100km < 14).length;
-    final good = driving.where((d) => d.netEfficiencyKwhPer100km >= 14 && d.netEfficiencyKwhPer100km < 17).length;
-    final fair = driving.where((d) => d.netEfficiencyKwhPer100km >= 17 && d.netEfficiencyKwhPer100km < 20).length;
+    final excellent =
+        driving.where((d) => d.netEfficiencyKwhPer100km < 14).length;
+    final good = driving
+        .where(
+          (d) =>
+              d.netEfficiencyKwhPer100km >= 14 &&
+              d.netEfficiencyKwhPer100km < 17,
+        )
+        .length;
+    final fair = driving
+        .where(
+          (d) =>
+              d.netEfficiencyKwhPer100km >= 17 &&
+              d.netEfficiencyKwhPer100km < 20,
+        )
+        .length;
     final poor = driving.where((d) => d.netEfficiencyKwhPer100km >= 20).length;
 
     return _card(
@@ -333,7 +372,10 @@ class _EfficiencyCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _heading(context, 'Efficiency'),
-          _subheading(context, 'Net kWh/100km since registration · consumed − regenerated'),
+          _subheading(
+            context,
+            'Net kWh/100km since registration · consumed − regenerated',
+          ),
           if (avgEff != null) ...[
             _StatRow(
               'Average',
@@ -345,7 +387,12 @@ class _EfficiencyCard extends StatelessWidget {
                   'Real-world figures of 14–18 kWh/100km are typical depending on '
                   'speed, temperature and driving style.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           if (v.efficiencyOverall != null) ...[
             _StatRow(
@@ -355,38 +402,73 @@ class _EfficiencyCard extends StatelessWidget {
                   'Long-run average reported by the car\'s onboard computer '
                   'across all driving since new.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           if (best != null) ...[
             _StatRow(
               'Best  ${fmt.format(best.date)}',
               '${best.netEfficiencyKwhPer100km.toStringAsFixed(1)} kWh/100km',
               valueColor: HyundaiColors.success,
-              tooltip: '**Best Day**\n\nThe most energy-efficient day in the dataset.\n\n'
+              tooltip:
+                  '**Best Day**\n\nThe most energy-efficient day in the dataset.\n\n'
                   'Low-speed urban driving with frequent regenerative braking '
                   'typically produces the best efficiency figures.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           if (worst != null) ...[
             _StatRow(
               'Worst  ${fmt.format(worst.date)}',
               '${worst.netEfficiencyKwhPer100km.toStringAsFixed(1)} kWh/100km',
               valueColor: HyundaiColors.warning,
-              tooltip: '**Worst Day**\n\nThe least energy-efficient day in the dataset.\n\n'
+              tooltip:
+                  '**Worst Day**\n\nThe least energy-efficient day in the dataset.\n\n'
                   'Highway driving at speed, cold weather, and heavy climate '
                   'use all increase energy consumption per km.',
             ),
           ],
           if (driving.isNotEmpty) ...[
-            _subheading(context, 'Day distribution (${driving.length} driving days)'),
-            _BandBar(label: '< 14  Excellent', count: excellent, total: driving.length, color: HyundaiColors.success),
+            _subheading(
+              context,
+              'Day distribution (${driving.length} driving days)',
+            ),
+            _BandBar(
+              label: '< 14  Excellent',
+              count: excellent,
+              total: driving.length,
+              color: HyundaiColors.success,
+            ),
             const Gap(4),
-            _BandBar(label: '14–17  Good', count: good, total: driving.length, color: HyundaiColors.accent),
+            _BandBar(
+              label: '14–17  Good',
+              count: good,
+              total: driving.length,
+              color: HyundaiColors.accent,
+            ),
             const Gap(4),
-            _BandBar(label: '17–20  Fair', count: fair, total: driving.length, color: HyundaiColors.warning),
+            _BandBar(
+              label: '17–20  Fair',
+              count: fair,
+              total: driving.length,
+              color: HyundaiColors.warning,
+            ),
             const Gap(4),
-            _BandBar(label: '≥ 20   Poor', count: poor, total: driving.length, color: HyundaiColors.error),
+            _BandBar(
+              label: '≥ 20   Poor',
+              count: poor,
+              total: driving.length,
+              color: HyundaiColors.error,
+            ),
           ],
           const SizedBox(height: 14),
         ],
@@ -399,7 +481,12 @@ class _BandBar extends StatelessWidget {
   final String label;
   final int count, total;
   final Color color;
-  const _BandBar({required this.label, required this.count, required this.total, required this.color});
+  const _BandBar({
+    required this.label,
+    required this.count,
+    required this.total,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -456,10 +543,14 @@ class _BreakdownCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    final engine = stats.fold(0.0, (s, d) => s + (d.engineConsumption ?? 0)) / 1000;
-    final climate = stats.fold(0.0, (s, d) => s + (d.climateConsumption ?? 0)) / 1000;
-    final electronics = stats.fold(0.0, (s, d) => s + (d.electronicsConsumption ?? 0)) / 1000;
-    final batteryCare = stats.fold(0.0, (s, d) => s + (d.batteryCareConsumption ?? 0)) / 1000;
+    final engine =
+        stats.fold(0.0, (s, d) => s + (d.engineConsumption ?? 0)) / 1000;
+    final climate =
+        stats.fold(0.0, (s, d) => s + (d.climateConsumption ?? 0)) / 1000;
+    final electronics =
+        stats.fold(0.0, (s, d) => s + (d.electronicsConsumption ?? 0)) / 1000;
+    final batteryCare =
+        stats.fold(0.0, (s, d) => s + (d.batteryCareConsumption ?? 0)) / 1000;
     final total = engine + climate + electronics + batteryCare;
 
     if (total == 0) return const SizedBox.shrink();
@@ -482,7 +573,12 @@ class _BreakdownCard extends StatelessWidget {
                   'Energy used to propel the car — turning the wheels via the '
                   'electric motor. This is the dominant consumer in most conditions.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           if (climate > 0) ...[
             _StatRow(
@@ -495,7 +591,12 @@ class _BreakdownCard extends StatelessWidget {
                   'heating in winter is particularly energy-intensive on EVs '
                   'as there is no waste engine heat to use.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           if (electronics > 0) ...[
             _StatRow(
@@ -506,7 +607,12 @@ class _BreakdownCard extends StatelessWidget {
                   'lighting, power steering, instrument cluster, cameras and '
                   'other auxiliary loads.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           if (batteryCare > 0) ...[
             _StatRow(
@@ -518,7 +624,12 @@ class _BreakdownCard extends StatelessWidget {
                   'to keep it within its optimal operating temperature range. '
                   'Protects battery longevity but consumes a small amount of energy.',
             ),
-            Divider(height: 1, color: cs.outlineVariant, indent: 16, endIndent: 16),
+            Divider(
+              height: 1,
+              color: cs.outlineVariant,
+              indent: 16,
+              endIndent: 16,
+            ),
           ],
           _StatRow('Total', '${total.toStringAsFixed(2)} kWh', bold: true),
           const SizedBox(height: 8),
@@ -542,8 +653,10 @@ class _DailyLeaderboard extends StatelessWidget {
     final driving = stats
         .where((d) => d.distanceKm > 0 && (d.totalConsumed ?? 0) > 0)
         .toList()
-      ..sort((a, b) =>
-          a.netEfficiencyKwhPer100km.compareTo(b.netEfficiencyKwhPer100km));
+      ..sort(
+        (a, b) =>
+            a.netEfficiencyKwhPer100km.compareTo(b.netEfficiencyKwhPer100km),
+      );
 
     if (driving.isEmpty) return const SizedBox.shrink();
 
@@ -559,29 +672,38 @@ class _DailyLeaderboard extends StatelessWidget {
               children: [
                 const SizedBox(width: 24),
                 Expanded(
-                  child: Text('Date',
-                      style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'Date',
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 SizedBox(
                   width: 60,
-                  child: Text('km',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'km',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 SizedBox(
                   width: 100,
-                  child: Text('kWh/100km',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600)),
+                  child: Text(
+                    'kWh/100km',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -609,19 +731,22 @@ class _DailyLeaderboard extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       SizedBox(
                         width: 24,
-                        child: Text(medal,
-                            style: const TextStyle(fontSize: 13)),
+                        child: Text(
+                          medal,
+                          style: const TextStyle(fontSize: 13),
+                        ),
                       ),
                       Expanded(
                         child: Text(
                           fmt.format(d.date),
-                          style:
-                              TextStyle(color: cs.onSurface, fontSize: 12),
+                          style: TextStyle(color: cs.onSurface, fontSize: 12),
                         ),
                       ),
                       SizedBox(
@@ -630,7 +755,9 @@ class _DailyLeaderboard extends StatelessWidget {
                           d.distanceKm.toStringAsFixed(1),
                           textAlign: TextAlign.right,
                           style: TextStyle(
-                              color: cs.onSurfaceVariant, fontSize: 12),
+                            color: cs.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -650,10 +777,11 @@ class _DailyLeaderboard extends StatelessWidget {
                 ),
                 if (i < driving.length - 1)
                   Divider(
-                      height: 1,
-                      color: cs.outlineVariant,
-                      indent: 40,
-                      endIndent: 16),
+                    height: 1,
+                    color: cs.outlineVariant,
+                    indent: 40,
+                    endIndent: 16,
+                  ),
               ],
             );
           }),

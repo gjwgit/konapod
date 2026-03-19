@@ -30,13 +30,13 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/vehicle.dart';
-import 'package:konapod/widgets/sections_comfort.dart';
-import 'package:konapod/widgets/doors_section.dart';
-import 'package:konapod/widgets/hero_card.dart';
-import 'package:konapod/widgets/warnings_section.dart';
-import 'package:konapod/widgets/windows_section.dart';
 import 'package:konapod/pages/section_label.dart';
 import 'package:konapod/pages/timestamp_row.dart';
+import 'package:konapod/widgets/doors_section.dart';
+import 'package:konapod/widgets/hero_card.dart';
+import 'package:konapod/widgets/sections_comfort.dart';
+import 'package:konapod/widgets/warnings_section.dart';
+import 'package:konapod/widgets/windows_section.dart';
 
 class StatusPage extends StatelessWidget {
   final Vehicle v;

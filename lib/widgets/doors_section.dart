@@ -30,10 +30,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/vehicle.dart';
-import 'package:konapod/widgets/primitives.dart';
 import 'package:konapod/widgets/door_tile.dart';
-import 'package:konapod/widgets/kv_table.dart';
-import 'package:konapod/widgets/tyre_tile.dart';
+import 'package:konapod/widgets/primitives.dart';
 
 class DoorsSection extends StatelessWidget {
   final Vehicle v;

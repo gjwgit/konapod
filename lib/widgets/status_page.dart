@@ -30,9 +30,9 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/widgets/section_label.dart';
 import 'package:konapod/widgets/sections_comfort.dart';
 import 'package:konapod/widgets/sections_status.dart';
-import 'package:konapod/widgets/section_label.dart';
 import 'package:konapod/widgets/timestamp_row.dart';
 
 class StatusPage extends StatelessWidget {
