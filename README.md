@@ -89,7 +89,7 @@ for Australia / NZ but please send in PRs for other regions).
 
 ---
 
-## 🌱🚗🔋🌍 Showcase
+## 🔌🚗 Showcase 🌳🌞
 
 Login Screen
 
