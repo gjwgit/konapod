@@ -86,7 +86,6 @@ for Australia / NZ but please send in PRs for other regions).
 + **Pull-to-refresh** and refresh button
 + **Sign out**
 
-
 ---
 
 ## 🔌🚗 Showcase 🌳🌞
