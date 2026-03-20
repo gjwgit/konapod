@@ -45,8 +45,9 @@ AU](https://solidcommunity.au) repository:
   [inno](https://solidcommunity.au/installers/konapod-windows-inno.exe) or
   [zip](https://solidcommunity.au/installers/konapod-windows.zip).
 
-Installation details are available for all platforms from
-[github](https://github.com/gjwgit/konapod/blob/dev/installers/README.md).
+[Installation
+details](https://github.com/gjwgit/konapod/blob/dev/installers/README.md)
+are available for all platforms.
 
 Contributions are welcome. Visit
 [github](https://github.com/gjwgit/konapod) to submit an issue or,
@@ -54,6 +55,8 @@ even better, fork the repository yourself, update the code, and submit
 a Pull Request. The app is implemented in
 [Flutter](https://flutter.dev) using
 [solidui](https://pub.dev/packages/solidui). Thanks.
+
+---
 
 ## Introduction
 
