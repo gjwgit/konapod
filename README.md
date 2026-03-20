@@ -10,22 +10,22 @@
 [![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/gjwgit/konapod/dev)](https://github.com/gjwgit/rattle/commits/dev/)
 [![GitHub Issues](https://img.shields.io/github/issues/gjwgit/konapod)](https://github.com/gjwgit/konapod/issues)
 
-KonaPod is a tool to collect your Hyundai vehicle data
-together in one secure and private place. You can selectively share
-any parts of your life with others. The app itself presents the data
-and analyses of the data. It is being developed by
-[Togaware](https://togaware.com) and written by [Graham
-Williams](https://togaware.com/Graham.Williams.html) through Vibe
-programming with Claude Code.
+KonaPod is a tool to collect your Hyundai vehicle data together in one
+secure and private place. You can selectively share any parts of your
+data with others. The app itself presents the data and analyses of the
+data. It is being developed by [Togaware](https://togaware.com) and
+written by [Graham
+Williams](https://togaware.com/Graham.Williams.html) mostly via
+prompting Claude Code.
 
 If you appreciate the app then please show some ❤️ and star the GitHub
 Repository to support the project.
 
 The latest version of the app can be run online at
-[konapod.solidcommunity.au](https://konapod.solidcommunity.au) with
-no installation required, or downloaded and installed for your
-platform from the [Solid Community AU](https://solidcommunity.au)
-repository:
+[konapod.solidcommunity.au](https://konapod.solidcommunity.au) with no
+installation required though requiring a Bluelink login, or downloaded
+and installed for your platform from the [Solid Community
+AU](https://solidcommunity.au) repository:
 
 <!-- markdownlint-disable MD036 -->
 + **Web**
@@ -51,7 +51,8 @@ Contributions are welcome. Visit
 [github](https://github.com/gjwgit/konapod) to submit an issue or,
 even better, fork the repository yourself, update the code, and submit
 a Pull Request. The app is implemented in
-[Flutter](https://flutter.dev). Thanks.
+[Flutter](https://flutter.dev) using
+[solidui](https://pub.dev/packages/solidui). Thanks.
 
 ## Introduction
 
@@ -62,8 +63,8 @@ for Australia / NZ but please send in PRs for other regions).
 
 ## Features
 
-+ **Login** with your Bluelink email, password & PIN (saved securely via `flutter_secure_storage`)
-+ **Auto login** on relaunch — no need to re-enter credentials
++ **Login** with your Bluelink email, password & PIN
++ **Auto login** on relaunch — no need to re-enter Bluelink credentials
 + **Demo mode** — test the UI without real credentials
 + **Dashboard** showing:
   + Vehicle nickname, model, year, colour & fuel type badge
@@ -81,9 +82,38 @@ for Australia / NZ but please send in PRs for other regions).
 + **Pull-to-refresh** and refresh button
 + **Sign out**
 
+
 ---
 
-## Setup
+## Showcase
+
+Login Screen
+
+![Login Screen](./assets/screenshots/login.png)
+
+Changelog Screen
+
+![Change Log](./assets/screenshots/changelog.png)
+
+Status Page
+
+![Status Page](./assets/screenshots/status.png)
+
+Energy Page
+
+![Energy Page](./assets/screenshots/energy.png)
+
+Visuals Page
+
+![Visuals Page](./assets/screenshots/visuals.png)
+
+History Page
+
+![History Page](./assets/screenshots/history.png)
+
+---
+
+## Setup to Build
 
 ### Prerequisites
 
@@ -156,29 +186,3 @@ Add to `ios/Runner/Info.plist`:
     <true/>
 </dict>
 ```
-
-## Showcase
-
-Login Screen
-
-![Login Screen](./assets/screenshots/login.png)
-
-Changelog Screen
-
-![Change Log](./assets/screenshots/changelog.png)
-
-Status Page
-
-![Status Page](./assets/screenshots/status.png)
-
-Energy Page
-
-![Energy Page](./assets/screenshots/energy.png)
-
-Visuals Page
-
-![Visuals Page](./assets/screenshots/visuals.png)
-
-History Page
-
-![History Page](./assets/screenshots/history.png)
