@@ -10,11 +10,11 @@
 [![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/gjwgit/konapod/dev)](https://github.com/gjwgit/rattle/commits/dev/)
 [![GitHub Issues](https://img.shields.io/github/issues/gjwgit/konapod)](https://github.com/gjwgit/konapod/issues)
 
-KonaPod is a tool to collect your Hyundai vehicle data together in one
-secure and private place. You can selectively share any parts of your
-data with others. The app itself presents the data and analyses of the
-data. It is being developed by [Togaware](https://togaware.com) and
-pair programmed by [Graham
+[KonaPod](https://gjwgit.github.io/konapod/) is a tool to collect your
+Hyundai vehicle data together in one secure and private place. You can
+selectively share any parts of your data with others. The app itself
+presents the data and analyses of the data. It is being developed by
+[Togaware](https://togaware.com) and pair programmed by [Graham
 Williams](https://togaware.com/Graham.Williams.html) and [Claude
 Code](https://claude.com/product/claude-code).
 
