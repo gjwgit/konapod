@@ -2,7 +2,6 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-🔌 🚗 🌳 🌞
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/gjwgit/konapod)
 [![GitHub License](https://img.shields.io/github/license/gjwgit/konapod)](https://raw.githubusercontent.com/gjwgit/konapod/dev/LICENSE)
