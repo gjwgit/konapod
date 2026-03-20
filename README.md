@@ -18,8 +18,9 @@ pair programmed by [Graham
 Williams](https://togaware.com/Graham.Williams.html) and [Claude
 Code](https://claude.com/product/claude-code).
 
-If you appreciate the app then please show some ❤️ and star the GitHub
-Repository to support the project.
+We make this project available for free so if you appreciate the app
+then please show some ❤️ and tap on the star at
+[GitHub](https://github.com/gjwgit/konapod) to support our work.
 
 The latest version of the app can be run online at
 [konapod.solidcommunity.au](https://konapod.solidcommunity.au) with no
