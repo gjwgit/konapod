@@ -117,7 +117,7 @@ History Page
 
 ---
 
-## Setup to Build
+## Setup to Build for Yourself
 
 ### Prerequisites
 
