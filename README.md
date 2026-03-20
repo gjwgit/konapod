@@ -14,9 +14,9 @@ KonaPod is a tool to collect your Hyundai vehicle data together in one
 secure and private place. You can selectively share any parts of your
 data with others. The app itself presents the data and analyses of the
 data. It is being developed by [Togaware](https://togaware.com) and
-written by [Graham
-Williams](https://togaware.com/Graham.Williams.html) mostly via
-prompting Claude Code.
+pair programmed by [Graham
+Williams](https://togaware.com/Graham.Williams.html) and [Claude
+Code](https://claude.com/product/claude-code).
 
 If you appreciate the app then please show some ❤️ and star the GitHub
 Repository to support the project.

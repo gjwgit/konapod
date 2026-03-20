@@ -31,8 +31,9 @@ We make this project available for free so if you appreciate the app
 then please show some ❤️ and tap on the star at
 [GitHub](https://github.com/gjwgit/konapod) to support our work.
 
-This app has been developed using Claude Code, prompted by Graham
-Williams.
+This app has been pair programmed by [Graham
+Williams](https://togaware.com/Graham.Williams.html) and [Claude
+Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
