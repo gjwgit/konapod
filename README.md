@@ -120,6 +120,10 @@ charateristics.
 
 ![Visuals Page](./assets/screenshots/visuals.png)
 
+Stats Page - Various statistics abuot your vehicle's performance.
+
+![Stats Page](./assets/screenshots/stats.png)
+
 History Page - This data is stored securely and privately on your
 Solid Pod. Tap the dow arrow to load that dataset into the app as the
 analysed dataset (replacing the data downloaded from your vehicle).
