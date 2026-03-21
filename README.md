@@ -90,27 +90,39 @@ for Australia / NZ but please send in PRs for other regions).
 
 ## 🔌🚗 Showcase 🌳🌞
 
-Login Screen
+Under settings you can specify your username, password and pin to
+access your Bluelink account. This is necessary to be able to use this
+app. Currently only AU/NZ are supported but we welcome pull requests
+to extend to other jurisdications.
+
+Login Screen - Here you can connect to your historic data you have
+stored securely and privately on your Solid Pod.
 
 ![Login Screen](./assets/screenshots/login.png)
 
-Changelog Screen
+Changelog Screen - Tap the Version string to get the latest changes
+for the app.
 
 ![Change Log](./assets/screenshots/changelog.png)
 
-Status Page
+Status Page - The basic home page reports some of the key information
+of interest to the driver.
 
 ![Status Page](./assets/screenshots/status.png)
 
-Energy Page
+Energy Page - The status of the battery and other energy related
+statistics are presented here.
 
 ![Energy Page](./assets/screenshots/energy.png)
 
-Visuals Page
+Visuals Page - Here we explore visually some of the vehicale
+charateristics.
 
 ![Visuals Page](./assets/screenshots/visuals.png)
 
-History Page
+History Page - This data is stored securely and privately on your
+Solid Pod. Tap the dow arrow to load that dataset into the app as the
+analysed dataset (replacing the data downloaded from your vehicle).
 
 ![History Page](./assets/screenshots/history.png)
 
