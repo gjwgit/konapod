@@ -115,19 +115,20 @@ statistics are presented here.
 
 ![Energy Page](./assets/screenshots/energy.png)
 
-Visuals Page - Here we explore visually some of the vehicle
-performace stats. The tooltip shows on this particular day the car
-regenerated about half of the used power through braking.
+Visuals Page - Here we explore visually some of the vehicle performace
+stats. The tooltip shows on this particular day the car regenerated
+about half of the used power through braking, using iPedal that day.
 
 ![Visuals Page](./assets/screenshots/visuals.png)
 
-Stats Page - Various statistics abuot your vehicle's performance.
+Stats Page - Various statistics about your vehicle's performance.
 
 ![Stats Page](./assets/screenshots/stats.png)
 
 History Page - This data is stored securely and privately on your
-Solid Pod. Tap the dow arrow to load that dataset into the app as the
-analysed dataset (replacing the data downloaded from your vehicle).
+Solid Pod. Tap the down arrow to load any dataset into the app as the
+analysed/displayed dataset (replacing the data downloaded from your
+vehicle).
 
 ![History Page](./assets/screenshots/history.png)
 
