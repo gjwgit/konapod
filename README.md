@@ -115,8 +115,9 @@ statistics are presented here.
 
 ![Energy Page](./assets/screenshots/energy.png)
 
-Visuals Page - Here we explore visually some of the vehicale
-charateristics.
+Visuals Page - Here we explore visually some of the vehicle
+performace stats. The tooltip shows on this particular day the car
+regenerated about half of the used power through braking.
 
 ![Visuals Page](./assets/screenshots/visuals.png)
 
