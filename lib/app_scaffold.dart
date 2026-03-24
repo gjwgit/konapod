@@ -1,6 +1,6 @@
 /// Main app scaffold with SolidScaffold, nav menu, app bar and actions.
 ///
-// Time-stamp: <Wednesday 2026-03-18 08:49:07 +1100 Graham Williams>
+// Time-stamp: <Monday 2026-03-23 12:55:40 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -149,6 +149,16 @@ class _AppScaffoldState extends State<AppScaffold> {
                 : NoDataPlaceholder(provider: provider),
           ),
         ),
+        const SolidMenuItem(
+          title: 'Driving',
+          icon: Icons.bar_chart,
+          tooltip:
+              '**Driving**\n\nCharts and visualisations of historical driving data.',
+          child: _PageWrapper(
+            title: 'Driving',
+            child: VisualsScreen(),
+          ),
+        ),
         SolidMenuItem(
           title: 'Energy',
           icon: Icons.battery_charging_full,
@@ -169,16 +179,6 @@ class _AppScaffoldState extends State<AppScaffold> {
             child: v != null
                 ? ComfortPage(v: v)
                 : NoDataPlaceholder(provider: provider),
-          ),
-        ),
-        const SolidMenuItem(
-          title: 'Visuals',
-          icon: Icons.bar_chart,
-          tooltip:
-              '**Visuals**\n\nCharts and visualisations of historical driving data.',
-          child: _PageWrapper(
-            title: 'Visuals',
-            child: VisualsScreen(),
           ),
         ),
         SolidMenuItem(

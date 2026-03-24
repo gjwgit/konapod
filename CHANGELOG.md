@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Pushing VISUALS as DRIVING high in the menu [0.2.16 20260324 gjw]
 + Refactor code [0.2.15 20260319 gjw]
 + Restructure in separate pages folder [0.2.14 20260319 gjw]
 + Add stats page [0.2.13 20260319 gjw]
