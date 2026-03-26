@@ -1,6 +1,6 @@
 /// DoorsSection widget showing lock, engine, charging and door states.
 ///
-// Time-stamp: <Wednesday 2026-03-18 09:56:35 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-03-26 18:40:09 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -61,7 +61,7 @@ class SummaryRow extends StatelessWidget {
         children: [
           VisualsCell('Total', '${total.toStringAsFixed(1)} km', cs),
           VisualsCell('Average', '${avg.toStringAsFixed(1)} km', cs),
-          VisualsCell('Best day', '${best.toStringAsFixed(1)} km', cs),
+          VisualsCell('Furtherest', '${best.toStringAsFixed(1)} km', cs),
           VisualsCell('Days', '$days', cs),
         ],
       ),
