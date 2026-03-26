@@ -115,6 +115,13 @@ statistics are presented here.
 
 ![Energy Page](./assets/screenshots/energy.png)
 
+Energy Page while Charging - Here we see a charger is plugged in and
+the vehicle is charging at 2.2kW (plugged into the normal home 240V
+supply) with 9 hours and 40 minutes to go to 100%. Currently at 75%
+charge and 333km range.
+
+![Energy Page while Charging](./assets/screenshots/energy_charging.png)
+
 Visuals Page - Here we explore visually some of the vehicle performace
 stats. The tooltip shows on this particular day the car regenerated
 about half of the used power through braking, using iPedal that day.
