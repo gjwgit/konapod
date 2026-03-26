@@ -124,8 +124,8 @@ charge and 333km range.
 
 Energy Page Plugged In - The plugged status remains Plugged In and and
 the Charging status disapers after charging has reached its set target
-(100% here though recommended up to 80% day-to-day) and so the vehicle
-is no longer charging.
+(100% here though recommended up to 80% day-to-day as set with the
+`Target SOC`) and so the vehicle is no longer charging.
 
 ![Energy Page while Plugged In But Not Charging](./assets/screenshots/energy_pluggedin.png)
 
