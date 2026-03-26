@@ -122,6 +122,13 @@ charge and 333km range.
 
 ![Energy Page while Charging](./assets/screenshots/energy_charging.png)
 
+Energy Page Plugged In - The plugged status remains Plugged In and and
+the Charging status disapers after charging has reached its set target
+(100% here though recommended up to 80% day-to-day) and so the vehicle
+is no longer charging.
+
+![Energy Page while Plugged In But Not Charging](./assets/screenshots/energy_pluggedin.png)
+
 Visuals Page - Here we explore visually some of the vehicle performace
 stats. The tooltip shows on this particular day the car regenerated
 about half of the used power through braking, using iPedal that day.
