@@ -1,6 +1,6 @@
 /// HeroCard widget showing vehicle identity, status badges and range.
 ///
-// Time-stamp: <Thursday 2026-03-19 09:06:02 +1100 Graham Williams>
+// Time-stamp: <Friday 2026-03-27 16:32:34 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -119,6 +119,7 @@ class HeroCard extends StatelessWidget {
                   activeLabel: 'Locked',
                   inactiveLabel: 'Unlocked',
                   activeColor: HyundaiColors.success,
+                  inactiveColor: Colors.red,
                 ),
               ),
               MarkdownTooltip(

@@ -110,6 +110,10 @@ of interest to the driver.
 
 ![Status Page](./assets/screenshots/status.png)
 
+Status Page - Here we see some doors are open as well as the boot.
+
+![Status Page Unlocked with Open Doors](./assets/screenshots/status_open_doors.png)
+
 Energy Page - The status of the battery and other energy related
 statistics are presented here.
 

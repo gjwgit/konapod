@@ -1,6 +1,6 @@
 /// DoorsSection widget showing lock, engine, charging and door states.
 ///
-// Time-stamp: <Wednesday 2026-03-18 09:56:35 +1100 Graham Williams>
+// Time-stamp: <Friday 2026-03-27 16:50:42 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -117,10 +117,11 @@ class DoorsSection extends StatelessWidget {
           // ),
           // const Gap(12),
           Row(
+            // 20260327 gjw The front left and right are crossed over!
             children: [
-              Expanded(child: DoorTile('Front Left', v.isDoorFrontLeftOpen)),
+              Expanded(child: DoorTile('Front Left', v.isDoorFrontRightOpen)),
               const Gap(8),
-              Expanded(child: DoorTile('Front Right', v.isDoorFrontRightOpen)),
+              Expanded(child: DoorTile('Front Right', v.isDoorFrontLeftOpen)),
             ],
           ),
           const Gap(8),

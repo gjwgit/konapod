@@ -1,6 +1,6 @@
 /// StatusBadge and SectionHeader shared across dashboard sections.
 ///
-// Time-stamp: <Monday 2026-03-16 22:01:12 +1100 Graham Williams>
+// Time-stamp: <Friday 2026-03-27 16:32:18 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -36,6 +36,7 @@ class StatusBadge extends StatelessWidget {
   final String activeLabel;
   final String inactiveLabel;
   final Color? activeColor;
+  final Color? inactiveColor;
 
   const StatusBadge({
     super.key,
@@ -43,12 +44,14 @@ class StatusBadge extends StatelessWidget {
     required this.activeLabel,
     required this.inactiveLabel,
     this.activeColor,
+    this.inactiveColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        active ? (activeColor ?? HyundaiColors.success) : HyundaiColors.midGrey;
+    final color = active
+        ? (activeColor ?? HyundaiColors.success)
+        : (inactiveColor ?? HyundaiColors.midGrey);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
