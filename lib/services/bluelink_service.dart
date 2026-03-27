@@ -1,6 +1,6 @@
 /// Bluelink service: spawns Python subprocess to fetch live vehicle data.
 ///
-// Time-stamp: <Thursday 2026-03-19 15:02:59 +1100 Graham Williams>
+// Time-stamp: <Friday 2026-03-27 18:50:07 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -132,7 +132,6 @@ class BluelinkService {
 
     final stdout = (result.stdout as String).trim();
     final stderr = (result.stderr as String).trim();
-    debugPrint('STDOUT $stdout');
     debugPrint('STDERR $stderr');
     dev.log('[Bluelink] exit=${result.exitCode}', name: 'BluelinkService');
     if (stderr.isNotEmpty) {

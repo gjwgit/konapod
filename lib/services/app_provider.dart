@@ -29,6 +29,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/services/bluelink_service.dart';
 import 'package:konapod/services/pod_service.dart';
@@ -43,6 +44,7 @@ class AppProvider extends ChangeNotifier {
   AppState _state = AppState.idle;
   String? _errorMessage;
   List<Vehicle> _vehicles = [];
+  List<LogEntry> _logEntries = [];
   int _selectedVehicleIndex = 0;
   bool _isRefreshing = false;
   DataSource _dataSource = DataSource.none;
@@ -58,6 +60,7 @@ class AppProvider extends ChangeNotifier {
   DataSource get dataSource => _dataSource;
   String? get loadedFilename => _loadedFilename;
   bool get hasData => _vehicles.isNotEmpty;
+  List<LogEntry> get logEntries => List.unmodifiable(_logEntries);
 
   // ── Auto-login (desktop/bluelink) ────────────────────────────────────────
 
@@ -115,7 +118,11 @@ class AppProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
+      // Load vehicle status and log entries independently — log entries
+      // should be available even if no vehicle snapshot exists yet.
       final data = await PodService.loadLatestStatus();
+      await loadLogFromPod();
+
       if (data == null) {
         _state = AppState.error;
         _errorMessage = 'No status data found on your Solid Pod.\n'
@@ -301,5 +308,44 @@ class AppProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  // ── Log book ──────────────────────────────────────────────────────────────
+
+  void addLogEntry(LogEntry entry) {
+    _logEntries = [entry, ..._logEntries];
+    notifyListeners();
+  }
+
+  void updateLogEntry(LogEntry updated) {
+    _logEntries = [
+      for (final e in _logEntries) e.id == updated.id ? updated : e,
+    ];
+    notifyListeners();
+  }
+
+  void deleteLogEntry(String id) {
+    _logEntries = _logEntries.where((e) => e.id != id).toList();
+    notifyListeners();
+  }
+
+  Future<void> loadLogFromPod() async {
+    try {
+      final raw = await PodService.loadLogEntries();
+      _logEntries = raw.map(LogEntry.fromJson).toList();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('[AppProvider] loadLogFromPod error: $e');
+    }
+  }
+
+  Future<void> saveLogToPod() async {
+    try {
+      await PodService.saveLogEntries(
+        _logEntries.map((e) => e.toJson()).toList(),
+      );
+    } catch (e) {
+      debugPrint('[AppProvider] saveLogToPod error: $e');
+    }
   }
 }

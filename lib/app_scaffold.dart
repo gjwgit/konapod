@@ -40,6 +40,7 @@ import 'package:konapod/pages/energy.dart';
 import 'package:konapod/pages/no_data_placeholder.dart';
 import 'package:konapod/pages/status.dart';
 import 'package:konapod/screens/history_screen.dart';
+import 'package:konapod/screens/logbook_screen.dart';
 import 'package:konapod/screens/settings_screen.dart';
 import 'package:konapod/screens/stats_screen.dart';
 import 'package:konapod/screens/visuals_screen.dart';
@@ -191,6 +192,15 @@ class _AppScaffoldState extends State<AppScaffold> {
             child: v != null
                 ? const StatsScreen()
                 : NoDataPlaceholder(provider: provider),
+          ),
+        ),
+        const SolidMenuItem(
+          title: 'Log Book',
+          icon: Icons.menu_book_outlined,
+          tooltip: '**Log Book**\n\nRecord services, charges, trips and notes.',
+          child: _PageWrapper(
+            title: 'Log Book',
+            child: LogbookScreen(),
           ),
         ),
         const SolidMenuItem(

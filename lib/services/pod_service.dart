@@ -190,4 +190,38 @@ class PodService {
     final ttl = _jsonToTtl('snapshotIndex', jsonEncode(index));
     await writePod('index.ttl', ttl, overwrite: true);
   }
+
+  // ── Log book ──────────────────────────────────────────────────────────────
+
+  static const _logFile = 'logbook.ttl';
+
+  /// Load all log entries from the pod. Returns empty list if none saved yet.
+
+  static Future<List<Map<String, dynamic>>> loadLogEntries() async {
+    try {
+      final ttl = await readPod(_logFile);
+      if (ttl.isEmpty) return [];
+      final literal = _ttlToLiteral(ttl);
+      if (literal == null || literal.isEmpty) return [];
+      final list = jsonDecode(literal) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (e) {
+      dev.log('[Pod] loadLogEntries error: $e', name: 'PodService');
+      return [];
+    }
+  }
+
+  /// Save all log entries to the pod.
+
+  static Future<void> saveLogEntries(
+    List<Map<String, dynamic>> entries,
+  ) async {
+    try {
+      final ttl = _jsonToTtl('logEntries', jsonEncode(entries));
+      await writePod(_logFile, ttl, overwrite: true);
+      dev.log('[Pod] Saved ${entries.length} log entries', name: 'PodService');
+    } catch (e) {
+      dev.log('[Pod] saveLogEntries error: $e', name: 'PodService');
+    }
+  }
 }
