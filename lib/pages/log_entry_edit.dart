@@ -10,16 +10,15 @@
 
 library;
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
-import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/pages/log_charge_section.dart';
+import 'package:konapod/pages/log_location_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 
 const _uuid = Uuid();
@@ -41,16 +40,15 @@ class _LogEntryEditState extends State<LogEntryEdit> {
   late final TextEditingController _title;
   late final TextEditingController _note;
   late final TextEditingController _odometer;
+  final _chargeKey = GlobalKey<LogChargeSectionState>();
   late DateTime _timestamp;
   late double? _batteryLevel;
   late double? _evRange;
   late double? _batteryRemainKwh;
-  late double? _latitude;
-  late double? _longitude;
-  late String? _locationAddress;
-  late final TextEditingController _manualAddress;
-  bool _geocoding = false;
-  String? _geocodeError;
+  late final TextEditingController _batteryLevelCtrl;
+  late final TextEditingController _evRangeCtrl;
+  late final TextEditingController _batteryRemainCtrl;
+  final _locationKey = GlobalKey<LogLocationSectionState>();
 
   bool get _isNew => widget.entry == null;
 
@@ -74,12 +72,19 @@ class _LogEntryEditState extends State<LogEntryEdit> {
     _batteryLevel = e?.batteryLevelPercent ?? v?.batteryLevelPercent;
     _evRange = e?.evRangeKm ?? v?.evRangeKm;
     _batteryRemainKwh = e?.batteryRemainKwh ?? v?.batteryRemainKwh;
-    _latitude = e?.latitude ?? v?.latitude;
-    _longitude = e?.longitude ?? v?.longitude;
-    _locationAddress = e?.locationAddress ?? v?.locationAddress;
-    _manualAddress = TextEditingController(
-      text: (_latitude == null && e?.locationAddress != null)
-          ? e!.locationAddress
+
+    // batteryRemainKwh is stored in kJ — display as kWh (÷3600).
+    _batteryLevelCtrl = TextEditingController(
+      text: _batteryLevel != null
+          ? _batteryLevel!.toStringAsFixed(0)
+          : '',
+    );
+    _evRangeCtrl = TextEditingController(
+      text: _evRange != null ? _evRange!.toStringAsFixed(0) : '',
+    );
+    _batteryRemainCtrl = TextEditingController(
+      text: _batteryRemainKwh != null
+          ? (_batteryRemainKwh! / 3600).toStringAsFixed(1)
           : '',
     );
   }
@@ -89,7 +94,9 @@ class _LogEntryEditState extends State<LogEntryEdit> {
     _title.dispose();
     _note.dispose();
     _odometer.dispose();
-    _manualAddress.dispose();
+    _batteryLevelCtrl.dispose();
+    _evRangeCtrl.dispose();
+    _batteryRemainCtrl.dispose();
     super.dispose();
   }
 
@@ -99,68 +106,23 @@ class _LogEntryEditState extends State<LogEntryEdit> {
         title: _title.text.trim(),
         note: _note.text.trim(),
         odometerKm: double.tryParse(_odometer.text.trim()),
-        batteryLevelPercent: _batteryLevel,
-        evRangeKm: _evRange,
-        batteryRemainKwh: _batteryRemainKwh,
-        latitude: _latitude,
-        longitude: _longitude,
-        locationAddress: _locationAddress,
+        batteryLevelPercent:
+            double.tryParse(_batteryLevelCtrl.text.trim()),
+        evRangeKm: double.tryParse(_evRangeCtrl.text.trim()),
+        // batteryRemainKwh stored in kJ — multiply entered kWh by 3600.
+        batteryRemainKwh: double.tryParse(_batteryRemainCtrl.text.trim()) != null
+            ? double.parse(_batteryRemainCtrl.text.trim()) * 3600
+            : null,
+        latitude: _locationKey.currentState!.currentValues.latitude,
+        longitude: _locationKey.currentState!.currentValues.longitude,
+        locationAddress: _locationKey.currentState!.currentValues.address,
+        chargeVendor: _chargeKey.currentState!.currentValues.vendor,
+        chargeRateKwh: _chargeKey.currentState!.currentValues.rateKwh,
+        chargeEnergyKwh: _chargeKey.currentState!.currentValues.energyKwh,
+        chargeDurationMinutes: _chargeKey.currentState!.currentValues.durationMinutes,
+        chargeCostPerKwh: _chargeKey.currentState!.currentValues.costPerKwh,
+        chargeTotalCost: _chargeKey.currentState!.currentValues.totalCost,
       );
-
-  Future<void> _geocodeAddress() async {
-    final addr = _manualAddress.text.trim();
-    if (addr.isEmpty) return;
-    setState(() {
-      _geocoding = true;
-      _geocodeError = null;
-    });
-    try {
-      // Use OpenStreetMap Nominatim — no API key required, works on all
-      // platforms including Linux desktop.
-      final uri = Uri.https(
-        'nominatim.openstreetmap.org',
-        '/search',
-        {
-          'q': addr,
-          'format': 'json',
-          'limit': '1',
-        },
-      );
-      final response = await http.get(
-        uri,
-        headers: {'User-Agent': 'KonaPod/1.0 (konapod@togaware.com)'},
-      );
-      if (response.statusCode != 200) {
-        setState(() {
-          _geocodeError = 'Geocoding request failed (${response.statusCode}).';
-          _geocoding = false;
-        });
-        return;
-      }
-      final results = jsonDecode(response.body) as List;
-      if (results.isEmpty) {
-        setState(() {
-          _geocodeError =
-              'Address not found. Try adding suburb, state or country.';
-          _geocoding = false;
-        });
-        return;
-      }
-      final place = results.first as Map<String, dynamic>;
-      setState(() {
-        _latitude = double.tryParse(place['lat'] as String? ?? '');
-        _longitude = double.tryParse(place['lon'] as String? ?? '');
-        _locationAddress = place['display_name'] as String? ?? addr;
-        _geocoding = false;
-      });
-    } catch (e) {
-      setState(() {
-        _geocodeError = 'Geocoding failed: $e';
-        _geocoding = false;
-      });
-    }
-  }
-
   Future<void> _pickDateTime() async {
     final date = await showDatePicker(
       context: context,
@@ -226,7 +188,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Date & time
-                    _SectionLabel('Date & Time', cs),
+                    LogSectionLabel('Date & Time', cs),
                     const Gap(8),
                     InkWell(
                       onTap: _pickDateTime,
@@ -242,7 +204,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     ),
                     const Gap(16),
                     // Title
-                    _SectionLabel('Title', cs),
+                    LogSectionLabel('Title', cs),
                     const Gap(8),
                     TextField(
                       controller: _title,
@@ -255,7 +217,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     ),
                     const Gap(16),
                     // Odometer
-                    _SectionLabel('Odometer (km)', cs),
+                    LogSectionLabel('Odometer (km)', cs),
                     const Gap(8),
                     TextField(
                       controller: _odometer,
@@ -269,94 +231,77 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                       ),
                     ),
                     const Gap(16),
-                    // Vehicle readings (read-only display, editable via
-                    // the odometer field above; others come from Bluelink)
-                    _SectionLabel('Vehicle Readings', cs),
+                    // Vehicle readings — pre-filled from Bluelink, editable.
+                    LogSectionLabel('Vehicle Readings', cs),
                     const Gap(8),
-                    LogReadingsRow(
-                      batteryLevel: _batteryLevel,
-                      evRange: _evRange,
-                      batteryRemainKwh: _batteryRemainKwh,
-                      cs: cs,
-                    ),
-                    // Location
-                    const Gap(16),
-                    _SectionLabel('Location', cs),
-                    const Gap(8),
-                    if (_latitude != null && _longitude != null)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: LogLocationDisplay(
-                              latitude: _latitude!,
-                              longitude: _longitude!,
-                              address: _locationAddress,
-                              cs: cs,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _batteryLevelCtrl,
+                            keyboardType:
+                                const TextInputType.numberWithOptions(
+                                    decimal: true),
+                            decoration: const InputDecoration(
+                              labelText: 'Battery',
+                              border: OutlineInputBorder(),
+                              isDense: true,
+                              suffixText: '%',
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.edit_location_outlined,
-                              color: cs.onSurfaceVariant,
-                            ),
-                            tooltip: 'Clear and enter manually',
-                            onPressed: () => setState(() {
-                              _latitude = null;
-                              _longitude = null;
-                              _locationAddress = null;
-                              _manualAddress.clear();
-                            }),
-                          ),
-                        ],
-                      )
-                    else ...[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _manualAddress,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                isDense: true,
-                                hintText: 'Enter address to geocode...',
-                                prefixIcon: Icon(
-                                  Icons.location_on_outlined,
-                                  size: 18,
-                                ),
-                              ),
-                              onSubmitted: (_) => _geocodeAddress(),
+                        ),
+                        const Gap(8),
+                        Expanded(
+                          child: TextField(
+                            controller: _batteryRemainCtrl,
+                            keyboardType:
+                                const TextInputType.numberWithOptions(
+                                    decimal: true),
+                            decoration: const InputDecoration(
+                              labelText: 'Remaining',
+                              border: OutlineInputBorder(),
+                              isDense: true,
+                              suffixText: 'kWh',
                             ),
                           ),
-                          const Gap(8),
-                          FilledButton.tonal(
-                            onPressed: _geocoding ? null : _geocodeAddress,
-                            child: _geocoding
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text('Find'),
-                          ),
-                        ],
-                      ),
-                      if (_geocodeError != null) ...[
-                        const Gap(6),
-                        Text(
-                          _geocodeError!,
-                          style: TextStyle(
-                            color: cs.error,
-                            fontSize: 12,
+                        ),
+                        const Gap(8),
+                        Expanded(
+                          child: TextField(
+                            controller: _evRangeCtrl,
+                            keyboardType:
+                                const TextInputType.numberWithOptions(
+                                    decimal: true),
+                            decoration: const InputDecoration(
+                              labelText: 'EV Range',
+                              border: OutlineInputBorder(),
+                              isDense: true,
+                              suffixText: 'km',
+                            ),
                           ),
                         ),
                       ],
-                    ],
+                    ),
+                    // Location
+                    const Gap(16),
+                    LogSectionLabel('Location', cs),
+                    const Gap(8),
+                    LogLocationSection(
+                      key: _locationKey,
+                      entry: widget.entry,
+                      initialLatitude: widget.vehicle?.latitude,
+                      initialLongitude: widget.vehicle?.longitude,
+                      initialAddress: widget.vehicle?.locationAddress,
+                    ),
+                    // Charging session
+                    const Gap(16),
+                    LogChargeSection(
+                      key: _chargeKey,
+                      entry: widget.entry,
+                    ),
                     const Gap(16),
                     // Note
-                    _SectionLabel('Notes', cs),
+                    LogSectionLabel('Notes', cs),
                     const Gap(8),
                     TextField(
                       controller: _note,
@@ -408,24 +353,4 @@ class _LogEntryEditState extends State<LogEntryEdit> {
         '${dt.minute.toString().padLeft(2, '0')}';
     return '$d  $t';
   }
-}
-
-// ── Section label ─────────────────────────────────────────────────────────────
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  final ColorScheme cs;
-
-  const _SectionLabel(this.text, this.cs);
-
-  @override
-  Widget build(BuildContext context) => Text(
-        text,
-        style: TextStyle(
-          color: cs.primary,
-          fontWeight: FontWeight.w600,
-          fontSize: 13,
-          letterSpacing: 0.5,
-        ),
-      );
 }

@@ -1,6 +1,6 @@
 /// LogEntry — a single log book entry for the vehicle.
 ///
-// Time-stamp: <Friday 2026-03-27 18:00:00 +1100 Graham Williams>
+// Time-stamp: <Saturday 2026-03-28 22:00:00 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -13,6 +13,7 @@ library;
 /// A single entry in the vehicle log book.
 ///
 /// Captures a point-in-time note with vehicle state at time of writing.
+/// Optionally records charging session details.
 
 class LogEntry {
   final String id;
@@ -30,6 +31,15 @@ class LogEntry {
   final double? longitude;
   final String? locationAddress;
 
+  // ── Charging session details (all optional) ────────────────────────────────
+
+  final String? chargeVendor;
+  final double? chargeRateKwh;
+  final double? chargeEnergyKwh;
+  final int? chargeDurationMinutes;
+  final double? chargeCostPerKwh;
+  final double? chargeTotalCost;
+
   const LogEntry({
     required this.id,
     required this.timestamp,
@@ -42,7 +52,22 @@ class LogEntry {
     this.latitude,
     this.longitude,
     this.locationAddress,
+    this.chargeVendor,
+    this.chargeRateKwh,
+    this.chargeEnergyKwh,
+    this.chargeDurationMinutes,
+    this.chargeCostPerKwh,
+    this.chargeTotalCost,
   });
+
+  /// Whether this entry has any charging data recorded.
+  bool get hasChargeData =>
+      chargeVendor != null ||
+      chargeRateKwh != null ||
+      chargeEnergyKwh != null ||
+      chargeDurationMinutes != null ||
+      chargeCostPerKwh != null ||
+      chargeTotalCost != null;
 
   // ── Serialisation ─────────────────────────────────────────────────────────
 
@@ -59,6 +84,13 @@ class LogEntry {
         if (latitude != null) 'latitude': latitude,
         if (longitude != null) 'longitude': longitude,
         if (locationAddress != null) 'locationAddress': locationAddress,
+        if (chargeVendor != null) 'chargeVendor': chargeVendor,
+        if (chargeRateKwh != null) 'chargeRateKwh': chargeRateKwh,
+        if (chargeEnergyKwh != null) 'chargeEnergyKwh': chargeEnergyKwh,
+        if (chargeDurationMinutes != null)
+          'chargeDurationMinutes': chargeDurationMinutes,
+        if (chargeCostPerKwh != null) 'chargeCostPerKwh': chargeCostPerKwh,
+        if (chargeTotalCost != null) 'chargeTotalCost': chargeTotalCost,
       };
 
   factory LogEntry.fromJson(Map<String, dynamic> j) => LogEntry(
@@ -73,6 +105,12 @@ class LogEntry {
         latitude: (j['latitude'] as num?)?.toDouble(),
         longitude: (j['longitude'] as num?)?.toDouble(),
         locationAddress: j['locationAddress'] as String?,
+        chargeVendor: j['chargeVendor'] as String?,
+        chargeRateKwh: (j['chargeRateKwh'] as num?)?.toDouble(),
+        chargeEnergyKwh: (j['chargeEnergyKwh'] as num?)?.toDouble(),
+        chargeDurationMinutes: j['chargeDurationMinutes'] as int?,
+        chargeCostPerKwh: (j['chargeCostPerKwh'] as num?)?.toDouble(),
+        chargeTotalCost: (j['chargeTotalCost'] as num?)?.toDouble(),
       );
 
   LogEntry copyWith({
@@ -87,6 +125,12 @@ class LogEntry {
     Object? latitude = _sentinel,
     Object? longitude = _sentinel,
     Object? locationAddress = _sentinel,
+    Object? chargeVendor = _sentinel,
+    Object? chargeRateKwh = _sentinel,
+    Object? chargeEnergyKwh = _sentinel,
+    Object? chargeDurationMinutes = _sentinel,
+    Object? chargeCostPerKwh = _sentinel,
+    Object? chargeTotalCost = _sentinel,
   }) =>
       LogEntry(
         id: id ?? this.id,
@@ -109,6 +153,24 @@ class LogEntry {
         locationAddress: locationAddress == _sentinel
             ? this.locationAddress
             : locationAddress as String?,
+        chargeVendor: chargeVendor == _sentinel
+            ? this.chargeVendor
+            : chargeVendor as String?,
+        chargeRateKwh: chargeRateKwh == _sentinel
+            ? this.chargeRateKwh
+            : chargeRateKwh as double?,
+        chargeEnergyKwh: chargeEnergyKwh == _sentinel
+            ? this.chargeEnergyKwh
+            : chargeEnergyKwh as double?,
+        chargeDurationMinutes: chargeDurationMinutes == _sentinel
+            ? this.chargeDurationMinutes
+            : chargeDurationMinutes as int?,
+        chargeCostPerKwh: chargeCostPerKwh == _sentinel
+            ? this.chargeCostPerKwh
+            : chargeCostPerKwh as double?,
+        chargeTotalCost: chargeTotalCost == _sentinel
+            ? this.chargeTotalCost
+            : chargeTotalCost as double?,
       );
 }
 

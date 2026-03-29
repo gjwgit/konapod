@@ -16,6 +16,7 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
 import 'package:konapod/models/log_entry.dart';
+import 'package:konapod/screens/logbook_tile.dart';
 import 'package:konapod/pages/log_entry_edit.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -45,13 +46,13 @@ class _LogbookScreenState extends State<LogbookScreen> {
 
     return Scaffold(
       body: entries.isEmpty
-          ? _EmptyState(cs: cs, onAdd: () => _addEntry(context, provider))
+          ? LogEmptyState(cs: cs, onAdd: () => _addEntry(context, provider))
           : ListView.separated(
               padding: const EdgeInsets.only(bottom: 80),
               itemCount: entries.length,
               separatorBuilder: (_, __) =>
                   const Divider(height: 1, indent: 16, endIndent: 16),
-              itemBuilder: (_, i) => _EntryTile(
+              itemBuilder: (_, i) => LogEntryTile(
                 entry: entries[i],
                 onTap: () => _editEntry(context, entries[i], provider),
                 onDelete: () => _deleteEntry(context, entries[i], provider),
@@ -139,11 +140,11 @@ class _LogbookScreenState extends State<LogbookScreen> {
 
 // ── Empty state ───────────────────────────────────────────────────────────────
 
-class _EmptyState extends StatelessWidget {
+class LogEmptyState extends StatelessWidget {
   final ColorScheme cs;
   final VoidCallback onAdd;
 
-  const _EmptyState({required this.cs, required this.onAdd});
+  const LogEmptyState({required this.cs, required this.onAdd});
 
   @override
   Widget build(BuildContext context) => Center(
@@ -177,228 +178,5 @@ class _EmptyState extends StatelessWidget {
             ],
           ),
         ),
-      );
-}
-
-// ── Entry tile ────────────────────────────────────────────────────────────────
-
-class _EntryTile extends StatelessWidget {
-  final LogEntry entry;
-  final VoidCallback onTap;
-  final VoidCallback onDelete;
-
-  const _EntryTile({
-    required this.entry,
-    required this.onTap,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Date column
-            SizedBox(
-              width: 48,
-              child: Column(
-                children: [
-                  Text(
-                    entry.timestamp.day.toString().padLeft(2, '0'),
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: cs.primary,
-                      height: 1,
-                    ),
-                  ),
-                  Text(
-                    _monthAbbr(entry.timestamp.month),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: cs.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    entry.timestamp.year.toString(),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Gap(12),
-            // Divider line
-            Container(
-              width: 2,
-              height: 56,
-              decoration: BoxDecoration(
-                color: cs.outlineVariant,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-            const Gap(12),
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        _fmtTime(entry.timestamp),
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                      if (entry.odometerKm != null) ...[
-                        Text(
-                          '  ·  ',
-                          style: TextStyle(color: cs.onSurfaceVariant),
-                        ),
-                        Icon(
-                          Icons.speed_outlined,
-                          size: 12,
-                          color: cs.onSurfaceVariant,
-                        ),
-                        const Gap(2),
-                        Text(
-                          '${entry.odometerKm!.toStringAsFixed(0)} km',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: cs.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const Gap(4),
-                  Text(
-                    entry.title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (entry.note.isNotEmpty) ...[
-                    const Gap(2),
-                    Text(
-                      entry.note,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                  // Battery readings row
-                  if (_hasReadings(entry)) ...[
-                    const Gap(6),
-                    Wrap(
-                      spacing: 8,
-                      children: [
-                        if (entry.batteryLevelPercent != null)
-                          _MiniChip(
-                            Icons.battery_charging_full,
-                            '${entry.batteryLevelPercent!.toStringAsFixed(0)}%',
-                            cs,
-                          ),
-                        if (entry.batteryRemainKwh != null)
-                          _MiniChip(
-                            Icons.bolt,
-                            '${(entry.batteryRemainKwh! / 3600).toStringAsFixed(1)} kWh',
-                            cs,
-                          ),
-                        if (entry.evRangeKm != null)
-                          _MiniChip(
-                            Icons.route_outlined,
-                            '${entry.evRangeKm!.toStringAsFixed(0)} km',
-                            cs,
-                          ),
-                        if (entry.latitude != null && entry.longitude != null)
-                          _MiniChip(
-                            Icons.location_on_outlined,
-                            entry.locationAddress?.isNotEmpty == true
-                                ? entry.locationAddress!.split(',').first
-                                : '${entry.latitude!.toStringAsFixed(3)}, '
-                                    '${entry.longitude!.toStringAsFixed(3)}',
-                            cs,
-                          ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            // Delete button
-            IconButton(
-              icon: Icon(
-                Icons.delete_outline,
-                size: 18,
-                color: cs.onSurfaceVariant,
-              ),
-              onPressed: onDelete,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  bool _hasReadings(LogEntry e) =>
-      e.batteryLevelPercent != null ||
-      e.batteryRemainKwh != null ||
-      e.evRangeKm != null ||
-      e.latitude != null;
-
-  String _fmtTime(DateTime dt) => '${dt.hour.toString().padLeft(2, '0')}:'
-      '${dt.minute.toString().padLeft(2, '0')}';
-
-  String _monthAbbr(int m) => const [
-        '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ][m];
-}
-
-class _MiniChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final ColorScheme cs;
-
-  const _MiniChip(this.icon, this.label, this.cs);
-
-  @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: cs.onSurfaceVariant),
-          const Gap(2),
-          Text(
-            label,
-            style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
-          ),
-        ],
       );
 }

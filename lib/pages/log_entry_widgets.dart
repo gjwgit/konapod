@@ -169,3 +169,23 @@ class LogLocationDisplay extends StatelessWidget {
         ),
       );
 }
+
+// ── Section label ─────────────────────────────────────────────────────────────
+
+class LogSectionLabel extends StatelessWidget {
+  final String text;
+  final ColorScheme cs;
+
+  const LogSectionLabel(this.text, this.cs);
+
+  @override
+  Widget build(BuildContext context) => Text(
+        text,
+        style: TextStyle(
+          color: cs.primary,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          letterSpacing: 0.5,
+        ),
+      );
+}
