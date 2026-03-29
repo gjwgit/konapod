@@ -1,6 +1,6 @@
 /// App entry point: initialises providers, theme and SolidLogin wrapper.
 ///
-// Time-stamp: <Monday 2026-03-16 13:55:28 +1100 Graham Williams>
+// Time-stamp: <Sunday 2026-03-29 20:44:56 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -120,7 +120,10 @@ class _AutoLoginWrapperState extends State<_AutoLoginWrapper> {
 
   Future<void> _init() async {
     final provider = context.read<AppProvider>();
-    // Try saved Bluelink credentials first; fall back to pod snapshot
+    // Always load the most recent snapshot from the pod on startup.
+    // Bluelink is only queried when the user taps the refresh button.
+    // await provider.loadFromPod();
+    // Alternatively try saved Bluelink credentials first and then fall back to pod snapshot
     final hasBluelink = await provider.tryAutoLogin();
     if (!hasBluelink) {
       await provider.loadFromPod();

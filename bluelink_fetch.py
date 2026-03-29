@@ -8,15 +8,24 @@ Requires: pip install hyundai-kia-connect-api
 import sys
 import json
 import traceback
+from datetime import datetime, timezone
 
 
 def safe(val):
     """Recursively convert any value to a JSON-serialisable primitive.
-    Critically: bools MUST be checked before int (bool is subclass of int in Python)."""
+    Critically: bools MUST be checked before int (bool is subclass of int in Python).
+    datetime objects are converted to local time before stringifying so that
+    the daily stats are attributed to the correct local calendar date."""
     if val is None:
         return None
     if isinstance(val, bool):   # MUST come before int check
         return val              # preserves True/False exactly
+    if isinstance(val, datetime):
+        # Convert UTC-aware datetimes to local time so dates are correct
+        # for the user's timezone (e.g. AEDT +11).
+        if val.tzinfo is not None:
+            val = val.astimezone()  # convert to local timezone
+        return str(val)
     if isinstance(val, (int, float)):
         return val
     if isinstance(val, str):
@@ -25,7 +34,8 @@ def safe(val):
         return [safe(i) for i in val]
     if isinstance(val, dict):
         return {k: safe(v) for k, v in val.items()}
-    # Enum / custom object
+    # Enum / custom object — str() gives the repr for datetime.datetime values
+    # embedded inside other objects (e.g. DailyDrivingStats)
     s = str(val)
     try:
         return int(s)

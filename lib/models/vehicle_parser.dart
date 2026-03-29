@@ -272,13 +272,13 @@ Vehicle parseVehicleFromJson(Map<String, dynamic> j) {
     powerConsumption30dKwh: i(j['power_consumption_30d']),
     extras: extras,
     lastUpdated: j['last_updated_at'] != null
-        ? DateTime.tryParse(j['last_updated_at'].toString())
+        ? DateTime.tryParse(j['last_updated_at'].toString())?.toLocal()
         : null,
     fetchedAt: j['fetchedAt'] != null
-        ? DateTime.tryParse(j['fetchedAt'].toString())
+        ? DateTime.tryParse(j['fetchedAt'].toString())?.toLocal()
         : null,
     registrationDate: j['registration_date'] != null
-        ? DateTime.tryParse(j['registration_date'].toString())
+        ? DateTime.tryParse(j['registration_date'].toString())?.toLocal()
         : null,
   );
 }
