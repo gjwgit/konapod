@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Additional log book data collection [0.2.18 20260329 gjw]
 + Add a Log Book [0.2.17 20260327 gjw]
 + Pushing VISUALS as DRIVING high in the menu [0.2.16 20260324 gjw]
 + Refactor code [0.2.15 20260319 gjw]
