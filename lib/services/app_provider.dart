@@ -60,7 +60,11 @@ class AppProvider extends ChangeNotifier {
   DataSource get dataSource => _dataSource;
   String? get loadedFilename => _loadedFilename;
   bool get hasData => _vehicles.isNotEmpty;
-  List<LogEntry> get logEntries => List.unmodifiable(_logEntries);
+  List<LogEntry> get logEntries {
+    final sorted = [..._logEntries];
+    sorted.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return List.unmodifiable(sorted);
+  }
 
   // ── Auto-login (desktop/bluelink) ────────────────────────────────────────
 

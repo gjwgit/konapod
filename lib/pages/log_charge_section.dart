@@ -61,7 +61,12 @@ class LogChargeSection extends StatefulWidget {
   /// Existing entry to pre-populate fields, if editing.
   final LogEntry? entry;
 
-  const LogChargeSection({super.key, this.entry});
+  /// Optional widget rendered inside the charging section (below the charge
+  /// fields) when the charging toggle is on. Used by the parent to inject
+  /// the end vehicle readings + Fetch from Bluelink button.
+  final Widget? endReadingsContent;
+
+  const LogChargeSection({super.key, this.entry, this.endReadingsContent});
 
   @override
   State<LogChargeSection> createState() => LogChargeSectionState();
@@ -92,7 +97,7 @@ class LogChargeSectionState extends State<LogChargeSection> {
       text: e?.chargeDurationMinutes?.toString() ?? '',
     );
     _costPerKwh = TextEditingController(
-      text: e?.chargeCostPerKwh?.toStringAsFixed(4) ?? '',
+      text: e?.chargeCostPerKwh?.toStringAsFixed(2) ?? '',
     );
     _totalCost = TextEditingController(
       text: e?.chargeTotalCost?.toStringAsFixed(2) ?? '',
@@ -143,6 +148,11 @@ class LogChargeSectionState extends State<LogChargeSection> {
           ],
         ),
         if (_showCharge) ...[
+          // End vehicle readings — injected by parent, shown first
+          if (widget.endReadingsContent != null)
+            widget.endReadingsContent!,
+          const Gap(12),
+          _Label('Charging Details', Theme.of(context).colorScheme),
           const Gap(8),
           // Vendor
           TextField(

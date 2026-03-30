@@ -138,39 +138,43 @@ class LogEntryTile extends StatelessWidget {
                       ),
                     ),
                   ],
-                  // Battery readings row
-                  if (_hasReadings(entry)) ...[
+                  // Start readings row
+                  if (entry.hasStartReadings) ...[
                     const Gap(6),
+                    _ReadingRow(
+                      label: 'Start',
+                      odo: entry.startOdometerKm,
+                      batt: entry.startBatteryLevelPercent,
+                      remain: entry.startBatteryRemainKwh,
+                      range: entry.startEvRangeKm,
+                      cs: cs,
+                    ),
+                  ],
+                  // End readings row
+                  if (entry.hasEndReadings) ...[
+                    const Gap(4),
+                    _ReadingRow(
+                      label: 'End',
+                      odo: entry.odometerKm,
+                      batt: entry.batteryLevelPercent,
+                      remain: entry.batteryRemainKwh,
+                      range: entry.evRangeKm,
+                      cs: cs,
+                    ),
+                  ],
+                  // Location chip
+                  if (entry.latitude != null && entry.longitude != null) ...[
+                    const Gap(4),
                     Wrap(
-                      spacing: 8,
                       children: [
-                        if (entry.batteryLevelPercent != null)
-                          LogMiniChip(
-                            Icons.battery_charging_full,
-                            '${entry.batteryLevelPercent!.toStringAsFixed(0)}%',
-                            cs,
-                          ),
-                        if (entry.batteryRemainKwh != null)
-                          LogMiniChip(
-                            Icons.bolt,
-                            '${(entry.batteryRemainKwh! / 3600).toStringAsFixed(1)} kWh',
-                            cs,
-                          ),
-                        if (entry.evRangeKm != null)
-                          LogMiniChip(
-                            Icons.route_outlined,
-                            '${entry.evRangeKm!.toStringAsFixed(0)} km',
-                            cs,
-                          ),
-                        if (entry.latitude != null && entry.longitude != null)
-                          LogMiniChip(
-                            Icons.location_on_outlined,
-                            entry.locationAddress?.isNotEmpty == true
-                                ? entry.locationAddress!.split(',').first
-                                : '${entry.latitude!.toStringAsFixed(3)}, '
-                                    '${entry.longitude!.toStringAsFixed(3)}',
-                            cs,
-                          ),
+                        LogMiniChip(
+                          Icons.location_on_outlined,
+                          entry.locationAddress?.isNotEmpty == true
+                              ? entry.locationAddress!.split(',').first
+                              : '${entry.latitude!.toStringAsFixed(3)}, '
+                                  '${entry.longitude!.toStringAsFixed(3)}',
+                          cs,
+                        ),
                       ],
                     ),
                   ],
@@ -216,7 +220,7 @@ class LogEntryTile extends StatelessWidget {
                           if (entry.chargeTotalCost != null)
                             LogMiniChip(
                               Icons.attach_money,
-                              '\$${entry.chargeTotalCost!.toStringAsFixed(2)}',
+                              entry.chargeTotalCost!.toStringAsFixed(2),
                               cs,
                             ),
                         ],
@@ -242,10 +246,7 @@ class LogEntryTile extends StatelessWidget {
   }
 
   bool _hasReadings(LogEntry e) =>
-      e.batteryLevelPercent != null ||
-      e.batteryRemainKwh != null ||
-      e.evRangeKm != null ||
-      e.latitude != null;
+      e.hasStartReadings || e.hasEndReadings;
 
   String _fmtDuration(int minutes) {
     if (minutes < 60) return '${minutes}m';
@@ -290,6 +291,74 @@ class LogMiniChip extends StatelessWidget {
           Text(
             label,
             style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
+          ),
+        ],
+      );
+}
+
+// ── Reading row (start or end) ────────────────────────────────────────────────
+
+class _ReadingRow extends StatelessWidget {
+  final String label;
+  final double? odo;
+  final double? batt;
+  final double? remain;
+  final double? range;
+  final ColorScheme cs;
+
+  const _ReadingRow({
+    required this.label,
+    required this.odo,
+    required this.batt,
+    required this.remain,
+    required this.range,
+    required this.cs,
+  });
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          SizedBox(
+            width: 34,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: cs.primary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Wrap(
+              spacing: 10,
+              children: [
+                if (odo != null)
+                  LogMiniChip(
+                    Icons.speed_outlined,
+                    '${odo!.toStringAsFixed(0)} km',
+                    cs,
+                  ),
+                if (batt != null)
+                  LogMiniChip(
+                    Icons.battery_charging_full,
+                    '${batt!.toStringAsFixed(0)}%',
+                    cs,
+                  ),
+                if (remain != null)
+                  LogMiniChip(
+                    Icons.bolt,
+                    '${(remain! / 3600).toStringAsFixed(1)} kWh',
+                    cs,
+                  ),
+                if (range != null)
+                  LogMiniChip(
+                    Icons.route_outlined,
+                    '${range!.toStringAsFixed(0)} km',
+                    cs,
+                  ),
+              ],
+            ),
           ),
         ],
       );

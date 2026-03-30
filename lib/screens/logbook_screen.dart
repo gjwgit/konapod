@@ -32,7 +32,6 @@ class _LogbookScreenState extends State<LogbookScreen> {
   @override
   void initState() {
     super.initState();
-    // Load log entries from pod when the screen is first shown.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AppProvider>().loadLogFromPod();
     });

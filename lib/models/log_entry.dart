@@ -1,6 +1,6 @@
 /// LogEntry — a single log book entry for the vehicle.
 ///
-// Time-stamp: <Saturday 2026-03-28 22:00:00 +1100 Graham Williams>
+// Time-stamp: <Saturday 2026-03-29 22:00:00 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -12,8 +12,7 @@ library;
 
 /// A single entry in the vehicle log book.
 ///
-/// Captures a point-in-time note with vehicle state at time of writing.
-/// Optionally records charging session details.
+/// Records start and end vehicle state, location, and optional charging details.
 
 class LogEntry {
   final String id;
@@ -21,17 +20,27 @@ class LogEntry {
   final String title;
   final String note;
 
-  // ── Vehicle state at time of entry ────────────────────────────────────────
+  // ── Start vehicle state ───────────────────────────────────────────────────
+
+  final double? startOdometerKm;
+  final double? startBatteryLevelPercent;
+  final double? startEvRangeKm;
+  final double? startBatteryRemainKwh;
+
+  // ── End vehicle state ─────────────────────────────────────────────────────
 
   final double? odometerKm;
   final double? batteryLevelPercent;
   final double? evRangeKm;
   final double? batteryRemainKwh;
+
+  // ── Location ──────────────────────────────────────────────────────────────
+
   final double? latitude;
   final double? longitude;
   final String? locationAddress;
 
-  // ── Charging session details (all optional) ────────────────────────────────
+  // ── Charging session details (all optional) ───────────────────────────────
 
   final String? chargeVendor;
   final double? chargeRateKwh;
@@ -45,6 +54,10 @@ class LogEntry {
     required this.timestamp,
     required this.title,
     this.note = '',
+    this.startOdometerKm,
+    this.startBatteryLevelPercent,
+    this.startEvRangeKm,
+    this.startBatteryRemainKwh,
     this.odometerKm,
     this.batteryLevelPercent,
     this.evRangeKm,
@@ -69,6 +82,20 @@ class LogEntry {
       chargeCostPerKwh != null ||
       chargeTotalCost != null;
 
+  /// Whether this entry has any start readings.
+  bool get hasStartReadings =>
+      startOdometerKm != null ||
+      startBatteryLevelPercent != null ||
+      startEvRangeKm != null ||
+      startBatteryRemainKwh != null;
+
+  /// Whether this entry has any end readings.
+  bool get hasEndReadings =>
+      odometerKm != null ||
+      batteryLevelPercent != null ||
+      evRangeKm != null ||
+      batteryRemainKwh != null;
+
   // ── Serialisation ─────────────────────────────────────────────────────────
 
   Map<String, dynamic> toJson() => {
@@ -76,6 +103,12 @@ class LogEntry {
         'timestamp': timestamp.toIso8601String(),
         'title': title,
         'note': note,
+        if (startOdometerKm != null) 'startOdometerKm': startOdometerKm,
+        if (startBatteryLevelPercent != null)
+          'startBatteryLevelPercent': startBatteryLevelPercent,
+        if (startEvRangeKm != null) 'startEvRangeKm': startEvRangeKm,
+        if (startBatteryRemainKwh != null)
+          'startBatteryRemainKwh': startBatteryRemainKwh,
         if (odometerKm != null) 'odometerKm': odometerKm,
         if (batteryLevelPercent != null)
           'batteryLevelPercent': batteryLevelPercent,
@@ -98,6 +131,12 @@ class LogEntry {
         timestamp: DateTime.parse(j['timestamp'] as String),
         title: j['title'] as String,
         note: j['note'] as String? ?? '',
+        startOdometerKm: (j['startOdometerKm'] as num?)?.toDouble(),
+        startBatteryLevelPercent:
+            (j['startBatteryLevelPercent'] as num?)?.toDouble(),
+        startEvRangeKm: (j['startEvRangeKm'] as num?)?.toDouble(),
+        startBatteryRemainKwh:
+            (j['startBatteryRemainKwh'] as num?)?.toDouble(),
         odometerKm: (j['odometerKm'] as num?)?.toDouble(),
         batteryLevelPercent: (j['batteryLevelPercent'] as num?)?.toDouble(),
         evRangeKm: (j['evRangeKm'] as num?)?.toDouble(),
@@ -118,6 +157,10 @@ class LogEntry {
     DateTime? timestamp,
     String? title,
     String? note,
+    Object? startOdometerKm = _sentinel,
+    Object? startBatteryLevelPercent = _sentinel,
+    Object? startEvRangeKm = _sentinel,
+    Object? startBatteryRemainKwh = _sentinel,
     Object? odometerKm = _sentinel,
     Object? batteryLevelPercent = _sentinel,
     Object? evRangeKm = _sentinel,
@@ -137,6 +180,18 @@ class LogEntry {
         timestamp: timestamp ?? this.timestamp,
         title: title ?? this.title,
         note: note ?? this.note,
+        startOdometerKm: startOdometerKm == _sentinel
+            ? this.startOdometerKm
+            : startOdometerKm as double?,
+        startBatteryLevelPercent: startBatteryLevelPercent == _sentinel
+            ? this.startBatteryLevelPercent
+            : startBatteryLevelPercent as double?,
+        startEvRangeKm: startEvRangeKm == _sentinel
+            ? this.startEvRangeKm
+            : startEvRangeKm as double?,
+        startBatteryRemainKwh: startBatteryRemainKwh == _sentinel
+            ? this.startBatteryRemainKwh
+            : startBatteryRemainKwh as double?,
         odometerKm:
             odometerKm == _sentinel ? this.odometerKm : odometerKm as double?,
         batteryLevelPercent: batteryLevelPercent == _sentinel

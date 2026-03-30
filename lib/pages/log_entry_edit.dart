@@ -13,13 +13,15 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/pages/log_charge_section.dart';
-import 'package:konapod/pages/log_location_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
+import 'package:konapod/pages/log_location_section.dart';
+import 'package:konapod/services/app_provider.dart';
 
 const _uuid = Uuid();
 
@@ -39,16 +41,18 @@ class LogEntryEdit extends StatefulWidget {
 class _LogEntryEditState extends State<LogEntryEdit> {
   late final TextEditingController _title;
   late final TextEditingController _note;
+  late final TextEditingController _startOdometer;
   late final TextEditingController _odometer;
+  late final TextEditingController _startBatteryLevelCtrl;
+  late final TextEditingController _startEvRangeCtrl;
+  late final TextEditingController _startBatteryRemainCtrl;
   final _chargeKey = GlobalKey<LogChargeSectionState>();
   late DateTime _timestamp;
-  late double? _batteryLevel;
-  late double? _evRange;
-  late double? _batteryRemainKwh;
   late final TextEditingController _batteryLevelCtrl;
   late final TextEditingController _evRangeCtrl;
   late final TextEditingController _batteryRemainCtrl;
   final _locationKey = GlobalKey<LogLocationSectionState>();
+  bool _fetchingEnd = false;
 
   bool get _isNew => widget.entry == null;
 
@@ -63,29 +67,48 @@ class _LogEntryEditState extends State<LogEntryEdit> {
     _title = TextEditingController(text: e?.title ?? '');
     _note = TextEditingController(text: e?.note ?? '');
 
-    // Pre-populate vehicle readings for new entries.
-    final odo = e?.odometerKm ?? v?.odometerKm;
+    // ── Start readings ────────────────────────────────────────────────────────
+    // For new entries: pre-fill from current vehicle state.
+    // For existing entries: use only what was saved — if the user cleared a
+    // field it must stay empty (never fall back to the live vehicle value).
+    final isNew = e == null;
+    final startOdo = e?.startOdometerKm ?? (isNew ? v?.odometerKm : null);
+    _startOdometer = TextEditingController(
+      text: startOdo != null ? startOdo.round().toString() : '',
+    );
+    final startBatt =
+        e?.startBatteryLevelPercent ?? (isNew ? v?.batteryLevelPercent : null);
+    _startBatteryLevelCtrl = TextEditingController(
+      text: startBatt != null ? startBatt.toStringAsFixed(0) : '',
+    );
+    final startRange = e?.startEvRangeKm ?? (isNew ? v?.evRangeKm : null);
+    _startEvRangeCtrl = TextEditingController(
+      text: startRange != null ? startRange.toStringAsFixed(0) : '',
+    );
+    final startRemain =
+        e?.startBatteryRemainKwh ?? (isNew ? v?.batteryRemainKwh : null);
+    _startBatteryRemainCtrl = TextEditingController(
+      text: startRemain != null
+          ? (startRemain / 3600).toStringAsFixed(1)
+          : '',
+    );
+
+    // ── End readings — blank for new entries, populated when editing ─────────
+    final odo = e?.odometerKm;
     _odometer = TextEditingController(
-      text: odo != null ? odo.toStringAsFixed(1) : '',
+      text: odo != null ? odo.round().toString() : '',
     );
-
-    _batteryLevel = e?.batteryLevelPercent ?? v?.batteryLevelPercent;
-    _evRange = e?.evRangeKm ?? v?.evRangeKm;
-    _batteryRemainKwh = e?.batteryRemainKwh ?? v?.batteryRemainKwh;
-
-    // batteryRemainKwh is stored in kJ — display as kWh (÷3600).
+    final batt = e?.batteryLevelPercent;
     _batteryLevelCtrl = TextEditingController(
-      text: _batteryLevel != null
-          ? _batteryLevel!.toStringAsFixed(0)
-          : '',
+      text: batt != null ? batt.toStringAsFixed(0) : '',
     );
+    final range = e?.evRangeKm;
     _evRangeCtrl = TextEditingController(
-      text: _evRange != null ? _evRange!.toStringAsFixed(0) : '',
+      text: range != null ? range.toStringAsFixed(0) : '',
     );
+    final remain = e?.batteryRemainKwh;
     _batteryRemainCtrl = TextEditingController(
-      text: _batteryRemainKwh != null
-          ? (_batteryRemainKwh! / 3600).toStringAsFixed(1)
-          : '',
+      text: remain != null ? (remain / 3600).toStringAsFixed(1) : '',
     );
   }
 
@@ -93,7 +116,11 @@ class _LogEntryEditState extends State<LogEntryEdit> {
   void dispose() {
     _title.dispose();
     _note.dispose();
+    _startOdometer.dispose();
     _odometer.dispose();
+    _startBatteryLevelCtrl.dispose();
+    _startEvRangeCtrl.dispose();
+    _startBatteryRemainCtrl.dispose();
     _batteryLevelCtrl.dispose();
     _evRangeCtrl.dispose();
     _batteryRemainCtrl.dispose();
@@ -105,11 +132,18 @@ class _LogEntryEditState extends State<LogEntryEdit> {
         timestamp: _timestamp,
         title: _title.text.trim(),
         note: _note.text.trim(),
+        startOdometerKm: double.tryParse(_startOdometer.text.trim()),
         odometerKm: double.tryParse(_odometer.text.trim()),
+        startBatteryLevelPercent:
+            double.tryParse(_startBatteryLevelCtrl.text.trim()),
+        startEvRangeKm: double.tryParse(_startEvRangeCtrl.text.trim()),
+        startBatteryRemainKwh:
+            double.tryParse(_startBatteryRemainCtrl.text.trim()) != null
+                ? double.parse(_startBatteryRemainCtrl.text.trim()) * 3600
+                : null,
         batteryLevelPercent:
             double.tryParse(_batteryLevelCtrl.text.trim()),
         evRangeKm: double.tryParse(_evRangeCtrl.text.trim()),
-        // batteryRemainKwh stored in kJ — multiply entered kWh by 3600.
         batteryRemainKwh: double.tryParse(_batteryRemainCtrl.text.trim()) != null
             ? double.parse(_batteryRemainCtrl.text.trim()) * 3600
             : null,
@@ -123,6 +157,30 @@ class _LogEntryEditState extends State<LogEntryEdit> {
         chargeCostPerKwh: _chargeKey.currentState!.currentValues.costPerKwh,
         chargeTotalCost: _chargeKey.currentState!.currentValues.totalCost,
       );
+  /// Refresh from Bluelink and populate end readings with current vehicle state.
+  Future<void> _fetchEndReadings() async {
+    setState(() => _fetchingEnd = true);
+    try {
+      final provider = context.read<AppProvider>();
+      await provider.refresh();
+      if (!mounted) return;
+      final v = provider.selectedVehicle;
+      if (v == null) return;
+      _odometer.text =
+          v.odometerKm != null ? v.odometerKm!.round().toString() : '';
+      _batteryLevelCtrl.text = v.batteryLevelPercent != null
+          ? v.batteryLevelPercent!.toStringAsFixed(0)
+          : '';
+      _batteryRemainCtrl.text = v.batteryRemainKwh != null
+          ? (v.batteryRemainKwh! / 3600).toStringAsFixed(1)
+          : '';
+      _evRangeCtrl.text =
+          v.evRangeKm != null ? v.evRangeKm!.toStringAsFixed(0) : '';
+    } finally {
+      if (mounted) setState(() => _fetchingEnd = false);
+    }
+  }
+
   Future<void> _pickDateTime() async {
     final date = await showDatePicker(
       context: context,
@@ -187,6 +245,19 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Title
+                    LogSectionLabel('Title', cs),
+                    const Gap(8),
+                    TextField(
+                      controller: _title,
+                      autofocus: _isNew,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        isDense: true,
+                        hintText: 'e.g. Charged at shopping centre',
+                      ),
+                    ),
+                    const Gap(16),
                     // Date & time
                     LogSectionLabel('Date & Time', cs),
                     const Gap(8),
@@ -203,87 +274,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                       ),
                     ),
                     const Gap(16),
-                    // Title
-                    LogSectionLabel('Title', cs),
-                    const Gap(8),
-                    TextField(
-                      controller: _title,
-                      autofocus: _isNew,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                        hintText: 'e.g. Charged at shopping centre',
-                      ),
-                    ),
-                    const Gap(16),
-                    // Odometer
-                    LogSectionLabel('Odometer (km)', cs),
-                    const Gap(8),
-                    TextField(
-                      controller: _odometer,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                        suffixText: 'km',
-                      ),
-                    ),
-                    const Gap(16),
-                    // Vehicle readings — pre-filled from Bluelink, editable.
-                    LogSectionLabel('Vehicle Readings', cs),
-                    const Gap(8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _batteryLevelCtrl,
-                            keyboardType:
-                                const TextInputType.numberWithOptions(
-                                    decimal: true),
-                            decoration: const InputDecoration(
-                              labelText: 'Battery',
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                              suffixText: '%',
-                            ),
-                          ),
-                        ),
-                        const Gap(8),
-                        Expanded(
-                          child: TextField(
-                            controller: _batteryRemainCtrl,
-                            keyboardType:
-                                const TextInputType.numberWithOptions(
-                                    decimal: true),
-                            decoration: const InputDecoration(
-                              labelText: 'Remaining',
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                              suffixText: 'kWh',
-                            ),
-                          ),
-                        ),
-                        const Gap(8),
-                        Expanded(
-                          child: TextField(
-                            controller: _evRangeCtrl,
-                            keyboardType:
-                                const TextInputType.numberWithOptions(
-                                    decimal: true),
-                            decoration: const InputDecoration(
-                              labelText: 'EV Range',
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                              suffixText: 'km',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                     // Location
-                    const Gap(16),
                     LogSectionLabel('Location', cs),
                     const Gap(8),
                     LogLocationSection(
@@ -293,11 +284,66 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                       initialLongitude: widget.vehicle?.longitude,
                       initialAddress: widget.vehicle?.locationAddress,
                     ),
-                    // Charging session
+                    const Gap(16),
+                    const Gap(16),
+                    // ── Start readings ───────────────────────────────────
+                    LogSectionLabel('Start Readings', cs),
+                    const Gap(8),
+                    LogReadingsGrid(
+                      odoCtrl: _startOdometer,
+                      battCtrl: _startBatteryLevelCtrl,
+                      remainCtrl: _startBatteryRemainCtrl,
+                      rangeCtrl: _startEvRangeCtrl,
+                    ),
+                    // Charging session + end readings
                     const Gap(16),
                     LogChargeSection(
                       key: _chargeKey,
                       entry: widget.entry,
+                      endReadingsContent: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Gap(12),
+                          Row(
+                            children: [
+                              LogSectionLabel('End Readings', cs),
+                              const Spacer(),
+                              // Fetch from Bluelink button
+                              if (context
+                                      .watch<AppProvider>()
+                                      .isAuthenticated)
+                                TextButton.icon(
+                                  icon: _fetchingEnd
+                                      ? const SizedBox(
+                                          width: 14,
+                                          height: 14,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2),
+                                        )
+                                      : const Icon(
+                                          Icons.cloud_download_outlined,
+                                          size: 16,
+                                        ),
+                                  label: const Text('From Bluelink'),
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  onPressed: _fetchingEnd
+                                      ? null
+                                      : _fetchEndReadings,
+                                ),
+                            ],
+                          ),
+                          const Gap(8),
+                          LogReadingsGrid(
+                            odoCtrl: _odometer,
+                            battCtrl: _batteryLevelCtrl,
+                            remainCtrl: _batteryRemainCtrl,
+                            rangeCtrl: _evRangeCtrl,
+                          ),
+                        ],
+                      ),
                     ),
                     const Gap(16),
                     // Note
