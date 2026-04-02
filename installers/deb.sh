@@ -35,8 +35,8 @@ EOL
 
 cat > ${APP}_${VER}_amd64/usr/share/applications/com.togaware.${APP}.desktop << EOL
 [Desktop Entry]
-Name=KonaPod
-Comment=Collect your documents in Pods
+Name=${APP}
+Comment=${APP}
 Exec=/usr/bin/${APP}
 Icon=${APP}
 Terminal=false

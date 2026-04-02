@@ -47,6 +47,7 @@ class AppProvider extends ChangeNotifier {
   List<LogEntry> _logEntries = [];
   int _selectedVehicleIndex = 0;
   bool _isRefreshing = false;
+  bool _logLoading = false;
   DataSource _dataSource = DataSource.none;
   String? _loadedFilename; // which pod file is currently loaded
 
@@ -57,6 +58,7 @@ class AppProvider extends ChangeNotifier {
       _vehicles.isNotEmpty ? _vehicles[_selectedVehicleIndex] : null;
   bool get isAuthenticated => _api.isAuthenticated;
   bool get isRefreshing => _isRefreshing;
+  bool get logLoading => _logLoading;
   DataSource get dataSource => _dataSource;
   String? get loadedFilename => _loadedFilename;
   bool get hasData => _vehicles.isNotEmpty;
@@ -334,12 +336,17 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<void> loadLogFromPod() async {
+    _logLoading = true;
+    notifyListeners();
+
     try {
       final raw = await PodService.loadLogEntries();
       _logEntries = raw.map(LogEntry.fromJson).toList();
-      notifyListeners();
     } catch (e) {
       debugPrint('[AppProvider] loadLogFromPod error: $e');
+    } finally {
+      _logLoading = false;
+      notifyListeners();
     }
   }
 

@@ -44,9 +44,14 @@ class _LogbookScreenState extends State<LogbookScreen> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: entries.isEmpty
-          ? LogEmptyState(cs: cs, onAdd: () => _addEntry(context, provider))
-          : ListView.separated(
+      body: provider.logLoading
+          ? const Center(child: CircularProgressIndicator())
+          : entries.isEmpty
+              ? LogEmptyState(
+                  cs: cs,
+                  onAdd: () => _addEntry(context, provider),
+                )
+              : ListView.separated(
               padding: const EdgeInsets.only(bottom: 80),
               itemCount: entries.length,
               separatorBuilder: (_, __) =>
