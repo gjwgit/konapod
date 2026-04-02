@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Add CONSUMED column for where consumed [0.2.21 20260402 gjw]
 + Add % REGEN and EFFICIENCY to DRIVING table [0.2.20 20260402 gjw]
 + Show busy animation on loading log book [0.2.19 20260402 gjw]
 + Additional log book data collection [0.2.18 20260329 gjw]

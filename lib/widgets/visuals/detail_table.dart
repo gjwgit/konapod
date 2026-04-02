@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/daily_driving_stat.dart';
 import 'package:konapod/models/vehicle.dart';
@@ -101,6 +102,30 @@ class DetailTable extends StatelessWidget {
                           color: cs.onSurfaceVariant,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  if (hasEnergy)
+                    SizedBox(
+                      width: 100,
+                      child: MarkdownTooltip(
+                        message: '**Consumption Breakdown**\n\n'
+                            'Percentage of total consumed by:\n\n'
+                            '+ **Engine** drive motor\n'
+                            '+ **Climate** heating/cooling\n'
+                            '+ **Electronics** onboard systems\n'
+                            '+ **Battery** care\n\n'
+                            'Format: E-C-L-B',
+                        child: Text(
+                          'Consumed',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: cs.onSurfaceVariant,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.dotted,
+                          ),
                         ),
                       ),
                     ),
@@ -185,6 +210,16 @@ class DetailTable extends StatelessWidget {
                                   TextStyle(color: cs.onSurface, fontSize: 12),
                             ),
                           ),
+                        if (hasEnergy)
+                          SizedBox(
+                            width: 100,
+                            child: Text(
+                              _consumedBreakdown(d),
+                              textAlign: TextAlign.right,
+                              style:
+                                  TextStyle(color: cs.onSurface, fontSize: 12),
+                            ),
+                          ),
                         if (hasRegen)
                           SizedBox(
                             width: 72,
@@ -257,6 +292,18 @@ double _efficiency(DailyDrivingStat d) {
 
 double _regenPercent(DailyDrivingStat d) {
   return (d.regeneratedEnergy ?? 0) / (d.totalConsumed ?? 1) * 100;
+}
+
+/// Consumption breakdown as Engine-Climate-Electronics-Battery percentages.
+
+String _consumedBreakdown(DailyDrivingStat d) {
+  final total = d.totalConsumed ?? 0;
+  if (total == 0) return '—';
+
+  int pct(int? value) => ((value ?? 0) / total * 100).round();
+
+  return '${pct(d.engineConsumption)}-${pct(d.climateConsumption)}-'
+      '${pct(d.electronicsConsumption)}-${pct(d.batteryCareConsumption)}';
 }
 
 // ── Consumption summary table ─────────────────────────────────────────────────
