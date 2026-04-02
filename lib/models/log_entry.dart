@@ -135,8 +135,7 @@ class LogEntry {
         startBatteryLevelPercent:
             (j['startBatteryLevelPercent'] as num?)?.toDouble(),
         startEvRangeKm: (j['startEvRangeKm'] as num?)?.toDouble(),
-        startBatteryRemainKwh:
-            (j['startBatteryRemainKwh'] as num?)?.toDouble(),
+        startBatteryRemainKwh: (j['startBatteryRemainKwh'] as num?)?.toDouble(),
         odometerKm: (j['odometerKm'] as num?)?.toDouble(),
         batteryLevelPercent: (j['batteryLevelPercent'] as num?)?.toDouble(),
         evRangeKm: (j['evRangeKm'] as num?)?.toDouble(),

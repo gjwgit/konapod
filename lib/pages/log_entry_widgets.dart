@@ -1,6 +1,6 @@
 /// LogEntryWidgets — vehicle readings and location display widgets.
 ///
-// Time-stamp: <Friday 2026-03-27 18:00:00 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-04-02 16:41:55 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -13,109 +13,6 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
-
-// ── Vehicle readings display ──────────────────────────────────────────────────
-
-class LogReadingsRow extends StatelessWidget {
-  final double? batteryLevel;
-  final double? evRange;
-  final double? batteryRemainKwh;
-  final ColorScheme cs;
-
-  const LogReadingsRow({
-    super.key,
-    required this.batteryLevel,
-    required this.evRange,
-    required this.batteryRemainKwh,
-    required this.cs,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (batteryLevel == null && evRange == null && batteryRemainKwh == null) {
-      return Text(
-        'No live vehicle data — connect to Bluelink for auto-fill.',
-        style: TextStyle(
-          color: cs.onSurfaceVariant,
-          fontSize: 12,
-          fontStyle: FontStyle.italic,
-        ),
-      );
-    }
-
-    return Wrap(
-      spacing: 12,
-      runSpacing: 8,
-      children: [
-        if (batteryLevel != null)
-          LogReadingChip(
-            icon: Icons.battery_charging_full,
-            label: '${batteryLevel!.toStringAsFixed(0)}%',
-            hint: 'Battery',
-            cs: cs,
-          ),
-        if (batteryRemainKwh != null)
-          LogReadingChip(
-            icon: Icons.bolt,
-            label: '${(batteryRemainKwh! / 3600).toStringAsFixed(1)} kWh',
-            hint: 'Remaining (kJ÷3600)',
-            cs: cs,
-          ),
-        if (evRange != null)
-          LogReadingChip(
-            icon: Icons.route_outlined,
-            label: '${evRange!.toStringAsFixed(0)} km',
-            hint: 'EV Range',
-            cs: cs,
-          ),
-      ],
-    );
-  }
-}
-
-// ── Reading chip ──────────────────────────────────────────────────────────────
-
-class LogReadingChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String hint;
-  final ColorScheme cs;
-
-  const LogReadingChip({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.hint,
-    required this.cs,
-  });
-
-  @override
-  Widget build(BuildContext context) => Tooltip(
-        message: hint,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: cs.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 14, color: cs.primary),
-              const Gap(4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: cs.onSurface,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-}
 
 // ── Location display ──────────────────────────────────────────────────────────
 
@@ -176,7 +73,7 @@ class LogSectionLabel extends StatelessWidget {
   final String text;
   final ColorScheme cs;
 
-  const LogSectionLabel(this.text, this.cs);
+  const LogSectionLabel(this.text, this.cs, {super.key});
 
   @override
   Widget build(BuildContext context) => Text(
@@ -199,6 +96,7 @@ class LogReadingsGrid extends StatelessWidget {
   final TextEditingController rangeCtrl;
 
   const LogReadingsGrid({
+    super.key,
     required this.odoCtrl,
     required this.battCtrl,
     required this.remainCtrl,

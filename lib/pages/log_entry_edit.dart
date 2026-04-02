@@ -88,9 +88,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
     final startRemain =
         e?.startBatteryRemainKwh ?? (isNew ? v?.batteryRemainKwh : null);
     _startBatteryRemainCtrl = TextEditingController(
-      text: startRemain != null
-          ? (startRemain / 3600).toStringAsFixed(1)
-          : '',
+      text: startRemain != null ? (startRemain / 3600).toStringAsFixed(1) : '',
     );
 
     // ── End readings — blank for new entries, populated when editing ─────────
@@ -141,22 +139,24 @@ class _LogEntryEditState extends State<LogEntryEdit> {
             double.tryParse(_startBatteryRemainCtrl.text.trim()) != null
                 ? double.parse(_startBatteryRemainCtrl.text.trim()) * 3600
                 : null,
-        batteryLevelPercent:
-            double.tryParse(_batteryLevelCtrl.text.trim()),
+        batteryLevelPercent: double.tryParse(_batteryLevelCtrl.text.trim()),
         evRangeKm: double.tryParse(_evRangeCtrl.text.trim()),
-        batteryRemainKwh: double.tryParse(_batteryRemainCtrl.text.trim()) != null
-            ? double.parse(_batteryRemainCtrl.text.trim()) * 3600
-            : null,
+        batteryRemainKwh:
+            double.tryParse(_batteryRemainCtrl.text.trim()) != null
+                ? double.parse(_batteryRemainCtrl.text.trim()) * 3600
+                : null,
         latitude: _locationKey.currentState!.currentValues.latitude,
         longitude: _locationKey.currentState!.currentValues.longitude,
         locationAddress: _locationKey.currentState!.currentValues.address,
         chargeVendor: _chargeKey.currentState!.currentValues.vendor,
         chargeRateKwh: _chargeKey.currentState!.currentValues.rateKwh,
         chargeEnergyKwh: _chargeKey.currentState!.currentValues.energyKwh,
-        chargeDurationMinutes: _chargeKey.currentState!.currentValues.durationMinutes,
+        chargeDurationMinutes:
+            _chargeKey.currentState!.currentValues.durationMinutes,
         chargeCostPerKwh: _chargeKey.currentState!.currentValues.costPerKwh,
         chargeTotalCost: _chargeKey.currentState!.currentValues.totalCost,
       );
+
   /// Refresh from Bluelink and populate end readings with current vehicle state.
   Future<void> _fetchEndReadings() async {
     setState(() => _fetchingEnd = true);
@@ -309,16 +309,15 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                               LogSectionLabel('End Readings', cs),
                               const Spacer(),
                               // Fetch from Bluelink button
-                              if (context
-                                      .watch<AppProvider>()
-                                      .isAuthenticated)
+                              if (context.watch<AppProvider>().isAuthenticated)
                                 TextButton.icon(
                                   icon: _fetchingEnd
                                       ? const SizedBox(
                                           width: 14,
                                           height: 14,
                                           child: CircularProgressIndicator(
-                                              strokeWidth: 2),
+                                            strokeWidth: 2,
+                                          ),
                                         )
                                       : const Icon(
                                           Icons.cloud_download_outlined,
@@ -329,9 +328,8 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                                     padding: EdgeInsets.zero,
                                     visualDensity: VisualDensity.compact,
                                   ),
-                                  onPressed: _fetchingEnd
-                                      ? null
-                                      : _fetchEndReadings,
+                                  onPressed:
+                                      _fetchingEnd ? null : _fetchEndReadings,
                                 ),
                             ],
                           ),

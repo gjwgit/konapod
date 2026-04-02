@@ -149,8 +149,7 @@ class LogChargeSectionState extends State<LogChargeSection> {
         ),
         if (_showCharge) ...[
           // End vehicle readings — injected by parent, shown first
-          if (widget.endReadingsContent != null)
-            widget.endReadingsContent!,
+          if (widget.endReadingsContent != null) widget.endReadingsContent!,
           const Gap(12),
           _Label('Charging Details', Theme.of(context).colorScheme),
           const Gap(8),

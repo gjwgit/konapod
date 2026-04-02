@@ -113,8 +113,7 @@ class LogLocationSectionState extends State<LogLocationSection> {
       );
       if (response.statusCode != 200) {
         setState(() {
-          _geocodeError =
-              'Geocoding request failed (${response.statusCode}).';
+          _geocodeError = 'Geocoding request failed (${response.statusCode}).';
           _geocoding = false;
         });
         return;
@@ -188,8 +187,7 @@ class LogLocationSectionState extends State<LogLocationSection> {
                   border: OutlineInputBorder(),
                   isDense: true,
                   hintText: 'Enter address to geocode...',
-                  prefixIcon:
-                      Icon(Icons.location_on_outlined, size: 18),
+                  prefixIcon: Icon(Icons.location_on_outlined, size: 18),
                 ),
                 onSubmitted: (_) => _geocode(),
               ),

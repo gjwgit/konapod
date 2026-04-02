@@ -16,8 +16,8 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
 import 'package:konapod/models/log_entry.dart';
-import 'package:konapod/screens/logbook_tile.dart';
 import 'package:konapod/pages/log_entry_edit.dart';
+import 'package:konapod/screens/logbook_tile.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 
@@ -52,16 +52,16 @@ class _LogbookScreenState extends State<LogbookScreen> {
                   onAdd: () => _addEntry(context, provider),
                 )
               : ListView.separated(
-              padding: const EdgeInsets.only(bottom: 80),
-              itemCount: entries.length,
-              separatorBuilder: (_, __) =>
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-              itemBuilder: (_, i) => LogEntryTile(
-                entry: entries[i],
-                onTap: () => _editEntry(context, entries[i], provider),
-                onDelete: () => _deleteEntry(context, entries[i], provider),
-              ),
-            ),
+                  padding: const EdgeInsets.only(bottom: 80),
+                  itemCount: entries.length,
+                  separatorBuilder: (_, __) =>
+                      const Divider(height: 1, indent: 16, endIndent: 16),
+                  itemBuilder: (_, i) => LogEntryTile(
+                    entry: entries[i],
+                    onTap: () => _editEntry(context, entries[i], provider),
+                    onDelete: () => _deleteEntry(context, entries[i], provider),
+                  ),
+                ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addEntry(context, provider),
         tooltip: 'New log entry',
@@ -148,7 +148,7 @@ class LogEmptyState extends StatelessWidget {
   final ColorScheme cs;
   final VoidCallback onAdd;
 
-  const LogEmptyState({required this.cs, required this.onAdd});
+  const LogEmptyState({super.key, required this.cs, required this.onAdd});
 
   @override
   Widget build(BuildContext context) => Center(

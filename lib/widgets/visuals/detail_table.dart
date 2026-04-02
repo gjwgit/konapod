@@ -117,6 +117,32 @@ class DetailTable extends StatelessWidget {
                         ),
                       ),
                     ),
+                  if (hasRegen && hasEnergy)
+                    SizedBox(
+                      width: 62,
+                      child: Text(
+                        'Regen %',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  if (hasEnergy)
+                    SizedBox(
+                      width: 82,
+                      child: Text(
+                        'Efficiency',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          color: cs.onSurfaceVariant,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -172,6 +198,32 @@ class DetailTable extends StatelessWidget {
                               ),
                             ),
                           ),
+                        if (hasRegen && hasEnergy)
+                          SizedBox(
+                            width: 62,
+                            child: Text(
+                              (d.totalConsumed ?? 0) > 0
+                                  ? '${_regenPercent(d).toStringAsFixed(0)}%'
+                                  : '—',
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                color: HyundaiColors.success,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        if (hasEnergy)
+                          SizedBox(
+                            width: 82,
+                            child: Text(
+                              d.distanceKm > 0
+                                  ? _efficiency(d).toStringAsFixed(1)
+                                  : '—',
+                              textAlign: TextAlign.right,
+                              style:
+                                  TextStyle(color: cs.onSurface, fontSize: 12),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -189,6 +241,22 @@ class DetailTable extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Net consumed energy per 100 km: (consumed − regen) / distance × 100.
+///
+/// Values from the API are in Wh; result is in kWh/100 km.
+
+double _efficiency(DailyDrivingStat d) {
+  final netWh = (d.totalConsumed ?? 0) - (d.regeneratedEnergy ?? 0);
+
+  return (netWh / 1000) / d.distanceKm * 100;
+}
+
+/// Regenerated energy as a percentage of total consumed.
+
+double _regenPercent(DailyDrivingStat d) {
+  return (d.regeneratedEnergy ?? 0) / (d.totalConsumed ?? 1) * 100;
 }
 
 // ── Consumption summary table ─────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 /// LogbookTile — entry tile and mini chip for the log book screen.
 ///
-// Time-stamp: <Friday 2026-03-27 18:00:00 +1100 Graham Williams>
+// Time-stamp: <Thursday 2026-04-02 16:41:15 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -24,6 +24,7 @@ class LogEntryTile extends StatelessWidget {
   final VoidCallback onDelete;
 
   const LogEntryTile({
+    super.key,
     required this.entry,
     required this.onTap,
     required this.onDelete,
@@ -245,9 +246,6 @@ class LogEntryTile extends StatelessWidget {
     );
   }
 
-  bool _hasReadings(LogEntry e) =>
-      e.hasStartReadings || e.hasEndReadings;
-
   String _fmtDuration(int minutes) {
     if (minutes < 60) return '${minutes}m';
     final h = minutes ~/ 60;
@@ -280,7 +278,7 @@ class LogMiniChip extends StatelessWidget {
   final String label;
   final ColorScheme cs;
 
-  const LogMiniChip(this.icon, this.label, this.cs);
+  const LogMiniChip(this.icon, this.label, this.cs, {super.key});
 
   @override
   Widget build(BuildContext context) => Row(
