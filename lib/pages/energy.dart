@@ -28,16 +28,54 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 
 import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/widgets/section_label.dart';
 import 'package:konapod/widgets/sections_energy.dart';
 
 class EnergyPage extends StatelessWidget {
-  final Vehicle v;
-  const EnergyPage({super.key, required this.v});
+  const EnergyPage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final v = context.watch<AppProvider>().selectedVehicle;
+
+    if (v == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.battery_charging_full,
+                size: 64,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurfaceVariant
+                    .withValues(alpha: 0.3),
+              ),
+              const Gap(16),
+              const Text(
+                'No vehicle data loaded.',
+                style: TextStyle(fontSize: 16),
+              ),
+              const Gap(8),
+              Text(
+                'Load a Bluelink snapshot or pod data first.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(

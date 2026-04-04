@@ -63,42 +63,54 @@ class HeroCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${v.nickname} ${v.modelName} ${v.color} ${v.trim}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    if (v.color.isNotEmpty)
+                child: MarkdownTooltip(
+                  message: '**Vehicle Identity**\n\n'
+                      'Nickname, model, colour and trim as registered '
+                      'with Hyundai Bluelink.',
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        v.color,
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.65),
-                          fontSize: 13,
+                        '${v.nickname} ${v.modelName} ${v.color} ${v.trim}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
                         ),
                       ),
-                  ],
+                      if (v.color.isNotEmpty)
+                        Text(
+                          v.color,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.65),
+                            fontSize: 13,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: HyundaiColors.accent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  v.fuelType,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+              MarkdownTooltip(
+                message: '**Fuel Type**\n\n'
+                    'The vehicle\'s powertrain type as reported by Bluelink.\n\n'
+                    'Common values: **EV** (battery electric), '
+                    '**PHEV** (plug-in hybrid), **HEV** (hybrid), '
+                    '**GDI/MPI** (petrol), **CRDI** (diesel).',
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: HyundaiColors.accent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    v.fuelType,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -193,56 +205,102 @@ class HeroCard extends StatelessWidget {
           Row(
             children: [
               if (v.evRangeKm != null || v.fuelRangeKm != null) ...[
-                const Icon(Icons.route, color: Colors.white54, size: 16),
-                const Gap(6),
-                Text(
-                  '${(v.evRangeKm ?? v.fuelRangeKm)!.round()} km current range',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                MarkdownTooltip(
+                  message: '**Current Range**\n\n'
+                      'Estimated distance the car can travel on the '
+                      'current charge or fuel level.\n\n'
+                      'Calculated by the onboard computer based on '
+                      'battery/fuel level, recent driving style, speed, '
+                      'temperature and climate control use.',
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.route, color: Colors.white54, size: 16),
+                      const Gap(6),
+                      Text(
+                        '${(v.evRangeKm ?? v.fuelRangeKm)!.round()} km current range',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
               if (v.batteryLevelPercent != null) ...[
                 const Gap(16),
-                const Icon(
-                  Icons.battery_charging_full,
-                  color: Colors.white54,
-                  size: 16,
-                ),
-                const Gap(6),
-                Text(
-                  '${v.batteryLevelPercent!.round()}% charge',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                MarkdownTooltip(
+                  message: '**Battery Charge**\n\n'
+                      'Current state of charge as a percentage of '
+                      'the battery\'s usable capacity.\n\n'
+                      '100% means fully charged. Most manufacturers '
+                      'recommend charging to 80% for daily use to '
+                      'maximise battery longevity.',
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.battery_charging_full,
+                        color: Colors.white54,
+                        size: 16,
+                      ),
+                      const Gap(6),
+                      Text(
+                        '${v.batteryLevelPercent!.round()}% charge',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
               const Gap(16),
-              const Icon(Icons.speed, color: Colors.white54, size: 16),
-              const Gap(6),
-              Text(
-                v.odometerKm != null
-                    ? '${NumberFormat('#,##0').format(v.odometerKm!.round())} km total travelled'
-                    : '– km',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
+              MarkdownTooltip(
+                message: '**Odometer**\n\n'
+                    'Total distance the vehicle has travelled since new, '
+                    'in kilometres.\n\n'
+                    'This is the lifetime cumulative distance reported '
+                    'by the car\'s trip computer.',
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.speed, color: Colors.white54, size: 16),
+                    const Gap(6),
+                    Text(
+                      v.odometerKm != null
+                          ? '${NumberFormat('#,##0').format(v.odometerKm!.round())} km total travelled'
+                          : '– km',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const Spacer(),
               if (v.vin.isNotEmpty)
-                Text(
-                  v.vin.length > 8
-                      ? '…${v.vin.substring(v.vin.length - 8)}'
-                      : v.vin,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45),
-                    fontSize: 12,
+                MarkdownTooltip(
+                  message: '**VIN (Vehicle Identification Number)**\n\n'
+                      'A unique 17-character code assigned to every vehicle '
+                      'at manufacture.\n\n'
+                      'Only the last 8 characters are shown here for privacy. '
+                      'The full VIN encodes the manufacturer, model, year, '
+                      'engine type and serial number.',
+                  child: Text(
+                    v.vin.length > 8
+                        ? '…${v.vin.substring(v.vin.length - 8)}'
+                        : v.vin,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.45),
+                      fontSize: 12,
+                    ),
                   ),
                 ),
             ],

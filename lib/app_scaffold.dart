@@ -1,6 +1,6 @@
 /// Main app scaffold with SolidScaffold, nav menu, app bar and actions.
 ///
-// Time-stamp: <Monday 2026-03-23 12:55:40 +1100 Graham Williams>
+// Time-stamp: <Saturday 2026-04-04 22:01:39 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -160,15 +160,13 @@ class _AppScaffoldState extends State<AppScaffold> {
             child: VisualsScreen(),
           ),
         ),
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'Energy',
           icon: Icons.battery_charging_full,
           tooltip: '**Energy**\n\nEV battery, charging status and fuel.',
           child: _PageWrapper(
             title: 'Energy',
-            child: v != null
-                ? EnergyPage(v: v)
-                : NoDataPlaceholder(provider: provider),
+            child: EnergyPage(),
           ),
         ),
         SolidMenuItem(

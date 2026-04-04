@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Additional tool tips for the STATUS hero card [0.2.24 20260405 gjw]
 + Add a HERO card to DRIVING [0.2.23 20260404 gjw]
 + Refine the table [0.2.22 20260404 gjw]
 + Add CONSUMED column for where consumed [0.2.21 20260402 gjw]

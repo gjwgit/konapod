@@ -206,6 +206,19 @@ class DrivingHeroCard extends StatelessWidget {
                               '13–16 kWh/100km depending on driving style '
                               'and conditions.',
                         ),
+                      if (_dailyMedianEfficiency(stats) != null)
+                        _Chip(
+                          'Daily Median',
+                          '${_dailyMedianEfficiency(stats)!.toStringAsFixed(1)} kWh/100km',
+                          Icons.bar_chart,
+                          tooltip: '**Daily Median Efficiency**\n\n'
+                              'The median of each day\'s individual efficiency '
+                              '(kWh/100km), only counting days with driving.\n\n'
+                              'The median is less affected by outliers than '
+                              'the mean — a single unusually short or long trip '
+                              'won\'t skew the figure. It represents your '
+                              '"typical day" efficiency.',
+                        ),
                     ],
                   ),
                 ),
@@ -228,6 +241,22 @@ double _computeMedian(List<DailyDrivingStat> stats) {
   return sorted.length.isOdd
       ? sorted[mid]
       : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+/// Median of each day's individual net efficiency, excluding zero-distance days.
+
+double? _dailyMedianEfficiency(List<DailyDrivingStat> stats) {
+  final values = stats
+      .where((d) => d.distanceKm > 0)
+      .map((d) => d.netEfficiencyKwhPer100km)
+      .toList()
+    ..sort();
+  if (values.isEmpty) return null;
+  final mid = values.length ~/ 2;
+
+  return values.length.isOdd
+      ? values[mid]
+      : (values[mid - 1] + values[mid]) / 2;
 }
 
 // ── Hero chip (white-on-dark, matching BatterySection style) ─────────────────
