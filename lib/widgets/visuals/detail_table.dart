@@ -1,6 +1,6 @@
 /// DoorsSection widget showing lock, engine, charging and door states.
 ///
-// Time-stamp: <Wednesday 2026-03-18 09:56:35 +1100 Graham Williams>
+// Time-stamp: <Saturday 2026-04-04 05:38:39 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -105,30 +105,6 @@ class DetailTable extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if (hasEnergy)
-                    SizedBox(
-                      width: 100,
-                      child: MarkdownTooltip(
-                        message: '**Consumption Breakdown**\n\n'
-                            'Percentage of total consumed by:\n\n'
-                            '+ **Engine** drive motor\n'
-                            '+ **Climate** heating/cooling\n'
-                            '+ **Electronics** onboard systems\n'
-                            '+ **Battery** care\n\n'
-                            'Format: E-C-L-B',
-                        child: Text(
-                          'Consumed',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            decoration: TextDecoration.underline,
-                            decorationStyle: TextDecorationStyle.dotted,
-                          ),
-                        ),
-                      ),
-                    ),
                   if (hasRegen)
                     SizedBox(
                       width: 72,
@@ -159,12 +135,36 @@ class DetailTable extends StatelessWidget {
                     SizedBox(
                       width: 82,
                       child: Text(
-                        'Efficiency',
+                        'kWh/100km',
                         textAlign: TextAlign.right,
                         style: TextStyle(
                           color: cs.onSurfaceVariant,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  if (hasEnergy)
+                    SizedBox(
+                      width: 100,
+                      child: MarkdownTooltip(
+                        message: '**Consumption Breakdown**\n\n'
+                            'Percentage of total consumed by:\n\n'
+                            '+ **Engine** drive motor\n'
+                            '+ **Climate** heating/cooling\n'
+                            '+ **Electronics** onboard systems\n'
+                            '+ **Battery** care\n\n'
+                            'Format: En-Cl-El-Ba',
+                        child: Text(
+                          'En-Cl-El-Ba',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            color: cs.onSurfaceVariant,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationStyle: TextDecorationStyle.dotted,
+                          ),
                         ),
                       ),
                     ),
@@ -206,18 +206,11 @@ class DetailTable extends StatelessWidget {
                             child: Text(
                               '${((d.totalConsumed ?? 0) / 1000).toStringAsFixed(2)} kWh',
                               textAlign: TextAlign.right,
-                              style:
-                                  TextStyle(color: cs.onSurface, fontSize: 12),
-                            ),
-                          ),
-                        if (hasEnergy)
-                          SizedBox(
-                            width: 100,
-                            child: Text(
-                              _consumedBreakdown(d),
-                              textAlign: TextAlign.right,
-                              style:
-                                  TextStyle(color: cs.onSurface, fontSize: 12),
+                              style: const TextStyle(
+                                color: HyundaiColors.primary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         if (hasRegen)
@@ -254,6 +247,19 @@ class DetailTable extends StatelessWidget {
                               d.distanceKm > 0
                                   ? _efficiency(d).toStringAsFixed(1)
                                   : '—',
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                color: HyundaiColors.primary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        if (hasEnergy)
+                          SizedBox(
+                            width: 100,
+                            child: Text(
+                              _consumedBreakdown(d),
                               textAlign: TextAlign.right,
                               style:
                                   TextStyle(color: cs.onSurface, fontSize: 12),
