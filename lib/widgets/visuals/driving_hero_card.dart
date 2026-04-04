@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 
-import 'package:konapod/models/daily_driving_stat.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 
@@ -35,10 +34,9 @@ class DrivingHeroCard extends StatelessWidget {
     final total = vehicle.statsTotalDistanceKm;
     final avg = stats.isNotEmpty ? total / stats.length : 0.0;
     final median = _computeMedian(stats);
-    final best =
-        stats.isNotEmpty
-            ? stats.map((d) => d.distanceKm).reduce((a, b) => a > b ? a : b)
-            : 0.0;
+    final best = stats.isNotEmpty
+        ? stats.map((d) => d.distanceKm).reduce((a, b) => a > b ? a : b)
+        : 0.0;
     final hasEnergy = stats.any((d) => (d.totalConsumed ?? 0) > 0);
 
     return Container(

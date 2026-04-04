@@ -180,10 +180,10 @@ This app uses endpoints reverse-engineered by the community:
 + [hyundai_kia_connect_api](https://github.com/Hyundai-Kia-Connect/hyundai_kia_connect_api)
 + [blog.kumo.dev — Reverse engineering Bluelink](https://blog.kumo.dev/2024/05/22/reverse_engineering_hkg_apps.html)
 
-
-
 ```bash
-bluelink --region Australia --brand Hyundai --username FOO --password BAR --pin 1234 info --json infos.json
+bluelink --region Australia --brand Hyundai \
+         --username FOO --password BAR --pin 1234 \
+         info --json infos.json
 ```
 
 ### Timezone Issue
