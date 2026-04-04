@@ -35,7 +35,7 @@ import 'package:konapod/widgets/daily_charts.dart';
 import 'package:konapod/widgets/visuals/chart_section.dart';
 import 'package:konapod/widgets/visuals/consumption_summary.dart';
 import 'package:konapod/widgets/visuals/detail_table.dart';
-import 'package:konapod/widgets/visuals/summary_row.dart';
+import 'package:konapod/widgets/visuals/driving_hero_card.dart';
 
 class VisualsScreen extends StatelessWidget {
   const VisualsScreen({super.key});
@@ -63,27 +63,14 @@ class VisualsScreen extends StatelessWidget {
 
     final hasEnergy = stats.any((d) => (d.totalConsumed ?? 0) > 0);
     final hasRegen = stats.any((d) => (d.regeneratedEnergy ?? 0) > 0);
-    final total = stats.fold(0.0, (s, d) => s + d.distanceKm);
-    final avg = total / stats.length;
-    final best = stats.map((d) => d.distanceKm).reduce((a, b) => a > b ? a : b);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Sub-header ────────────────────────────────────────────────
-          Text(
-            '${stats.length} days · ${vehicle.nickname}',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 13,
-            ),
-          ),
-          const Gap(20),
-
-          // ── Summary cards ─────────────────────────────────────────────
-          SummaryRow(total: total, avg: avg, best: best, days: stats.length),
+          // ── Hero card ──────────────────────────────────────────────────
+          DrivingHeroCard(vehicle: vehicle, stats: stats),
           const Gap(24),
 
           // ── Distance chart ────────────────────────────────────────────

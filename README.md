@@ -180,6 +180,23 @@ This app uses endpoints reverse-engineered by the community:
 + [hyundai_kia_connect_api](https://github.com/Hyundai-Kia-Connect/hyundai_kia_connect_api)
 + [blog.kumo.dev — Reverse engineering Bluelink](https://blog.kumo.dev/2024/05/22/reverse_engineering_hkg_apps.html)
 
+
+
+```bash
+bluelink --region Australia --brand Hyundai --username FOO --password BAR --pin 1234 info --json infos.json
+```
+
+### Timezone Issue
+
+Note that the API returns a "driving date" as a string like
+"20260403", and the code uses `strptime()` to create a naive datetime
+at midnight with no timezone info.  The Bluelink server aggregates
+daily statistics by UTC day boundaries. So driving done before 11am
+AEDT or 10am AEST (= midnight UTC) on April 4th, for example, gets
+bucketed into April 3rd's stats, and the date label
+says 20260403. This as a known Bluelink API limitation. The root cause
+is server-side and not something the client library can fully fix.
+
 ## Stamp Mechanism
 
 Hyundai's AU API requires a rotating "stamp" header.
