@@ -27,20 +27,44 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
+
 class SectionLabel extends StatelessWidget {
   final String text;
-  const SectionLabel(this.text, {super.key});
+  final String? tooltip;
+  const SectionLabel(this.text, {super.key, this.tooltip});
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          text.toUpperCase(),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-          ),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final label = Text(
+      text.toUpperCase(),
+      style: TextStyle(
+        color: cs.onSurfaceVariant,
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.2,
+      ),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: tooltip == null
+          ? label
+          : Row(
+              children: [
+                label,
+                const Gap(6),
+                MarkdownTooltip(
+                  message: tooltip!,
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
 }

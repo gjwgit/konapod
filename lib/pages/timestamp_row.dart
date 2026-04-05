@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 class TimestampRow extends StatelessWidget {
   final DateTime? lastUpdated;
@@ -48,13 +49,36 @@ class TimestampRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (lastUpdated != null)
-          _TsLine('Last updated', fmt.format(lastUpdated!), cs),
+          _TsLine(
+            'Last updated',
+            fmt.format(lastUpdated!),
+            cs,
+            tooltip: '**Last Updated**\n\n'
+                'When the car last reported its status to the '
+                'Bluelink servers. The car transmits periodically '
+                'and after events like locking or charging.',
+          ),
         const Gap(16),
         if (fetchedAt != null)
-          _TsLine('Fetched at', fmt.format(fetchedAt!), cs),
+          _TsLine(
+            'Fetched at',
+            fmt.format(fetchedAt!),
+            cs,
+            tooltip: '**Fetched At**\n\n'
+                'When this app retrieved the data from the Bluelink API. '
+                'May be later than "Last Updated" if the car has been '
+                'offline or in an area without cellular coverage.',
+          ),
         const Gap(16),
         if (registrationDate != null)
-          _TsLine('Data collected since', fmt.format(registrationDate!), cs),
+          _TsLine(
+            'Data collected since',
+            fmt.format(registrationDate!),
+            cs,
+            tooltip: '**Data Collected Since**\n\n'
+                'The date the vehicle was first registered with '
+                'the Bluelink service — typically the delivery date.',
+          ),
       ],
     );
   }
@@ -63,23 +87,29 @@ class TimestampRow extends StatelessWidget {
 class _TsLine extends StatelessWidget {
   final String label, value;
   final ColorScheme cs;
-  const _TsLine(this.label, this.value, this.cs);
+  final String? tooltip;
+  const _TsLine(this.label, this.value, this.cs, {this.tooltip});
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Row(
-          children: [
-            Icon(Icons.access_time, size: 13, color: cs.onSurfaceVariant),
-            const Gap(6),
-            Text(
-              '$label: ',
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
-            ),
-            Text(
-              value,
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
-            ),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    final row = Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          Icon(Icons.access_time, size: 13, color: cs.onSurfaceVariant),
+          const Gap(6),
+          Text(
+            '$label: ',
+            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
+          ),
+          Text(
+            value,
+            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+    if (tooltip == null) return row;
+
+    return MarkdownTooltip(message: tooltip!, child: row);
+  }
 }

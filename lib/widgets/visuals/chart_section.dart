@@ -28,42 +28,56 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 // ── Chart section wrapper ─────────────────────────────────────────────────────
 
 class ChartSection extends StatelessWidget {
   final String title, subtitle;
   final Widget chart;
+  final String? tooltip;
   const ChartSection({
     super.key,
     required this.title,
     required this.subtitle,
     required this.chart,
+    this.tooltip,
   });
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+  Widget build(BuildContext context) {
+    final header = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
-          const Gap(2),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
-            ),
+        ),
+        const Gap(2),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 12,
           ),
-          const Gap(10),
-          chart,
-        ],
-      );
+        ),
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        tooltip != null
+            ? MarkdownTooltip(message: tooltip!, child: header)
+            : header,
+        const Gap(10),
+        chart,
+      ],
+    );
+  }
 }
 
 // ── Detail table ──────────────────────────────────────────────────────────────

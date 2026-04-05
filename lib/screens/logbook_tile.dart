@@ -1,6 +1,6 @@
 /// LogbookTile — entry tile and mini chip for the log book screen.
 ///
-// Time-stamp: <Thursday 2026-04-02 16:41:15 +1100 Graham Williams>
+// Time-stamp: <Sunday 2026-04-05 09:58:48 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -202,13 +202,13 @@ class LogEntryTile extends StatelessWidget {
                             ),
                           if (entry.chargeEnergyKwh != null)
                             LogMiniChip(
-                              Icons.bolt,
+                              Icons.speed,
                               '${entry.chargeEnergyKwh!.toStringAsFixed(1)} kWh',
                               cs,
                             ),
                           if (entry.chargeRateKwh != null)
                             LogMiniChip(
-                              Icons.speed,
+                              Icons.bolt,
                               '${entry.chargeRateKwh!.toStringAsFixed(1)} kW',
                               cs,
                             ),

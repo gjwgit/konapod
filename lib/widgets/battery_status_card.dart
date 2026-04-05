@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -44,52 +45,81 @@ class BatteryStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (v.isChargeScheduledOn != null)
-            StatusRow(
-              Icons.schedule,
-              'Charge Scheduled',
-              v.isChargeScheduledOn == true,
-              HyundaiColors.accent,
+            MarkdownTooltip(
+              message: '**Charge Schedule**\n\n'
+                  'Whether a timed charge is configured. When enabled, '
+                  'the car will only begin charging during the scheduled '
+                  'window — useful for off-peak electricity rates.',
+              child: StatusRow(
+                Icons.schedule,
+                'Charge Scheduled',
+                v.isChargeScheduledOn == true,
+                HyundaiColors.accent,
+              ),
             ),
           if (v.targetSocAC != null) ...[
             const Gap(8),
-            KVRow('Target SOC (AC)', '${v.targetSocAC}%'),
+            MarkdownTooltip(
+              message: '**Target SOC (AC)**\n\n'
+                  'The charge level the car will stop at when using an '
+                  'AC (slow) charger — typically a home wall box.\n\n'
+                  'Setting this below 100% helps preserve battery '
+                  'longevity for daily driving.',
+              child: KVRow('Target SOC (AC)', '${v.targetSocAC}%'),
+            ),
           ],
           if (v.targetSocDC != null)
-            KVRow('Target SOC (DC)', '${v.targetSocDC}%'),
+            MarkdownTooltip(
+              message: '**Target SOC (DC)**\n\n'
+                  'The charge level the car will stop at when using a '
+                  'DC (fast) charger.\n\n'
+                  'Usually set to 80% because DC charging above 80% '
+                  'is much slower and generates more heat.',
+              child: KVRow('Target SOC (DC)', '${v.targetSocDC}%'),
+            ),
           if (v.battery12VPercent != null) ...[
             Divider(
               height: 16,
               color: Theme.of(context).colorScheme.outlineVariant,
             ),
-            Row(
-              children: [
-                Icon(
-                  Icons.battery_0_bar,
-                  size: 16,
-                  color: (v.battery12VPercent ?? 100) < 20
-                      ? HyundaiColors.error
-                      : HyundaiColors.midGrey,
-                ),
-                const Gap(8),
-                Text(
-                  '12V Battery: ${v.battery12VPercent}%',
-                  style: TextStyle(
-                    fontSize: 13,
+            MarkdownTooltip(
+              message: '**12V Auxiliary Battery**\n\n'
+                  'The small lead-acid battery that powers the car\'s '
+                  'electronics (lights, computer, locks) when the main '
+                  'EV battery is off.\n\n'
+                  'Below 20% is a warning — the car may not start. '
+                  'The main battery trickle-charges the 12V battery '
+                  'periodically.',
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.battery_0_bar,
+                    size: 16,
                     color: (v.battery12VPercent ?? 100) < 20
                         ? HyundaiColors.error
-                        : HyundaiColors.darkGrey,
+                        : HyundaiColors.midGrey,
                   ),
-                ),
-                if (v.is12VBatteryWarning == true)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 8),
-                    child: Icon(
-                      Icons.warning_amber,
-                      color: HyundaiColors.error,
-                      size: 16,
+                  const Gap(8),
+                  Text(
+                    '12V Battery: ${v.battery12VPercent}%',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: (v.battery12VPercent ?? 100) < 20
+                          ? HyundaiColors.error
+                          : HyundaiColors.darkGrey,
                     ),
                   ),
-              ],
+                  if (v.is12VBatteryWarning == true)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(
+                        Icons.warning_amber,
+                        color: HyundaiColors.error,
+                        size: 16,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ],

@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/theme/hyundai_theme.dart';
 
@@ -40,45 +41,56 @@ class TyreTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final warn = warning == true;
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-      decoration: BoxDecoration(
-        color: warn
-            ? HyundaiColors.error.withValues(alpha: 0.08)
-            : cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(10),
-        border: warn
-            ? Border.all(color: HyundaiColors.error.withValues(alpha: 0.4))
-            : null,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            warn ? Icons.warning_amber : Icons.check_circle_outline,
-            color: warn ? HyundaiColors.error : HyundaiColors.success,
-            size: 16,
-          ),
-          const Gap(6),
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                color: warn ? HyundaiColors.error : cs.onSurface,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+
+    return MarkdownTooltip(
+      message: '**$label Tyre**\n\n'
+          'Tyre Pressure Monitoring System (TPMS) status.\n\n'
+          'Green = pressure within normal range. '
+          'Red/amber = pressure is too low or too high — '
+          'check and inflate to the recommended level '
+          '(usually shown on the driver\'s door jamb sticker).\n\n'
+          'Incorrect tyre pressure affects handling, fuel efficiency, '
+          'and tyre wear.',
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        decoration: BoxDecoration(
+          color: warn
+              ? HyundaiColors.error.withValues(alpha: 0.08)
+              : cs.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(10),
+          border: warn
+              ? Border.all(color: HyundaiColors.error.withValues(alpha: 0.4))
+              : null,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              warn ? Icons.warning_amber : Icons.check_circle_outline,
+              color: warn ? HyundaiColors.error : HyundaiColors.success,
+              size: 16,
+            ),
+            const Gap(6),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: warn ? HyundaiColors.error : cs.onSurface,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-          ),
-          if (pressure != null)
-            Text(
-              pressure!,
-              style: TextStyle(
-                color: warn ? HyundaiColors.error : cs.onSurfaceVariant,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+            if (pressure != null)
+              Text(
+                pressure!,
+                style: TextStyle(
+                  color: warn ? HyundaiColors.error : cs.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

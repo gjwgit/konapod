@@ -43,10 +43,22 @@ class ComfortPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SectionLabel('Climate'),
+          const SectionLabel(
+            'Climate',
+            tooltip: '**Climate Control**\n\n'
+                'Heating and cooling system status including '
+                'cabin temperature settings, defrost, and steering wheel heater.',
+          ),
           ClimateSection(v: v),
           const Gap(16),
-          const SectionLabel('Tyres'),
+          const SectionLabel(
+            'Tyres',
+            tooltip: '**Tyres**\n\n'
+                'Tyre pressure status for each wheel. '
+                'A warning (amber) indicates the pressure is outside '
+                'the recommended range. Pressure values are in psi '
+                'when available from the car.',
+          ),
           TyreSection(v: v),
           const Gap(24),
         ],

@@ -77,6 +77,10 @@ class VisualsScreen extends StatelessWidget {
           ChartSection(
             title: 'Daily Distance Driven',
             subtitle: 'km per day',
+            tooltip: '**Daily Distance Driven**\n\n'
+                'Bar chart showing kilometres driven each day. '
+                'The number above each bar is the distance for that day.\n\n'
+                'Days with zero driving still appear to show the full timeline.',
             chart: DailyDistanceChart(stats: stats),
           ),
           const Gap(24),
@@ -87,6 +91,14 @@ class VisualsScreen extends StatelessWidget {
               title: 'Daily Energy Consumption',
               subtitle:
                   'kWh · coloured by type · bar label is net (consumed − regenerated)',
+              tooltip: '**Daily Energy Consumption**\n\n'
+                  'Stacked bar chart showing energy usage by subsystem:\n\n'
+                  '+ **Drive motor** — propulsion\n'
+                  '+ **Climate** — heating/cooling\n'
+                  '+ **Electronics** — onboard systems\n'
+                  '+ **Battery care** — thermal management\n\n'
+                  'The number above each bar is the *net* consumption '
+                  '(total minus regenerated).',
               chart: DailyEnergyChart(stats: stats),
             ),
             const Gap(24),

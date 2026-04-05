@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/daily_driving_stat.dart';
 import 'package:konapod/models/vehicle.dart';
@@ -60,7 +61,14 @@ class DailyLeaderboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          statsHeading(context, 'Daily Leaderboard'),
+          MarkdownTooltip(
+            message: '**Daily Leaderboard**\n\n'
+                'All driving days ranked from most to least efficient '
+                '(lowest kWh/100km is best).\n\n'
+                'Only days with both distance and energy data are included. '
+                'The medal icons highlight the top 3 most efficient days.',
+            child: statsHeading(context, 'Daily Leaderboard'),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             child: Row(

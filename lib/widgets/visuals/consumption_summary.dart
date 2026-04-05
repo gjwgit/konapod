@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -139,12 +140,20 @@ class ConsumptionSummary extends StatelessWidget {
           // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-            child: Text(
-              'Consumption Summary',
-              style: TextStyle(
-                color: cs.onSurface,
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
+            child: MarkdownTooltip(
+              message: '**Consumption Summary**\n\n'
+                  'Aggregated energy statistics across all daily driving data.\n\n'
+                  'Shows total distance, gross consumption, regenerated energy, '
+                  'net consumption, and the breakdown by subsystem '
+                  '(drive motor, climate, electronics, battery care).\n\n'
+                  'Best and worst days are ranked by net efficiency (kWh/100km).',
+              child: Text(
+                'Consumption Summary',
+                style: TextStyle(
+                  color: cs.onSurface,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
               ),
             ),
           ),

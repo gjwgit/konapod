@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -44,32 +45,39 @@ class FuelSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.local_gas_station,
-                color: HyundaiColors.warning,
-                size: 20,
-              ),
-              const Gap(8),
-              Text(
-                'Fuel',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
+          MarkdownTooltip(
+            message: '**Fuel Level**\n\n'
+                'Current fuel tank level as a percentage. '
+                'Red below 15% indicates low fuel.\n\n'
+                'The fuel gauge sensor reports this to the '
+                'Body Control Module.',
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.local_gas_station,
+                  color: HyundaiColors.warning,
+                  size: 20,
                 ),
-              ),
-              const Spacer(),
-              Text(
-                '${pct.round()}%',
-                style: TextStyle(
-                  color: barColor,
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
+                const Gap(8),
+                Text(
+                  'Fuel',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-            ],
+                const Spacer(),
+                Text(
+                  '${pct.round()}%',
+                  style: TextStyle(
+                    color: barColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
           ),
           const Gap(10),
           ClipRRect(

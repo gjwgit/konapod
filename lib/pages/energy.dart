@@ -85,12 +85,24 @@ class EnergyPage extends StatelessWidget {
             const Gap(8),
             BatteryStatusCard(v: v),
             const Gap(16),
-            const SectionLabel('EV Efficiency'),
+            const SectionLabel(
+              'EV Efficiency',
+              tooltip: '**EV Efficiency**\n\n'
+                  'Energy consumption rates from the car\'s onboard computer:\n\n'
+                  '+ **Overall** — lifetime average since new\n'
+                  '+ **Since Charging** — since the last full charge\n'
+                  '+ **Latest Trip** — the most recent drive\n\n'
+                  'Lower kWh/100km is better. Typical EV range is 13–20.',
+            ),
             EfficiencySection(v: v),
             const Gap(16),
           ],
           if (v.isICE && !v.isEV) ...[
-            const SectionLabel('Fuel'),
+            const SectionLabel(
+              'Fuel',
+              tooltip: '**Fuel**\n\n'
+                  'Current fuel level and estimated range on remaining fuel.',
+            ),
             FuelSection(v: v),
             const Gap(16),
           ],

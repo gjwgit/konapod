@@ -56,16 +56,36 @@ class StatusPage extends StatelessWidget {
             registrationDate: v.registrationDate,
           ),
           const Gap(16),
-          const SectionLabel('Doors & Security'),
+          const SectionLabel(
+            'Doors & Security',
+            tooltip: '**Doors & Security**\n\n'
+                'Open/closed state of each door, boot and bonnet. '
+                'Red indicates a door is currently open.',
+          ),
           DoorsSection(v: v),
           const Gap(16),
-          const SectionLabel('Windows'),
+          const SectionLabel(
+            'Windows',
+            tooltip: '**Windows**\n\n'
+                'Open/closed state of each window. '
+                'Red indicates a window is currently open.',
+          ),
           WindowsSection(v: v),
           const Gap(16),
-          const SectionLabel('Warnings'),
+          const SectionLabel(
+            'Warnings',
+            tooltip: '**Warnings**\n\n'
+                'Active vehicle warnings reported by the onboard systems — '
+                'low fuel, tyre pressure, 12V battery, smart key, and washer fluid.',
+          ),
           WarningsSection(v: v),
           const Gap(16),
-          const SectionLabel('Vehicle Info'),
+          const SectionLabel(
+            'Vehicle Info',
+            tooltip: '**Vehicle Info**\n\n'
+                'Registration details including model, year, VIN, '
+                'colour, trim, and fuel type.',
+          ),
           InfoSection(v: v),
           if (v.extras.isNotEmpty) ...[
             const Gap(16),

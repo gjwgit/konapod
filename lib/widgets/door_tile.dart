@@ -28,6 +28,7 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:konapod/theme/hyundai_theme.dart';
 
@@ -40,42 +41,51 @@ class DoorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final open = isOpen == true;
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-      decoration: BoxDecoration(
-        color: open
-            ? HyundaiColors.error.withValues(alpha: 0.07)
-            : cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isWindow
-                ? (open ? Icons.crop_square : Icons.crop_din)
-                : (open ? Icons.sensor_door : Icons.sensor_door_outlined),
-            size: 14,
-            color: open ? HyundaiColors.error : HyundaiColors.success,
-          ),
-          const Gap(6),
-          Text(
-            label,
-            style: TextStyle(fontSize: 12, color: cs.onSurface),
-          ),
-          const Spacer(),
-          Text(
-            isOpen == null
-                ? '–'
-                : open
-                    ? 'Open'
-                    : 'Closed',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
+    final kind = isWindow ? 'window' : 'door';
+
+    return MarkdownTooltip(
+      message: '**$label${isWindow ? ' Window' : ''}**\n\n'
+          'Whether the $label $kind is currently open or closed.\n\n'
+          'Green (Closed) means the $kind is secure. '
+          'Red (Open) means it is ajar — the Body Control Module '
+          'reports this via a sensor in the $kind frame.',
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        decoration: BoxDecoration(
+          color: open
+              ? HyundaiColors.error.withValues(alpha: 0.07)
+              : cs.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isWindow
+                  ? (open ? Icons.crop_square : Icons.crop_din)
+                  : (open ? Icons.sensor_door : Icons.sensor_door_outlined),
+              size: 14,
               color: open ? HyundaiColors.error : HyundaiColors.success,
             ),
-          ),
-        ],
+            const Gap(6),
+            Text(
+              label,
+              style: TextStyle(fontSize: 12, color: cs.onSurface),
+            ),
+            const Spacer(),
+            Text(
+              isOpen == null
+                  ? '–'
+                  : open
+                      ? 'Open'
+                      : 'Closed',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: open ? HyundaiColors.error : HyundaiColors.success,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
