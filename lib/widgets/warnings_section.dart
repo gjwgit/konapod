@@ -46,9 +46,8 @@ const _warningTips = {
       '**Tyre Pressure — Rear Left**\n\nRear left tyre pressure is outside the recommended range.',
   'Tyre pressure RR':
       '**Tyre Pressure — Rear Right**\n\nRear right tyre pressure is outside the recommended range.',
-  '12V battery low':
-      '**12V Battery Low**\n\nThe auxiliary 12V battery is low. '
-          'The car may not start if it drops further.',
+  '12V battery low': '**12V Battery Low**\n\nThe auxiliary 12V battery is low. '
+      'The car may not start if it drops further.',
   'Smart key battery':
       '**Smart Key Battery**\n\nThe key fob battery is running low — replace the CR2032 cell.',
   'Washer fluid low':
@@ -76,12 +75,12 @@ class WarningsSection extends StatelessWidget {
     ];
     return DashboardCard(
       child: warnings.isEmpty
-          ? MarkdownTooltip(
+          ? const MarkdownTooltip(
               message: '**No Active Warnings**\n\n'
                   'All monitored systems are within normal parameters. '
                   'Checks include fuel level, tyre pressure, 12V battery, '
                   'smart key battery, washer fluid, and brake fluid.',
-              child: const Row(
+              child: Row(
                 children: [
                   Icon(
                     Icons.check_circle,
