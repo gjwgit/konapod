@@ -46,11 +46,11 @@ class LogLocationDisplay extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (address != null && address!.isNotEmpty)
-                    Text(
+                    SelectableText(
                       address!,
                       style: const TextStyle(fontSize: 12),
                     ),
-                  Text(
+                  SelectableText(
                     '${latitude.toStringAsFixed(5)}, '
                     '${longitude.toStringAsFixed(5)}',
                     style: TextStyle(
