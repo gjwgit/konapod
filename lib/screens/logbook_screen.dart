@@ -78,6 +78,7 @@ class _LogbookScreenState extends State<LogbookScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final entry = await showDialog<LogEntry>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => LogEntryEdit(vehicle: provider.selectedVehicle),
     );
     if (entry != null) {
@@ -96,6 +97,7 @@ class _LogbookScreenState extends State<LogbookScreen> {
   ) async {
     final updated = await showDialog<LogEntry>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => LogEntryEdit(
         entry: entry,
         vehicle: provider.selectedVehicle,

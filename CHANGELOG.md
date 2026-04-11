@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Ensure popups don't dimsiss on lose focus in app [0.2.26 20260412 gjw]
 + Add tooltips everywhere [0.2.25 20260405 gjw]
 + Additional tool tips for the STATUS hero card [0.2.24 20260405 gjw]
 + Add a HERO card to DRIVING [0.2.23 20260404 gjw]
