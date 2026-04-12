@@ -27,7 +27,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
@@ -37,6 +37,9 @@ import 'package:konapod/services/pod_service.dart';
 enum AppState { idle, loading, loaded, error }
 
 enum DataSource { bluelink, pod, none }
+
+// Secure storage instance — shared across the app.
+const _storage = FlutterSecureStorage();
 
 class AppProvider extends ChangeNotifier {
   final BluelinkService _api = BluelinkService();
@@ -71,10 +74,9 @@ class AppProvider extends ChangeNotifier {
   // ── Auto-login (desktop/bluelink) ────────────────────────────────────────
 
   Future<bool> tryAutoLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('bl_username');
-    final password = prefs.getString('bl_password');
-    final pin = prefs.getString('bl_pin');
+    final username = await _storage.read(key: 'bl_username');
+    final password = await _storage.read(key: 'bl_password');
+    final pin = await _storage.read(key: 'bl_pin');
     if (username != null && password != null && pin != null) {
       return login(username: username, password: password, pin: pin);
     }
@@ -91,10 +93,9 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _api.login(username: username, password: password, pin: pin);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('bl_username', username);
-      await prefs.setString('bl_password', password);
-      await prefs.setString('bl_pin', pin);
+      await _storage.write(key: 'bl_username', value: username);
+      await _storage.write(key: 'bl_password', value: password);
+      await _storage.write(key: 'bl_pin', value: pin);
       _vehicles = await _api.getVehicles();
       _selectedVehicleIndex = 0;
       _dataSource = DataSource.bluelink;
@@ -288,10 +289,9 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('bl_username');
-    await prefs.remove('bl_password');
-    await prefs.remove('bl_pin');
+    await _storage.delete(key: 'bl_username');
+    await _storage.delete(key: 'bl_password');
+    await _storage.delete(key: 'bl_pin');
     _api.logout();
     _vehicles = [];
     _state = AppState.idle;

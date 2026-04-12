@@ -27,9 +27,9 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -56,19 +56,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
+    const storage = FlutterSecureStorage();
+    final username = await storage.read(key: 'bl_username') ?? '';
+    final password = await storage.read(key: 'bl_password') ?? '';
+    final pin = await storage.read(key: 'bl_pin') ?? '';
     setState(() {
-      _emailCtrl.text = prefs.getString('bl_username') ?? '';
-      _passCtrl.text = prefs.getString('bl_password') ?? '';
-      _pinCtrl.text = prefs.getString('bl_pin') ?? '';
+      _emailCtrl.text = username;
+      _passCtrl.text = password;
+      _pinCtrl.text = pin;
     });
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('bl_username', _emailCtrl.text.trim());
-    await prefs.setString('bl_password', _passCtrl.text);
-    await prefs.setString('bl_pin', _pinCtrl.text.trim());
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'bl_username', value: _emailCtrl.text.trim());
+    await storage.write(key: 'bl_password', value: _passCtrl.text);
+    await storage.write(key: 'bl_pin', value: _pinCtrl.text.trim());
     setState(() => _saved = true);
     Future.delayed(
       const Duration(seconds: 2),

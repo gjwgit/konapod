@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Store credentials securely [0.2.28 20260412 gjw]
 + Make location selectable [0.2.27 20260412 gjw]
 + Ensure popups don't dimsiss on lose focus in app [0.2.26 20260412 gjw]
 + Add tooltips everywhere [0.2.25 20260405 gjw]
