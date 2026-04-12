@@ -35,6 +35,12 @@ mkdir tmp
 
 meld tmp/lib lib
 
+# Check if pubspec included and if so compare.
+
+if [ -f tmp/pubspec.yaml ]; then
+  meld tmp/pubspec.yaml pubspec.yaml
+fi
+
 # Remove the file after meld closes
 
 rm -rf tmp

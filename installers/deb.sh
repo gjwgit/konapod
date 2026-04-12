@@ -36,7 +36,7 @@ EOL
 cat > ${APP}_${VER}_amd64/usr/share/applications/com.togaware.${APP}.desktop << EOL
 [Desktop Entry]
 Name=${APP}
-Comment=${APP}
+Comment=Kona app with data stored securely and privately.
 Exec=/usr/bin/${APP}
 Icon=${APP}
 Terminal=false
