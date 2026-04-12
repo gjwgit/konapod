@@ -29,15 +29,14 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
 
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/services/pod_service.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
-import 'package:konapod/utils/pod_utils.dart';
 
 /// History screen — browse, load, and delete archived snapshots from the pod.
+
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
   @override
@@ -48,7 +47,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<String> _files = [];
   bool _loading = true;
   String? _error;
-  String? _deleting; // filename currently being deleted
+  String? _deleting;
 
   @override
   void initState() {
@@ -141,10 +140,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
     setState(() => _deleting = null);
   }
 
-  String _formatDate(String filename) {
-    final dt = parseStatusFilename(filename);
-    if (dt == null) return filename;
-    return DateFormat('dd MMM yyyy  HH:mm:ss').format(dt);
+  /// Formats filename as: Status Save Sunday 12 April 2026 at 08:15:15
+  /// Uses a direct regex so it works regardless of prefix/suffix constants.
+  String _formatTitle(String filename) {
+    final match = RegExp(
+      r'(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})',
+    ).firstMatch(filename);
+    if (match == null) return filename;
+    final dt = DateTime(
+      int.parse(match.group(1)!),
+      int.parse(match.group(2)!),
+      int.parse(match.group(3)!),
+      int.parse(match.group(4)!),
+      int.parse(match.group(5)!),
+      int.parse(match.group(6)!),
+    );
+    return '${DateFormat('EEEE d MMMM yyyy').format(dt)}'
+        ' at ${DateFormat('HH:mm:ss').format(dt)}';
   }
 
   @override
@@ -218,6 +230,56 @@ class _HistoryScreenState extends State<HistoryScreen> {
         final f = _files[i];
         final isLoaded = provider.loadedFilename == f;
         final isDeleting = _deleting == f;
+
+        // Build the tile content.
+        final tile = ListTile(
+          leading: isDeleting
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(
+                  isLoaded ? Icons.radio_button_checked : Icons.history,
+                  color: isLoaded ? HyundaiColors.accent : null,
+                ),
+          title: Text(
+            _formatTitle(f),
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          subtitle: Text(
+            f,
+            style: const TextStyle(fontSize: 11),
+          ),
+          // No onTap — loading is only via the download button.
+          trailing: isDeleting
+              ? null
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isLoaded)
+                      const Chip(
+                        label: Text('Active'),
+                        backgroundColor: HyundaiColors.accent,
+                        labelStyle:
+                            TextStyle(color: Colors.white, fontSize: 11),
+                      )
+                    else
+                      IconButton(
+                        icon: const Icon(Icons.arrow_circle_down_outlined),
+                        tooltip: 'Load this snapshot',
+                        onPressed: () => _loadFile(f),
+                      ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: 'Delete snapshot',
+                      color: HyundaiColors.error,
+                      onPressed: isDeleting ? null : () => _confirmDelete(f),
+                    ),
+                  ],
+                ),
+        );
+
         return Card(
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -226,57 +288,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ? const BorderSide(color: HyundaiColors.accent, width: 2)
                 : BorderSide.none,
           ),
-          child: ListTile(
-            leading: isDeleting
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Icon(
-                    isLoaded ? Icons.radio_button_checked : Icons.history,
-                    color: isLoaded ? HyundaiColors.accent : null,
-                  ),
-            title: Text(
-              _formatDate(f),
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            subtitle: Text(f, style: const TextStyle(fontSize: 11)),
-            trailing: isDeleting
-                ? null
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isLoaded)
-                        const Chip(
-                          label: Text('Active'),
-                          backgroundColor: HyundaiColors.accent,
-                          labelStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                          ),
-                        )
-                      else
-                        IconButton(
-                          icon: const MarkdownTooltip(
-                            message: 'Load this snapshot into the dashboard.',
-                            child: Icon(Icons.download_outlined),
-                          ),
-                          onPressed: () => _loadFile(f),
-                        ),
-                      IconButton(
-                        icon: const MarkdownTooltip(
-                          message:
-                              '**Delete** this snapshot permanently\n\nThis cannot be undone.',
-                          child: Icon(Icons.delete_outline),
-                        ),
-                        color: HyundaiColors.error,
-                        onPressed: isDeleting ? null : () => _confirmDelete(f),
-                      ),
-                    ],
-                  ),
-            onTap: isDeleting ? null : () => _loadFile(f),
-          ),
+          child: tile,
         );
       },
     );
