@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/pages/log_entry_edit.dart';
+import 'package:konapod/screens/logbook_export.dart';
 import 'package:konapod/screens/logbook_tile.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -44,6 +45,28 @@ class _LogbookScreenState extends State<LogbookScreen> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      appBar: entries.isEmpty
+          ? null
+          : AppBar(
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.upload_file_outlined),
+                  tooltip: 'Import log from JSON',
+                  onPressed: () => _importJson(context, provider),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.download_outlined),
+                  tooltip: 'Export log as JSON',
+                  onPressed: () => _exportJson(context, entries),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.picture_as_pdf_outlined),
+                  tooltip: 'Export log as PDF',
+                  onPressed: () => _exportPdf(context, entries),
+                ),
+              ],
+            ),
       body: provider.logLoading
           ? const Center(child: CircularProgressIndicator())
           : entries.isEmpty
@@ -142,6 +165,17 @@ class _LogbookScreenState extends State<LogbookScreen> {
       }
     });
   }
+
+  // ── Import/Export — delegated to LogbookExport ───────────────────────────
+
+  Future<void> _exportJson(BuildContext ctx, List<LogEntry> entries) =>
+      LogbookExport.exportJson(ctx, entries);
+
+  Future<void> _importJson(BuildContext ctx, AppProvider provider) =>
+      LogbookExport.importJson(ctx, provider);
+
+  Future<void> _exportPdf(BuildContext ctx, List<LogEntry> entries) =>
+      LogbookExport.exportPdf(ctx, entries);
 }
 
 // ── Empty state ───────────────────────────────────────────────────────────────

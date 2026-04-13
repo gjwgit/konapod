@@ -1,6 +1,6 @@
 /// LogbookTile — entry tile and mini chip for the log book screen.
 ///
-// Time-stamp: <Sunday 2026-04-05 09:58:48 +1000 Graham Williams>
+// Time-stamp: <Monday 2026-04-13 16:04:59 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -171,7 +171,11 @@ class LogEntryTile extends StatelessWidget {
                         LogMiniChip(
                           Icons.location_on_outlined,
                           entry.locationAddress?.isNotEmpty == true
-                              ? entry.locationAddress!.split(',').first
+                              ? entry.locationAddress!
+                                  .split(',')
+                                  .take(3)
+                                  .map((s) => s.trim())
+                                  .join(', ')
                               : '${entry.latitude!.toStringAsFixed(3)}, '
                                   '${entry.longitude!.toStringAsFixed(3)}',
                           cs,
@@ -194,34 +198,37 @@ class LogEntryTile extends StatelessWidget {
                       child: Wrap(
                         spacing: 12,
                         children: [
-                          if (entry.chargeVendor != null)
+                          if (entry.chargeVendor != null ||
+                              entry.chargeRateKwh != null)
                             LogMiniChip(
                               Icons.ev_station_outlined,
-                              entry.chargeVendor!,
+                              [
+                                if (entry.chargeVendor != null)
+                                  entry.chargeVendor!,
+                                if (entry.chargeRateKwh != null)
+                                  '${entry.chargeRateKwh!.toStringAsFixed(1)} kW',
+                              ].join(' @ '),
                               cs,
                             ),
                           if (entry.chargeEnergyKwh != null)
                             LogMiniChip(
-                              Icons.speed,
+                              Icons.bolt,
                               '${entry.chargeEnergyKwh!.toStringAsFixed(1)} kWh',
                               cs,
                             ),
-                          if (entry.chargeRateKwh != null)
+                          if (entry.chargeTotalCost != null)
                             LogMiniChip(
-                              Icons.bolt,
-                              '${entry.chargeRateKwh!.toStringAsFixed(1)} kW',
+                              Icons.attach_money,
+                              entry.chargeCostPerKwh != null
+                                  ? '${entry.chargeCostPerKwh!.toStringAsFixed(2)}/kWh'
+                                      '   =   \$${entry.chargeTotalCost!.toStringAsFixed(2)}'
+                                  : entry.chargeTotalCost!.toStringAsFixed(2),
                               cs,
                             ),
                           if (entry.chargeDurationMinutes != null)
                             LogMiniChip(
                               Icons.timer_outlined,
                               _fmtDuration(entry.chargeDurationMinutes!),
-                              cs,
-                            ),
-                          if (entry.chargeTotalCost != null)
-                            LogMiniChip(
-                              Icons.attach_money,
-                              entry.chargeTotalCost!.toStringAsFixed(2),
                               cs,
                             ),
                         ],

@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Export/Import JSON and Export PDF [0.2.30 20260413 gjw]
 + Improved history listing [0.2.29 20260412 gjw]
 + Store credentials securely [0.2.28 20260412 gjw]
 + Make location selectable [0.2.27 20260412 gjw]
