@@ -81,6 +81,9 @@ class _LogbookScreenState extends State<LogbookScreen> {
                       const Divider(height: 1, indent: 16, endIndent: 16),
                   itemBuilder: (_, i) => LogEntryTile(
                     entry: entries[i],
+                    prevOdometerKm: i + 1 < entries.length
+                        ? entries[i + 1].odometerKm
+                        : null,
                     onTap: () => _editEntry(context, entries[i], provider),
                     onDelete: () => _deleteEntry(context, entries[i], provider),
                   ),

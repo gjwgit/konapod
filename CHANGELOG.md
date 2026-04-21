@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Fine tune the log book entry and PDF [0.2.32 20260422 gjw]
 + Auto update duration/cost when data from Bluelink [0.2.31 20260422 gjw]
 + Export/Import JSON and Export PDF [0.2.30 20260413 gjw]
 + Improved history listing [0.2.29 20260412 gjw]

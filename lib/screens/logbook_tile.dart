@@ -20,12 +20,14 @@ import 'package:konapod/models/log_entry.dart';
 
 class LogEntryTile extends StatelessWidget {
   final LogEntry entry;
+  final double? prevOdometerKm;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
   const LogEntryTile({
     super.key,
     required this.entry,
+    this.prevOdometerKm,
     required this.onTap,
     required this.onDelete,
   });
@@ -111,6 +113,26 @@ class LogEntryTile extends StatelessWidget {
                         const Gap(2),
                         Text(
                           '${entry.odometerKm!.toStringAsFixed(0)} km',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                      if (entry.odometerKm != null &&
+                          prevOdometerKm != null) ...[
+                        Text(
+                          '  ·  ',
+                          style: TextStyle(color: cs.onSurfaceVariant),
+                        ),
+                        Icon(
+                          Icons.route_outlined,
+                          size: 12,
+                          color: cs.onSurfaceVariant,
+                        ),
+                        const Gap(2),
+                        Text(
+                          '+${(entry.odometerKm! - prevOdometerKm!).toStringAsFixed(0)} km',
                           style: TextStyle(
                             fontSize: 11,
                             color: cs.onSurfaceVariant,
@@ -223,6 +245,13 @@ class LogEntryTile extends StatelessWidget {
                                   ? '${entry.chargeCostPerKwh!.toStringAsFixed(2)}/kWh'
                                       '   =   \$${entry.chargeTotalCost!.toStringAsFixed(2)}'
                                   : entry.chargeTotalCost!.toStringAsFixed(2),
+                              cs,
+                            ),
+                          if (entry.startEvRangeKm != null &&
+                              entry.evRangeKm != null)
+                            LogMiniChip(
+                              Icons.route_outlined,
+                              '+${(entry.evRangeKm! - entry.startEvRangeKm!).toStringAsFixed(0)} km',
                               cs,
                             ),
                           if (entry.chargeDurationMinutes != null)

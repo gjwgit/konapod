@@ -1,6 +1,6 @@
 /// Logbook import/export helpers for KonaPod.
 ///
-// Time-stamp: <Monday 2026-04-13 00:00:00 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2026-04-22 08:46:35 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -48,7 +48,7 @@ class LogbookExport {
         return;
       }
 
-      final savePath = await FilePicker.platform.saveFile(
+      final savePath = await FilePicker.saveFile(
         dialogTitle: 'Save Log Book as JSON',
         fileName: fileName,
         type: FileType.custom,
@@ -72,7 +72,7 @@ class LogbookExport {
   ) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         dialogTitle: 'Select Log Book JSON file',
         type: FileType.custom,
         allowedExtensions: ['json'],
@@ -184,36 +184,45 @@ class LogbookExport {
           build: (_) => entries.map((e) {
             final ts = DateFormat('EEE d MMM yyyy HH:mm').format(e.timestamp);
 
-            // Heading: timestamp | title | odo | range -> range | +range | elapsed
+            // Heading: timestamp | title | odo | +% | +range | elapsed
             final rangeAdded = (e.startEvRangeKm != null && e.evRangeKm != null)
                 ? '+${(e.evRangeKm! - e.startEvRangeKm!).toStringAsFixed(0)} km'
                 : '';
-            final rangeStr = (e.startEvRangeKm != null || e.evRangeKm != null)
-                ? '${e.startEvRangeKm != null ? "${e.startEvRangeKm!.toStringAsFixed(0)} km" : "?"} -> ${e.evRangeKm != null ? "${e.evRangeKm!.toStringAsFixed(0)} km" : "?"}'
-                : '';
             final elapsed = e.chargeDurationMinutes != null
-                ? '${e.chargeDurationMinutes} min'
+                ? _fmtDuration(e.chargeDurationMinutes!)
                 : '';
-            final heading = [
-              ts,
-              if (e.title.isNotEmpty) e.title,
-              if (e.odometerKm != null)
-                '${e.odometerKm!.toStringAsFixed(0)} km',
-              if (rangeStr.isNotEmpty) rangeStr,
-              if (rangeAdded.isNotEmpty) rangeAdded,
-              if (elapsed.isNotEmpty) elapsed,
-            ].join('  |  ');
 
-            // Start/end battery % and delta.
+            // Battery delta for headline.
             final startBatt = e.startBatteryLevelPercent;
             final endBatt = e.batteryLevelPercent;
             final battDelta = (startBatt != null && endBatt != null)
                 ? '+${(endBatt - startBatt).toStringAsFixed(0)} %'
                 : '';
-            final readingParts = [
-              if (startBatt != null) 'Start: ${startBatt.toStringAsFixed(0)} %',
-              if (endBatt != null) 'End: ${endBatt.toStringAsFixed(0)} %',
+
+            final heading = [
+              ts,
+              if (e.title.isNotEmpty) e.title,
+              if (e.odometerKm != null)
+                '${e.odometerKm!.toStringAsFixed(0)} km',
+              if (rangeAdded.isNotEmpty) rangeAdded,
               if (battDelta.isNotEmpty) battDelta,
+              if (elapsed.isNotEmpty) elapsed,
+            ].join('  |  ');
+
+            // Start/end readings: battery % and range (no odo).
+            final startRange = e.startEvRangeKm;
+            final endRange = e.evRangeKm;
+            final startParts = [
+              if (startBatt != null) '${startBatt.toStringAsFixed(0)} %',
+              if (startRange != null) '${startRange.toStringAsFixed(0)} km',
+            ].join('  ');
+            final endParts = [
+              if (endBatt != null) '${endBatt.toStringAsFixed(0)} %',
+              if (endRange != null) '${endRange.toStringAsFixed(0)} km',
+            ].join('  ');
+            final readingParts = [
+              if (startParts.isNotEmpty) 'Start: $startParts',
+              if (endParts.isNotEmpty) 'End: $endParts',
             ].join('    ');
 
             // Charge details line: Tesla | 58.0 kW | 25.7 kWh x 0.51/kWh = $13.10
@@ -317,7 +326,7 @@ class LogbookExport {
         return;
       }
 
-      final savePath = await FilePicker.platform.saveFile(
+      final savePath = await FilePicker.saveFile(
         dialogTitle: 'Save Log Book as PDF',
         fileName: fileName,
         type: FileType.custom,
@@ -331,5 +340,12 @@ class LogbookExport {
       if (!context.mounted) return;
       messenger.showSnackBar(SnackBar(content: Text('PDF export failed: $e')));
     }
+  }
+
+  static String _fmtDuration(int minutes) {
+    if (minutes < 60) return '${minutes}m';
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    return m == 0 ? '${h}h' : '${h}h ${m}m';
   }
 }

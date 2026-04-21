@@ -15,9 +15,9 @@ appname=$(basename $PWD)
 
 # Find the latest zip file to run meld across.
 
-claude=$(find ${HOME}/Downloads -name "${appname}_lib*.zip" 2>/dev/null | head -1)
+claude=$(find ${HOME}/Downloads -name "${appname}_lib*.zip" 2>/dev/null -printf '%T@ %p\n' | sort -rn | head -1 | cut -d' ' -f2-)
 
-if [[ ! -z "$claude" ]] && [[ "$claude" != "${appname}_lib.zip" ]]; then
+if [[ ! -z "$claude" ]] && [[ "$(basename $claude)" != "${appname}_lib.zip" ]]; then
     read -p "Continue with ${claude}? (y/N) " response
     if [[ "$response" != "y" ]]; then
         exit 1
@@ -64,7 +64,7 @@ rm -i "${claude}"
 
 # Also remove any older file if there.
 
-if [[ "${claude}" != "${appname}_lib.zip" ]]; then
+if [[ "$(basename $claude)" != "${appname}_lib.zip" ]]; then
     if [[ -f "${HOME}/Downloads/${appname}_lib.zip" ]]; then
 	read -p "Also remove ${HOME}/Downloads/${appname}_lib.zip? (y/N) " response
 	if [[ "$response" == "y" ]]; then
