@@ -129,6 +129,22 @@ class LogChargeSectionState extends State<LogChargeSection> {
     );
   }
 
+  /// Populate derived fields calculated from Bluelink end-of-charge data.
+
+  void populateFromBluelink({
+    required int durationMinutes,
+    double? energyKwh,
+    double? totalCost,
+  }) {
+    _duration.text = durationMinutes.toString();
+    if (energyKwh != null) _energy.text = energyKwh.toStringAsFixed(1);
+    if (totalCost != null) _totalCost.text = totalCost.toStringAsFixed(2);
+  }
+
+  /// Current cost per kWh entered by the user (for use by parent).
+
+  double? get costPerKwh => double.tryParse(_costPerKwh.text.trim());
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;

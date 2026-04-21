@@ -168,14 +168,47 @@ class _LogEntryEditState extends State<LogEntryEdit> {
       if (v == null) return;
       _odometer.text =
           v.odometerKm != null ? v.odometerKm!.round().toString() : '';
-      _batteryLevelCtrl.text = v.batteryLevelPercent != null
-          ? v.batteryLevelPercent!.toStringAsFixed(0)
-          : '';
+      final endBatt = v.batteryLevelPercent;
+      _batteryLevelCtrl.text =
+          endBatt != null ? endBatt.toStringAsFixed(0) : '';
       _batteryRemainCtrl.text = v.batteryRemainKwh != null
           ? (v.batteryRemainKwh! / 3600).toStringAsFixed(1)
           : '';
       _evRangeCtrl.text =
           v.evRangeKm != null ? v.evRangeKm!.toStringAsFixed(0) : '';
+
+      // ── Derived charge values ──────────────────────────────────────────────
+
+      // Duration: from entry timestamp to now.
+      final now = DateTime.now();
+      final durationMin = now.difference(_timestamp).inMinutes.clamp(0, 9999);
+
+      // Energy delivered: end remaining kWh − start remaining kWh.
+      // Use the directly measured remaining values — more accurate than
+      // deriving from battery percentage × capacity.
+      final startRemain = double.tryParse(_startBatteryRemainCtrl.text.trim());
+      final endRemain =
+          v.batteryRemainKwh != null ? v.batteryRemainKwh! / 3600 : null;
+      double? energyKwh;
+      double? totalCost;
+      if (endRemain != null && startRemain != null) {
+        final delta = endRemain - startRemain;
+        if (delta > 0) {
+          energyKwh = delta;
+
+          // Total cost: energy × cost per kWh if available.
+          final costPerKwh = _chargeKey.currentState?.costPerKwh;
+          if (costPerKwh != null && costPerKwh > 0) {
+            totalCost = energyKwh * costPerKwh;
+          }
+        }
+      }
+
+      _chargeKey.currentState?.populateFromBluelink(
+        durationMinutes: durationMin,
+        energyKwh: energyKwh,
+        totalCost: totalCost,
+      );
     } finally {
       if (mounted) setState(() => _fetchingEnd = false);
     }
