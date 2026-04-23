@@ -161,7 +161,37 @@ class PodService {
     }
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────
+  /// Restores a snapshot to the Pod using its original filename.
+  /// Skips the write if the file already exists in the index.
+  /// Returns null on success, or an error message on failure.
+
+  static Future<String?> restoreSnapshot(
+    String filename,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final index = await _readIndex();
+      if (index.contains(filename)) {
+        dev.log(
+          '[Pod] Skipping $filename (already exists)',
+          name: 'PodService',
+        );
+        return 'already exists';
+      }
+      final json = const JsonEncoder.withIndent('  ').convert(data);
+      final ttl = _jsonToTtl('vehicleStatus', json);
+      await writePod(filename, ttl);
+      dev.log('[Pod] Restored $filename', name: 'PodService');
+      index.add(filename);
+      index.sort((a, b) => b.compareTo(a));
+      await _writeIndex(index);
+      return null;
+    } catch (e, st) {
+      debugPrint('[Pod] Restore error ($filename): $e\n$st');
+      dev.log('[Pod] Restore error ($filename): $e', name: 'PodService');
+      return e.toString();
+    }
+  }
 
   static Map<String, dynamic>? _parseTtlSnapshot(String ttl) {
     final json = _ttlToLiteral(ttl);

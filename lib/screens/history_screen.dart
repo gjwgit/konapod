@@ -31,6 +31,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:konapod/screens/history_export.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/services/pod_service.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
@@ -46,6 +47,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   List<String> _files = [];
   bool _loading = true;
+  bool _busy = false;
   String? _error;
   String? _deleting;
 
@@ -161,11 +163,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AppProvider>();
+
+    Widget body;
+
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (_error != null) {
-      return Center(
+      body = const Center(child: CircularProgressIndicator());
+    } else if (_error != null) {
+      body = Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -189,9 +194,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ],
         ),
       );
-    }
-    if (_files.isEmpty) {
-      return Center(
+    } else if (_files.isEmpty) {
+      body = Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -219,78 +223,128 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ],
         ),
       );
+    } else {
+      body = ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: _files.length,
+        separatorBuilder: (_, __) => const Gap(8),
+        itemBuilder: (_, i) {
+          final f = _files[i];
+          final isLoaded = provider.loadedFilename == f;
+          final isDeleting = _deleting == f;
+
+          final tile = ListTile(
+            leading: isDeleting
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(
+                    isLoaded ? Icons.radio_button_checked : Icons.history,
+                    color: isLoaded ? HyundaiColors.accent : null,
+                  ),
+            title: Text(
+              _formatTitle(f),
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(
+              f,
+              style: const TextStyle(fontSize: 11),
+            ),
+            trailing: isDeleting
+                ? null
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isLoaded)
+                        const Chip(
+                          label: Text('Active'),
+                          backgroundColor: HyundaiColors.accent,
+                          labelStyle:
+                              TextStyle(color: Colors.white, fontSize: 11),
+                        )
+                      else
+                        IconButton(
+                          icon: const Icon(Icons.arrow_circle_down_outlined),
+                          tooltip: 'Load this snapshot',
+                          onPressed: () => _loadFile(f),
+                        ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        tooltip: 'Delete snapshot',
+                        color: HyundaiColors.error,
+                        onPressed: isDeleting ? null : () => _confirmDelete(f),
+                      ),
+                    ],
+                  ),
+          );
+
+          return Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: isLoaded
+                  ? const BorderSide(color: HyundaiColors.accent, width: 2)
+                  : BorderSide.none,
+            ),
+            child: tile,
+          );
+        },
+      );
     }
 
-    final provider = context.watch<AppProvider>();
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: _files.length,
-      separatorBuilder: (_, __) => const Gap(8),
-      itemBuilder: (_, i) {
-        final f = _files[i];
-        final isLoaded = provider.loadedFilename == f;
-        final isDeleting = _deleting == f;
-
-        // Build the tile content.
-        final tile = ListTile(
-          leading: isDeleting
-              ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Icon(
-                  isLoaded ? Icons.radio_button_checked : Icons.history,
-                  color: isLoaded ? HyundaiColors.accent : null,
-                ),
-          title: Text(
-            _formatTitle(f),
-            style: const TextStyle(fontWeight: FontWeight.w600),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        bottom: _busy
+            ? const PreferredSize(
+                preferredSize: Size.fromHeight(4),
+                child: LinearProgressIndicator(),
+              )
+            : null,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file_outlined),
+            tooltip: 'Import history from JSON',
+            onPressed: _busy ? null : () => _importJson(context),
           ),
-          subtitle: Text(
-            f,
-            style: const TextStyle(fontSize: 11),
-          ),
-          // No onTap — loading is only via the download button.
-          trailing: isDeleting
-              ? null
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isLoaded)
-                      const Chip(
-                        label: Text('Active'),
-                        backgroundColor: HyundaiColors.accent,
-                        labelStyle:
-                            TextStyle(color: Colors.white, fontSize: 11),
-                      )
-                    else
-                      IconButton(
-                        icon: const Icon(Icons.arrow_circle_down_outlined),
-                        tooltip: 'Load this snapshot',
-                        onPressed: () => _loadFile(f),
-                      ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      tooltip: 'Delete snapshot',
-                      color: HyundaiColors.error,
-                      onPressed: isDeleting ? null : () => _confirmDelete(f),
-                    ),
-                  ],
-                ),
-        );
-
-        return Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: isLoaded
-                ? const BorderSide(color: HyundaiColors.accent, width: 2)
-                : BorderSide.none,
-          ),
-          child: tile,
-        );
-      },
+          if (_files.isNotEmpty) ...[
+            IconButton(
+              icon: const Icon(Icons.download_outlined),
+              tooltip: 'Export history as JSON',
+              onPressed: _busy ? null : () => _exportJson(context),
+            ),
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              tooltip: 'Export history as PDF',
+              onPressed: _busy ? null : () => _exportPdf(context),
+            ),
+          ],
+        ],
+      ),
+      body: body,
     );
+  }
+
+  // ── Import/Export — delegated to HistoryExport ───────────────────────────
+
+  Future<void> _exportJson(BuildContext ctx) async {
+    setState(() => _busy = true);
+    await HistoryExport.exportJson(ctx, _files);
+    if (mounted) setState(() => _busy = false);
+  }
+
+  Future<void> _importJson(BuildContext ctx) async {
+    setState(() => _busy = true);
+    await HistoryExport.importJson(ctx);
+    if (mounted) setState(() => _busy = false);
+    await _loadList();
+  }
+
+  Future<void> _exportPdf(BuildContext ctx) async {
+    setState(() => _busy = true);
+    await HistoryExport.exportPdf(ctx, _files);
+    if (mounted) setState(() => _busy = false);
   }
 }

@@ -59,8 +59,8 @@ class AppScaffold extends StatefulWidget {
 class _AppScaffoldState extends State<AppScaffold> {
   final _controller = SolidScaffoldController();
 
-  // Solid Pod login state
-  String? _webId;
+  // Saved provider reference — used in dispose() to avoid unsafe context.read().
+  AppProvider? _provider;
 
   // Security key state — tracks whether the user's encryption key is saved.
   // Updated via the onKeyStatusChanged callback from SolidSecurityKeyStatus.
@@ -73,6 +73,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     // Listen for errors from the provider and show a dialog.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<AppProvider>();
+      _provider = provider;
       // Show any error that occurred before the scaffold was mounted
       // (e.g. failed auto-login on startup).
       if (provider.state == AppState.error && provider.errorMessage != null) {
@@ -86,7 +87,7 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   @override
   void dispose() {
-    context.read<AppProvider>().removeListener(_onProviderChange);
+    _provider?.removeListener(_onProviderChange);
     super.dispose();
   }
 
@@ -280,9 +281,7 @@ class _AppScaffoldState extends State<AppScaffold> {
 
       // ── Status bar ───────────────────────────────────────────────────────
       statusBar: SolidStatusBarConfig(
-        loginStatus: SolidLoginStatus(
-          webId: _webId,
-          onTap: () => _handlePodLoginTap(context),
+        loginStatus: const SolidLoginStatus(
           loggedInText: 'Pod: Connected',
           loggedOutText: 'Pod: Not connected',
         ),
@@ -420,15 +419,6 @@ class _AppScaffoldState extends State<AppScaffold> {
         ),
       );
     }
-  }
-
-  void _handlePodLoginTap(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (_) => const SolidPopupLogin(),
-      ),
-    );
   }
 }
 

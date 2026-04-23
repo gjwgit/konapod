@@ -42,6 +42,7 @@ class LogbookExport {
       final fileName = 'konapod_logbook_$stamp.json';
 
       if (kIsWeb) {
+        if (!context.mounted) return;
         messenger.showSnackBar(
           const SnackBar(content: Text('JSON export not supported on web.')),
         );
@@ -81,6 +82,7 @@ class LogbookExport {
       if (result == null || result.files.isEmpty) return;
       final bytes = result.files.first.bytes;
       if (bytes == null) {
+        if (!context.mounted) return;
         messenger.showSnackBar(
           const SnackBar(content: Text('Could not read file.')),
         );
@@ -323,6 +325,7 @@ class LogbookExport {
           onLayout: (_) async => pdfBytes,
           name: fileName,
         );
+        if (!context.mounted) return;
         return;
       }
 

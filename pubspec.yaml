@@ -1,7 +1,7 @@
 name: konapod
 description: Hyundai Konapod – Vehicle Dashboard
 publish_to: 'none'
-version: 0.2.32+2
+version: 0.2.33+2
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -32,7 +32,6 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  shared_preferences: any
 
 flutter:
   uses-material-design: true
