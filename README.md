@@ -3,11 +3,12 @@
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/gjwgit/konapod)
+[![Github Docs](https://img.shields.io/badge/GitHub-Pages-green?logo=gitbook)](https://gjwgit.github.io/gjwgit/konapod)
+[![Github Repo](https://img.shields.io/badge/GitHub-Repo-blue?logo=github)](https://github.com/gjwgit/konapod)
 [![GitHub License](https://img.shields.io/github/license/gjwgit/konapod)](https://raw.githubusercontent.com/gjwgit/konapod/dev/LICENSE)
-[![Flutter Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/gjwgit/konapod/master/pubspec.yaml&query=$.version&label=version)](https://github.com/gjwgit/konapod/blob/dev/CHANGELOG.md)
-[![Last Updated](https://img.shields.io/github/last-commit/gjwgit/konapod?label=last%20updated)](https://github.com/gjwgit/konapod/commits/dev/)
-[![GitHub commit activity (dev)](https://img.shields.io/github/commit-activity/w/gjwgit/konapod/dev)](https://github.com/gjwgit/rattle/commits/dev/)
+[![Github Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/gjwgit/konapod/master/pubspec.yaml&query=$.version&label=version)](https://github.com/gjwgit/konapod/blob/dev/CHANGELOG.md)
+[![Github Last Updated](https://img.shields.io/github/last-commit/gjwgit/konapod?label=last%20updated)](https://github.com/gjwgit/konapod/commits/dev/)
+[![GitHub Commit Activity (dev)](https://img.shields.io/github/commit-activity/w/gjwgit/konapod/dev)](https://github.com/gjwgit/rattle/commits/dev/)
 [![GitHub Issues](https://img.shields.io/github/issues/gjwgit/konapod)](https://github.com/gjwgit/konapod/issues)
 
 [KonaPod](https://gjwgit.github.io/konapod/) is a tool to collect your

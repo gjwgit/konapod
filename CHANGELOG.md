@@ -31,7 +31,7 @@ We make this project available for free so if you appreciate the app
 then please show some ❤️ and tap on the star at
 [GitHub](https://github.com/gjwgit/konapod) to support our work.
 
-This app has been pair programmed by [Graham
+This app is pair programmed by [Graham
 Williams](https://togaware.com/Graham.Williams.html) and [Claude
 Code](https://claude.com/product/claude-code).
 
@@ -75,6 +75,6 @@ Code](https://claude.com/product/claude-code).
 
 + Initial solid implementation without save [0.2.0 20260316 gjw]
 
-## 0.1 Initial View Only App
+## 0.1 Initial App
 
 + Initial working app to view data [0.1.0 20260314 gjw]
