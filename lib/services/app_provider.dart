@@ -29,8 +29,10 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'package:konapod/models/battery_observation.dart';
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
+import 'package:konapod/services/battery_observation_service.dart';
 import 'package:konapod/services/bluelink_service.dart';
 import 'package:konapod/services/pod_service.dart';
 
@@ -102,6 +104,8 @@ class AppProvider extends ChangeNotifier {
       _loadedFilename = null;
       _state = AppState.loaded;
       notifyListeners();
+      // Record battery observation in the background.
+      _recordBatteryObservation();
       return true;
     } on BluelinkApiException catch (e) {
       debugPrint('[AppProvider] BluelinkApiException: ${e.message}');
@@ -116,6 +120,28 @@ class AppProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  // ── Battery observation recording ────────────────────────────────────────
+
+  void _recordBatteryObservation() {
+    final v = selectedVehicle;
+    if (v == null) return;
+    final pct = v.batteryLevelPercent;
+    final range = v.evRangeKm;
+    if (pct == null || range == null) return;
+    final obs = BatteryObservation(
+      timestamp: v.lastUpdated ?? DateTime.now(),
+      batteryPct: pct,
+      rangeKm: range,
+      odometerKm: v.odometerKm,
+      remainKwh: v.batteryRemainKwh != null ? v.batteryRemainKwh! / 3600 : null,
+    );
+    BatteryObservationService.record(obs).then((error) {
+      if (error != null) {
+        debugPrint('[AppProvider] battery obs error: $error');
+      }
+    });
   }
 
   // ── Pod data loading ─────────────────────────────────────────────────────
@@ -194,6 +220,9 @@ class AppProvider extends ChangeNotifier {
     _dataSource = source;
     _state = AppState.loaded;
     notifyListeners();
+    // Record battery observation in the background (deduplication is handled
+    // by BatteryObservationService — pod snapshots often share the same reading).
+    _recordBatteryObservation();
     return true;
   }
 

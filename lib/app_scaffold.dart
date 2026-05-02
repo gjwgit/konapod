@@ -162,11 +162,11 @@ class _AppScaffoldState extends State<AppScaffold> {
           ),
         ),
         const SolidMenuItem(
-          title: 'Energy',
+          title: 'Battery',
           icon: Icons.battery_charging_full,
-          tooltip: '**Energy**\n\nEV battery, charging status and fuel.',
+          tooltip: '**Battery**\n\nEV battery, charging status and fuel.',
           child: _PageWrapper(
-            title: 'Energy',
+            title: 'Battery',
             child: EnergyPage(),
           ),
         ),

@@ -3,7 +3,7 @@
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 
-[![Github Docs](https://img.shields.io/badge/GitHub-Pages-green?logo=gitbook)](https://gjwgit.github.io/gjwgit/konapod)
+[![Github Docs](https://img.shields.io/badge/GitHub-Pages-green?logo=gitbook)](https://gjwgit.github.io/konapod)
 [![Github Repo](https://img.shields.io/badge/GitHub-Repo-blue?logo=github)](https://github.com/gjwgit/konapod)
 [![GitHub License](https://img.shields.io/github/license/gjwgit/konapod)](https://raw.githubusercontent.com/gjwgit/konapod/dev/LICENSE)
 [![Github Version](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/gjwgit/konapod/master/pubspec.yaml&query=$.version&label=version)](https://github.com/gjwgit/konapod/blob/dev/CHANGELOG.md)
@@ -133,6 +133,20 @@ the Charging status disapers after charging has reached its set target
 `Target SOC`) and so the vehicle is no longer charging.
 
 ![Energy Page while Plugged In But Not Charging](./assets/screenshots/energy_pluggedin.png)
+
+The Engergy Page also shows the reported battery percentage and km
+range. I understand these are calculated estimates based on recent
+charging levels.
+
+![Energy Page with % versus km plot](./assets/screenshots/energy_battery_charge.png)
+
+We can also plot the percentage against the remaining kWh to notice
+the linear relationship, confirming that the percentage is simply the
+percentage of battery charge, as expected. The kWh versus range
+remaining is then the same plot as the percentage charge versus
+distance or range remaining.
+
+![Energy Page with Range and Charge Plots](assets/screenshots/energy_battery_range.png)
 
 Visuals Page - Here we explore visually some of the vehicle performace
 stats. The tooltip shows on this particular day the car regenerated

@@ -1,6 +1,6 @@
 /// EnergyPage — EV battery, charging, efficiency and fuel sections.
 ///
-// Time-stamp: <Thursday 2026-03-19 14:02:31 +1100 Graham Williams>
+// Time-stamp: <Saturday 2026-05-02 20:41:42 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -30,7 +30,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
+import 'package:konapod/models/battery_observation.dart';
+import 'package:konapod/screens/battery_analysis_screen.dart';
 import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/services/battery_observation_service.dart';
 import 'package:konapod/widgets/section_label.dart';
 import 'package:konapod/widgets/sections_energy.dart';
 
@@ -96,6 +99,17 @@ class EnergyPage extends StatelessWidget {
             ),
             EfficiencySection(v: v),
             const Gap(16),
+            const SectionLabel(
+              'Battery Observations',
+              tooltip: '**Battery Observations**\n\n'
+                  'Data collected each time vehicle data is refreshed from '
+                  'Bluelink or loaded from your Pod.\n\n'
+                  '**Top:** Battery % vs estimated range (trend = km per 1%)\n'
+                  '**Middle:** % vs kWh remaining and Range vs kWh remaining\n'
+                  '**Bottom:** All recorded observations',
+            ),
+            const _BatterySection(),
+            const Gap(16),
           ],
           if (v.isICE && !v.isEV) ...[
             const SectionLabel(
@@ -109,6 +123,111 @@ class EnergyPage extends StatelessWidget {
           const Gap(8),
         ],
       ),
+    );
+  }
+}
+
+/// Compact panel: scatter plot on top, scrollable table below.
+/// Single loader that shares observations across all battery plots and table.
+class _BatterySection extends StatefulWidget {
+  const _BatterySection();
+
+  @override
+  State<_BatterySection> createState() => _BatterySectionState();
+}
+
+class _BatterySectionState extends State<_BatterySection> {
+  List<BatteryObservation>? _obs;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    BatteryObservationService.load().then((data) {
+      if (mounted) {
+        data.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        setState(() {
+          _obs = data;
+          _loading = false;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const SizedBox(
+        height: 120,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final obs = _obs ?? [];
+    if (obs.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Center(
+          child: Text(
+            'No battery observations yet.\nRefresh Bluelink data to start collecting.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      );
+    }
+    final withKwh = obs.where((o) => o.remainKwh != null).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: 260,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+            child: BatteryScatterPlot(observations: obs),
+          ),
+        ),
+        if (withKwh.isNotEmpty) ...[
+          const Gap(8),
+          SizedBox(
+            height: 220,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
+                    child: BatteryKwhScatterPlot(
+                      observations: withKwh,
+                      mode: KwhPlotMode.pctVsKwh,
+                    ),
+                  ),
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+                    child: BatteryKwhScatterPlot(
+                      observations: withKwh,
+                      mode: KwhPlotMode.rangeVsKwh,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Gap(8),
+          SizedBox(
+            height: 220,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+              child: BatteryEfficiencyBarChart(observations: withKwh),
+            ),
+          ),
+        ],
+        const Gap(8),
+        ObservationTable(observations: obs),
+      ],
     );
   }
 }

@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Analysis of battery km versus % and kWh [0.2.34 20260502 gjw]
 + Add export for history [0.2.33 20260423 gjw]
 + Fine tune the log book entry and PDF [0.2.32 20260422 gjw]
 + Auto update duration/cost when data from Bluelink [0.2.31 20260422 gjw]
