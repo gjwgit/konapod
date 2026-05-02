@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Move efficiency plot to more logical location [0.2.35 20260503 gjw]
 + Analysis of battery km versus % and kWh [0.2.34 20260502 gjw]
 + Add export for history [0.2.33 20260423 gjw]
 + Fine tune the log book entry and PDF [0.2.32 20260422 gjw]

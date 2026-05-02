@@ -98,6 +98,7 @@ class EnergyPage extends StatelessWidget {
                   'Lower kWh/100km is better. Typical EV range is 13–20.',
             ),
             EfficiencySection(v: v),
+            const _EfficiencyBarSection(),
             const Gap(16),
             const SectionLabel(
               'Battery Observations',
@@ -216,18 +217,51 @@ class _BatterySectionState extends State<_BatterySection> {
               ],
             ),
           ),
-          const Gap(8),
-          SizedBox(
-            height: 220,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
-              child: BatteryEfficiencyBarChart(observations: withKwh),
-            ),
-          ),
         ],
         const Gap(8),
         ObservationTable(observations: obs),
       ],
+    );
+  }
+}
+
+/// Loads battery observations and renders the efficiency bar chart.
+class _EfficiencyBarSection extends StatefulWidget {
+  const _EfficiencyBarSection();
+
+  @override
+  State<_EfficiencyBarSection> createState() => _EfficiencyBarSectionState();
+}
+
+class _EfficiencyBarSectionState extends State<_EfficiencyBarSection> {
+  List<BatteryObservation>? _obs;
+
+  @override
+  void initState() {
+    super.initState();
+    BatteryObservationService.load().then((data) {
+      if (mounted) {
+        final withKwh = data
+            .where((o) =>
+                o.remainKwh != null && o.odometerKm != null && o.rangeKm > 0)
+            .toList()
+          ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        setState(() => _obs = withKwh);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final obs = _obs;
+    if (obs == null) return const SizedBox.shrink();
+    if (obs.isEmpty) return const SizedBox.shrink();
+    return SizedBox(
+      height: 220,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+        child: BatteryEfficiencyBarChart(observations: obs),
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 name: konapod
 description: Hyundai Konapod – Vehicle Dashboard
 publish_to: 'none'
-version: 0.2.34+2
+version: 0.2.35+2
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
