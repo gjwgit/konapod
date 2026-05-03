@@ -243,7 +243,7 @@ class _EfficiencyBarSectionState extends State<_EfficiencyBarSection> {
       if (mounted) {
         final withKwh = data
             .where((o) =>
-                o.remainKwh != null && o.odometerKm != null && o.rangeKm > 0)
+                o.remainKwh != null && o.odometerKm != null && o.rangeKm > 0,)
             .toList()
           ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
         setState(() => _obs = withKwh);
