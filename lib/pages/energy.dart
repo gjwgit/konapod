@@ -31,7 +31,10 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
 import 'package:konapod/models/battery_observation.dart';
-import 'package:konapod/screens/battery_analysis_screen.dart';
+import 'package:konapod/screens/battery_efficiency_bar.dart';
+import 'package:konapod/screens/battery_kwh_plot.dart';
+import 'package:konapod/screens/battery_observation_table.dart';
+import 'package:konapod/screens/battery_scatter_plot.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/services/battery_observation_service.dart';
 import 'package:konapod/widgets/section_label.dart';
