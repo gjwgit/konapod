@@ -377,8 +377,13 @@ class _ScatterPainter extends CustomPainter {
 
 class ObservationTable extends StatelessWidget {
   final List<BatteryObservation> observations;
+  final void Function(BatteryObservation)? onDelete;
 
-  const ObservationTable({super.key, required this.observations});
+  const ObservationTable({
+    super.key,
+    required this.observations,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -416,6 +421,7 @@ class ObservationTable extends StatelessWidget {
               DataColumn(label: Text('km/kWh'), numeric: true),
               DataColumn(label: Text('kWh/100km'), numeric: true),
               DataColumn(label: Text('Odo km'), numeric: true),
+              DataColumn(label: Text('')),
             ],
             rows: rows.map((o) {
               return DataRow(
@@ -469,6 +475,21 @@ class ObservationTable extends StatelessWidget {
                           : '—',
                       style: const TextStyle(fontSize: 11),
                     ),
+                  ),
+                  DataCell(
+                    onDelete != null
+                        ? IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              size: 16,
+                              color: Colors.red,
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            tooltip: 'Delete this observation',
+                            onPressed: () => onDelete!(o),
+                          )
+                        : const SizedBox.shrink(),
                   ),
                 ],
               );

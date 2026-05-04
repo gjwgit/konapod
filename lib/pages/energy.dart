@@ -219,7 +219,14 @@ class _BatterySectionState extends State<_BatterySection> {
           ),
         ],
         const Gap(8),
-        ObservationTable(observations: obs),
+        ObservationTable(
+          observations: obs,
+          onDelete: (o) async {
+            final updated = obs.where((e) => e != o).toList();
+            setState(() => _obs = updated);
+            await BatteryObservationService.saveAll(updated);
+          },
+        ),
       ],
     );
   }
@@ -242,8 +249,10 @@ class _EfficiencyBarSectionState extends State<_EfficiencyBarSection> {
     BatteryObservationService.load().then((data) {
       if (mounted) {
         final withKwh = data
-            .where((o) =>
-                o.remainKwh != null && o.odometerKm != null && o.rangeKm > 0,)
+            .where(
+              (o) =>
+                  o.remainKwh != null && o.odometerKm != null && o.rangeKm > 0,
+            )
             .toList()
           ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
         setState(() => _obs = withKwh);
