@@ -1,6 +1,6 @@
 /// LogEntryEdit — dialog to add or edit a log book entry.
 ///
-// Time-stamp: <Friday 2026-03-27 18:00:00 +1100 Graham Williams>
+// Time-stamp: <Tuesday 2026-05-05 15:19:57 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -12,6 +12,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:emacs_text_field/emacs_text_field.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +23,6 @@ import 'package:konapod/pages/log_charge_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 import 'package:konapod/pages/log_location_section.dart';
 import 'package:konapod/services/app_provider.dart';
-import 'package:konapod/widgets/emacs_text_field.dart';
 
 const _uuid = Uuid();
 
