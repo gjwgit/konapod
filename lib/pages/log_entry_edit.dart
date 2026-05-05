@@ -22,6 +22,7 @@ import 'package:konapod/pages/log_charge_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 import 'package:konapod/pages/log_location_section.dart';
 import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/widgets/emacs_text_field.dart';
 
 const _uuid = Uuid();
 
@@ -380,9 +381,9 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     // Note
                     LogSectionLabel('Notes', cs),
                     const Gap(8),
-                    TextField(
+                    EmacsTextField(
                       controller: _note,
-                      maxLines: 5,
+                      minLines: 3,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         isDense: true,

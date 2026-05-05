@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Migrate to EMACS TEXT FIELD [0.2.38 20260505 gjw]
 + Restructure battery observation file sizes [0.2.37 20260504 gjw]
 + Allow battery observation entry to be deleted [0.2.36 20260504 gjw]
 + Move efficiency plot to more logical location [0.2.35 20260503 gjw]
