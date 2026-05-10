@@ -260,6 +260,26 @@ class LogEntryTile extends StatelessWidget {
                               _fmtDuration(entry.chargeDurationMinutes!),
                               cs,
                             ),
+                          // km added per hour of charging
+                          if (entry.startEvRangeKm != null &&
+                              entry.evRangeKm != null &&
+                              entry.chargeDurationMinutes != null &&
+                              entry.chargeDurationMinutes! > 0)
+                            LogMiniChip(
+                              Icons.speed_outlined,
+                              '${((entry.evRangeKm! - entry.startEvRangeKm!) / (entry.chargeDurationMinutes! / 60)).toStringAsFixed(0)} km/h',
+                              cs,
+                            ),
+                          // cost per km added
+                          if (entry.chargeTotalCost != null &&
+                              entry.startEvRangeKm != null &&
+                              entry.evRangeKm != null &&
+                              (entry.evRangeKm! - entry.startEvRangeKm!) > 0)
+                            LogMiniChip(
+                              Icons.attach_money,
+                              '${(entry.chargeTotalCost! / (entry.evRangeKm! - entry.startEvRangeKm!)).toStringAsFixed(3)}/km',
+                              cs,
+                            ),
                         ],
                       ),
                     ),

@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Add km/h and $/km to the log book charge summary [0.2.39 20260511 gjw]
 + Migrate to EMACS TEXT FIELD [0.2.38 20260505 gjw]
 + Restructure battery observation file sizes [0.2.37 20260504 gjw]
 + Allow battery observation entry to be deleted [0.2.36 20260504 gjw]
