@@ -91,13 +91,31 @@ class LogEntryTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Top row: time only (odo moved to title line below).
+                  // For charging entries we hide the time here too — it
+                  // appears next to the Start row instead.
+                  if (!entry.hasChargeData)
+                    Text(
+                      _fmtTime(entry.timestamp),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  if (!entry.hasChargeData) const Gap(4),
+                  // Title line: title · odo · (+kWh charge added, if any).
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
                     children: [
-                      Text(
-                        _fmtTime(entry.timestamp),
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: cs.onSurfaceVariant,
+                      Flexible(
+                        child: Text(
+                          entry.title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (entry.odometerKm != null) ...[
@@ -114,7 +132,7 @@ class LogEntryTile extends StatelessWidget {
                         Text(
                           '${entry.odometerKm!.toStringAsFixed(0)} km',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 12,
                             color: cs.onSurfaceVariant,
                           ),
                         ),
@@ -132,22 +150,29 @@ class LogEntryTile extends StatelessWidget {
                         ),
                         const Gap(2),
                         Text(
-                          '+${(entry.odometerKm! - prevOdometerKm!).toStringAsFixed(0)} km',
+                          'traveled +${(entry.odometerKm! - prevOdometerKm!).toStringAsFixed(0)} km',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 12,
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                      if (entry.chargeEnergyKwh != null) ...[
+                        Text(
+                          '  ·  ',
+                          style: TextStyle(color: cs.onSurfaceVariant),
+                        ),
+                        Icon(Icons.bolt, size: 12, color: cs.onSurfaceVariant),
+                        const Gap(2),
+                        Text(
+                          'charged +${entry.chargeEnergyKwh!.toStringAsFixed(1)} kWh',
+                          style: TextStyle(
+                            fontSize: 12,
                             color: cs.onSurfaceVariant,
                           ),
                         ),
                       ],
                     ],
-                  ),
-                  const Gap(4),
-                  Text(
-                    entry.title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
                   ),
                   if (entry.note.isNotEmpty) ...[
                     const Gap(2),
@@ -166,7 +191,10 @@ class LogEntryTile extends StatelessWidget {
                     const Gap(6),
                     _ReadingRow(
                       label: 'Start',
-                      odo: entry.startOdometerKm,
+                      time: entry.hasChargeData
+                          ? _fmtTime(entry.timestamp)
+                          : null,
+                      odo: entry.hasChargeData ? null : entry.startOdometerKm,
                       batt: entry.startBatteryLevelPercent,
                       remain: entry.startBatteryRemainKwh,
                       range: entry.startEvRangeKm,
@@ -178,7 +206,15 @@ class LogEntryTile extends StatelessWidget {
                     const Gap(4),
                     _ReadingRow(
                       label: 'End',
-                      odo: entry.odometerKm,
+                      time: (entry.hasChargeData &&
+                              entry.chargeDurationMinutes != null)
+                          ? _fmtTime(
+                              entry.timestamp.add(
+                                Duration(minutes: entry.chargeDurationMinutes!),
+                              ),
+                            )
+                          : null,
+                      odo: entry.hasChargeData ? null : entry.odometerKm,
                       batt: entry.batteryLevelPercent,
                       remain: entry.batteryRemainKwh,
                       range: entry.evRangeKm,
@@ -354,6 +390,7 @@ class LogMiniChip extends StatelessWidget {
 
 class _ReadingRow extends StatelessWidget {
   final String label;
+  final String? time;
   final double? odo;
   final double? batt;
   final double? remain;
@@ -362,6 +399,7 @@ class _ReadingRow extends StatelessWidget {
 
   const _ReadingRow({
     required this.label,
+    this.time,
     required this.odo,
     required this.batt,
     required this.remain,
@@ -383,6 +421,13 @@ class _ReadingRow extends StatelessWidget {
               ),
             ),
           ),
+          if (time != null) ...[
+            Text(
+              time!,
+              style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
+            ),
+            const Gap(10),
+          ],
           Expanded(
             child: Wrap(
               spacing: 10,
