@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Autocalc total cost in LOG BOOK [0.2.41 20260516 gjw]
 + Improve LOG BOOK presentation [0.2.40 20260515 gjw]
 + Add km/h and $/km to the log book charge summary [0.2.39 20260511 gjw]
 + Migrate to EMACS TEXT FIELD [0.2.38 20260505 gjw]

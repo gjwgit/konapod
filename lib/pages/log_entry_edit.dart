@@ -334,6 +334,8 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     LogChargeSection(
                       key: _chargeKey,
                       entry: widget.entry,
+                      startRemainCtrl: _startBatteryRemainCtrl,
+                      endRemainCtrl: _batteryRemainCtrl,
                       endReadingsContent: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

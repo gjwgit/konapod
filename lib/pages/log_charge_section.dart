@@ -66,7 +66,24 @@ class LogChargeSection extends StatefulWidget {
   /// the end vehicle readings + Fetch from Bluelink button.
   final Widget? endReadingsContent;
 
-  const LogChargeSection({super.key, this.entry, this.endReadingsContent});
+  /// Optional controller holding the start battery remaining value (in kWh,
+  /// as a text string). When provided together with [endRemainCtrl], the
+  /// total cost field is auto-recalculated as
+  /// `(endRemain − startRemain) × costPerKwh` whenever any of those three
+  /// inputs change.
+  final TextEditingController? startRemainCtrl;
+
+  /// Optional controller holding the end battery remaining value (in kWh).
+  /// See [startRemainCtrl] for behaviour.
+  final TextEditingController? endRemainCtrl;
+
+  const LogChargeSection({
+    super.key,
+    this.entry,
+    this.endReadingsContent,
+    this.startRemainCtrl,
+    this.endRemainCtrl,
+  });
 
   @override
   State<LogChargeSection> createState() => LogChargeSectionState();
@@ -102,10 +119,18 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _totalCost = TextEditingController(
       text: e?.chargeTotalCost?.toStringAsFixed(2) ?? '',
     );
+
+    // Auto-recalc total cost when cost/kWh or either remain value changes.
+    _costPerKwh.addListener(_recalcTotalCost);
+    widget.startRemainCtrl?.addListener(_recalcTotalCost);
+    widget.endRemainCtrl?.addListener(_recalcTotalCost);
   }
 
   @override
   void dispose() {
+    _costPerKwh.removeListener(_recalcTotalCost);
+    widget.startRemainCtrl?.removeListener(_recalcTotalCost);
+    widget.endRemainCtrl?.removeListener(_recalcTotalCost);
     _vendor.dispose();
     _energy.dispose();
     _rate.dispose();
@@ -113,6 +138,31 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _costPerKwh.dispose();
     _totalCost.dispose();
     super.dispose();
+  }
+
+  /// Recalculate total cost from delta charge × cost/kWh and update the
+  /// total cost field. Only fires when all three inputs are present and
+  /// the resulting delta is positive.
+
+  void _recalcTotalCost() {
+    final costPerKwh = double.tryParse(_costPerKwh.text.trim());
+    if (costPerKwh == null || costPerKwh <= 0) return;
+
+    final startRemain = double.tryParse(
+      widget.startRemainCtrl?.text.trim() ?? '',
+    );
+    final endRemain = double.tryParse(
+      widget.endRemainCtrl?.text.trim() ?? '',
+    );
+    if (startRemain == null || endRemain == null) return;
+
+    final delta = endRemain - startRemain;
+    if (delta <= 0) return;
+
+    final newTotal = (delta * costPerKwh).toStringAsFixed(2);
+    if (_totalCost.text != newTotal) {
+      _totalCost.text = newTotal;
+    }
   }
 
   /// Read current values from the form. Returns null fields for empty inputs.
