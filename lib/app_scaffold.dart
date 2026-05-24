@@ -44,9 +44,9 @@ import 'package:konapod/screens/logbook_screen.dart';
 import 'package:konapod/screens/settings_screen.dart';
 import 'package:konapod/screens/stats_screen.dart';
 import 'package:konapod/screens/visuals_screen.dart';
-import 'package:konapod/widgets/setup_dialog.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/setup_dialog.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
 /// Provides left nav, top app bar, status bar, and per-section pages.

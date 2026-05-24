@@ -97,7 +97,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     void addOrUpdate({required String label, bool? ok, String? detail}) {
       if (steps.isNotEmpty && steps.last.ok == null) {
-        steps[steps.length - 1] = _DiagStep(label: label, ok: ok, detail: detail);
+        steps[steps.length - 1] =
+            _DiagStep(label: label, ok: ok, detail: detail);
       } else {
         steps.add(_DiagStep(label: label, ok: ok, detail: detail));
       }
@@ -479,9 +480,8 @@ class _DiagStepList extends StatelessWidget {
                     : Icon(
                         s.ok! ? Icons.check_circle : Icons.cancel,
                         size: 18,
-                        color: s.ok!
-                            ? HyundaiColors.success
-                            : HyundaiColors.error,
+                        color:
+                            s.ok! ? HyundaiColors.success : HyundaiColors.error,
                       ),
               ),
               const Gap(6),

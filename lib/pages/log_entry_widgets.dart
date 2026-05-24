@@ -114,7 +114,7 @@ class LogReadingsGrid extends StatelessWidget {
             children: [
               if (odoCtrl != null) ...[
                 Flexible(
-                child: LabeledValueField(
+                  child: LabeledValueField(
                     labelText: 'Odometer',
                     unit: 'km',
                     controller: odoCtrl!,

@@ -15,8 +15,6 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 
-import 'package:konapod/theme/hyundai_theme.dart';
-
 /// Full setup instructions for Bluelink connectivity.
 /// Shown from Settings and auto-displayed when a setup-related error occurs.
 class SetupDialog extends StatelessWidget {
