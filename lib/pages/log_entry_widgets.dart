@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 
+import 'package:konapod/widgets/labeled_value_field.dart';
+
 // ── Location display ──────────────────────────────────────────────────────────
 
 class LogLocationDisplay extends StatelessWidget {
@@ -108,34 +110,24 @@ class LogReadingsGrid extends StatelessWidget {
         children: [
           // First row: odo + battery (or just battery if no odo)
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (odoCtrl != null) ...[
-                Expanded(
-                  child: TextField(
-                    controller: odoCtrl,
+                Flexible(
+                child: LabeledValueField(
+                    labelText: 'Odometer',
+                    unit: 'km',
+                    controller: odoCtrl!,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Odometer',
-                      border: OutlineInputBorder(),
-                      isDense: true,
-                      suffixText: 'km',
-                    ),
                   ),
                 ),
-                const Gap(8),
+                const Gap(16),
               ],
-              Expanded(
-                child: TextField(
+              Flexible(
+                child: LabeledValueField(
+                  labelText: 'Battery',
+                  unit: '%',
                   controller: battCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Battery',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    suffixText: '%',
-                  ),
                 ),
               ),
             ],
@@ -143,34 +135,21 @@ class LogReadingsGrid extends StatelessWidget {
           const Gap(8),
           // Second row: remaining + range
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
+              Flexible(
+                child: LabeledValueField(
+                  labelText: 'Remaining',
+                  unit: 'kWh',
                   controller: remainCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Remaining',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    suffixText: 'kWh',
-                  ),
                 ),
               ),
-              const Gap(8),
-              Expanded(
-                child: TextField(
+              const Gap(16),
+              Flexible(
+                child: LabeledValueField(
+                  labelText: 'EV Range',
+                  unit: 'km',
                   controller: rangeCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'EV Range',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    suffixText: 'km',
-                  ),
                 ),
               ),
             ],

@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/log_entry.dart';
+import 'package:konapod/widgets/labeled_value_field.dart';
 
 /// Holds the values read from a [LogChargeSection].
 
@@ -94,7 +95,8 @@ class LogChargeSectionState extends State<LogChargeSection> {
   late final TextEditingController _vendor;
   late final TextEditingController _energy;
   late final TextEditingController _rate;
-  late final TextEditingController _duration;
+  late final TextEditingController _durationHours;
+  late final TextEditingController _durationMinutes;
   late final TextEditingController _costPerKwh;
   late final TextEditingController _totalCost;
 
@@ -110,8 +112,14 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _rate = TextEditingController(
       text: e?.chargeRateKwh?.toStringAsFixed(1) ?? '',
     );
-    _duration = TextEditingController(
-      text: e?.chargeDurationMinutes?.toString() ?? '',
+    // Duration is stored as a single integer (minutes) but edited as two
+    // fields: hours and minutes. Split on init, combine on read.
+    final mins = e?.chargeDurationMinutes;
+    _durationHours = TextEditingController(
+      text: mins == null ? '' : (mins ~/ 60).toString(),
+    );
+    _durationMinutes = TextEditingController(
+      text: mins == null ? '' : (mins % 60).toString(),
     );
     _costPerKwh = TextEditingController(
       text: e?.chargeCostPerKwh?.toStringAsFixed(2) ?? '',
@@ -134,10 +142,24 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _vendor.dispose();
     _energy.dispose();
     _rate.dispose();
-    _duration.dispose();
+    _durationHours.dispose();
+    _durationMinutes.dispose();
     _costPerKwh.dispose();
     _totalCost.dispose();
     super.dispose();
+  }
+
+  /// Combine the hours and minutes fields back into a single minute count.
+  /// Returns null when both fields are blank; treats blank fields in one
+  /// half as zero (so "2h" with empty minutes is 120 min, and ":30m" with
+  /// empty hours is 30 min).
+  int? _readDurationMinutes() {
+    final hStr = _durationHours.text.trim();
+    final mStr = _durationMinutes.text.trim();
+    if (hStr.isEmpty && mStr.isEmpty) return null;
+    final h = int.tryParse(hStr) ?? 0;
+    final m = int.tryParse(mStr) ?? 0;
+    return h * 60 + m;
   }
 
   /// Recalculate total cost from delta charge × cost/kWh and update the
@@ -173,7 +195,7 @@ class LogChargeSectionState extends State<LogChargeSection> {
       vendor: _vendor.text.trim().isEmpty ? null : _vendor.text.trim(),
       energyKwh: double.tryParse(_energy.text.trim()),
       rateKwh: double.tryParse(_rate.text.trim()),
-      durationMinutes: int.tryParse(_duration.text.trim()),
+      durationMinutes: _readDurationMinutes(),
       costPerKwh: double.tryParse(_costPerKwh.text.trim()),
       totalCost: double.tryParse(_totalCost.text.trim()),
     );
@@ -186,7 +208,8 @@ class LogChargeSectionState extends State<LogChargeSection> {
     double? energyKwh,
     double? totalCost,
   }) {
-    _duration.text = durationMinutes.toString();
+    _durationHours.text = (durationMinutes ~/ 60).toString();
+    _durationMinutes.text = (durationMinutes % 60).toString();
     if (energyKwh != null) _energy.text = energyKwh.toStringAsFixed(1);
     if (totalCost != null) _totalCost.text = totalCost.toStringAsFixed(2);
   }
@@ -233,55 +256,54 @@ class LogChargeSectionState extends State<LogChargeSection> {
           const Gap(10),
           // Energy + Rate
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: TextField(
+              Flexible(
+                child: LabeledValueField(
+                  labelText: 'Energy delivered',
+                  unit: 'kWh',
                   controller: _energy,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    labelText: 'Energy delivered',
-                    suffixText: 'kWh',
-                  ),
                 ),
               ),
-              const Gap(10),
-              Expanded(
-                child: TextField(
+              const Gap(16),
+              Flexible(
+                child: LabeledValueField(
+                  labelText: 'Charge rate',
+                  unit: 'kW',
                   controller: _rate,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    labelText: 'Charge rate',
-                    suffixText: 'kW',
-                  ),
                 ),
               ),
             ],
           ),
           const Gap(10),
-          // Duration + Cost per kWh
+          // Duration (split into hours + minutes) + Cost per kWh
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: TextField(
-                  controller: _duration,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    labelText: 'Duration',
-                    suffixText: 'min',
-                  ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    LabeledValueField(
+                      labelText: 'Duration',
+                      unit: 'h',
+                      controller: _durationHours,
+                      keyboardType: TextInputType.number,
+                      fieldWidth: 56,
+                    ),
+                    const Gap(8),
+                    LabeledValueField(
+                      labelText: ' ',
+                      unit: 'm',
+                      controller: _durationMinutes,
+                      keyboardType: TextInputType.number,
+                      fieldWidth: 56,
+                    ),
+                  ],
                 ),
               ),
-              const Gap(10),
+              const Gap(16),
               Expanded(
                 child: TextField(
                   controller: _costPerKwh,
