@@ -53,12 +53,14 @@ class AppProvider extends ChangeNotifier {
   int _selectedVehicleIndex = 0;
   bool _isRefreshing = false;
   bool _logLoading = false;
+  bool _keyringLocked = false;
   DataSource _dataSource = DataSource.none;
   String? _loadedFilename; // which pod file is currently loaded
 
   AppState get state => _state;
   String? get errorMessage => _errorMessage;
   List<Vehicle> get vehicles => _vehicles;
+  bool get keyringLocked => _keyringLocked;
   Vehicle? get selectedVehicle =>
       _vehicles.isNotEmpty ? _vehicles[_selectedVehicleIndex] : null;
   bool get isAuthenticated => _api.isAuthenticated;
@@ -76,13 +78,23 @@ class AppProvider extends ChangeNotifier {
   // ── Auto-login (desktop/bluelink) ────────────────────────────────────────
 
   Future<bool> tryAutoLogin() async {
-    final username = await _storage.read(key: 'bl_username');
-    final password = await _storage.read(key: 'bl_password');
-    final pin = await _storage.read(key: 'bl_pin');
-    if (username != null && password != null && pin != null) {
-      return login(username: username, password: password, pin: pin);
+    try {
+      final username = await _storage.read(key: 'bl_username');
+      final password = await _storage.read(key: 'bl_password');
+      final pin = await _storage.read(key: 'bl_pin');
+      if (username != null && password != null && pin != null) {
+        return login(username: username, password: password, pin: pin);
+      }
+      return false;
+    } catch (e) {
+      // The system keyring may be locked on startup (common on a fresh Linux
+      // install where gnome-keyring-daemon hasn't been unlocked yet).
+      // Treat this as "no saved credentials" rather than crashing.
+      debugPrint('[AppProvider] tryAutoLogin keyring error: $e');
+      _keyringLocked = true;
+      notifyListeners();
+      return false;
     }
-    return false;
   }
 
   Future<bool> login({
@@ -95,9 +107,15 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _api.login(username: username, password: password, pin: pin);
-      await _storage.write(key: 'bl_username', value: username);
-      await _storage.write(key: 'bl_password', value: password);
-      await _storage.write(key: 'bl_pin', value: pin);
+      try {
+        await _storage.write(key: 'bl_username', value: username);
+        await _storage.write(key: 'bl_password', value: password);
+        await _storage.write(key: 'bl_pin', value: pin);
+      } catch (e) {
+        // Keyring may still be locked — credentials aren't saved for next
+        // launch, but we can continue with the in-memory session.
+        debugPrint('[AppProvider] credential save skipped (keyring): $e');
+      }
       _vehicles = await _api.getVehicles();
       _selectedVehicleIndex = 0;
       _dataSource = DataSource.bluelink;

@@ -1,6 +1,6 @@
 /// App entry point: initialises providers, theme and SolidLogin wrapper.
 ///
-// Time-stamp: <Sunday 2026-03-29 20:44:56 +1100 Graham Williams>
+// Time-stamp: <Friday 2026-05-22 13:43:15 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -89,7 +89,7 @@ class _KonapodAppState extends State<KonapodApp> {
       // Drive themeMode from SolidThemeNotifier so the toggle in
       // SolidScaffold actually changes the app theme.
       themeMode: _themeNotifier.themeMode,
-      debugShowCheckedModeBanner: false,
+      // debugShowCheckedModeBanner: false,
       home: SolidLogin(
         required: false,
         appDirectory: appDirectory,
@@ -175,6 +175,33 @@ class _AutoLoginWrapperState extends State<_AutoLoginWrapper> {
                   color: Colors.white54,
                   strokeWidth: 2,
                 ),
+              ),
+              const Gap(24),
+              Consumer<AppProvider>(
+                builder: (_, p, __) => p.keyringLocked
+                    ? Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 32),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          '⚠️  System keyring is locked.\n'
+                          'Credentials cannot be read.\n\n'
+                          'Fix: unlock the keyring then restart.\n'
+                          '  sudo apt install seahorse\n'
+                          '  seahorse  →  unlock Default keyring\n\n'
+                          'Or enter credentials manually after login.',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            height: 1.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ),
             ],
           ),

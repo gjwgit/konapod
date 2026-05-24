@@ -44,6 +44,7 @@ import 'package:konapod/screens/logbook_screen.dart';
 import 'package:konapod/screens/settings_screen.dart';
 import 'package:konapod/screens/stats_screen.dart';
 import 'package:konapod/screens/visuals_screen.dart';
+import 'package:konapod/widgets/setup_dialog.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 
@@ -101,6 +102,12 @@ class _AppScaffoldState extends State<AppScaffold> {
   }
 
   void _showErrorDialog(String message) {
+    // Detect setup-related errors so we can offer the setup instructions.
+    final isSetupError = message.contains('Python') ||
+        message.contains('pip') ||
+        message.contains('hyundai') ||
+        message.contains('bluelink_fetch') ||
+        message.contains('library not');
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -118,6 +125,18 @@ class _AppScaffoldState extends State<AppScaffold> {
           ),
         ),
         actions: [
+          if (isSetupError)
+            TextButton.icon(
+              icon: const Icon(Icons.build_outlined, size: 16),
+              label: const Text('Setup instructions'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                showDialog<void>(
+                  context: context,
+                  builder: (_) => const SetupDialog(),
+                );
+              },
+            ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('OK'),

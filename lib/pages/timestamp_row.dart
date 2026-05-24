@@ -1,6 +1,6 @@
 /// TimestampRow — displays last updated, fetched at and registration date.
 ///
-// Time-stamp: <Wednesday 2026-03-18 22:06:27 +1100 Graham Williams>
+// Time-stamp: <Monday 2026-05-25 09:11:00 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -72,10 +72,10 @@ class TimestampRow extends StatelessWidget {
         const Gap(16),
         if (registrationDate != null)
           _TsLine(
-            'Data collected since',
+            'Collected since',
             fmt.format(registrationDate!),
             cs,
-            tooltip: '**Data Collected Since**\n\n'
+            tooltip: '**Collected Since**\n\n'
                 'The date the vehicle was first registered with '
                 'the Bluelink service — typically the delivery date.',
           ),

@@ -51,7 +51,7 @@ class BluelinkService {
 
   bool get isAuthenticated => _authenticated;
 
-  String _findScript() {
+  String findScript() {
     final candidates = [
       '${File(Platform.resolvedExecutable).parent.path}/bluelink_fetch.py',
       '${Directory.current.path}/bluelink_fetch.py',
@@ -64,17 +64,36 @@ class BluelinkService {
   }
 
   Future<String> _findPython() async {
-    for (final cmd in ['python3', 'python']) {
+    // Ordered preference:
+    //  1. A venv created specifically for konapod at a predictable location.
+    //  2. The system python3 / python (library installed with
+    //     pip install hyundai-kia-connect-api --break-system-packages).
+    final home = Platform.environment['HOME'] ?? '';
+    final venvCandidates = [
+      '$home/.local/share/konapod/venv/bin/python',
+      '$home/.konapod-venv/bin/python',
+      '${File(Platform.resolvedExecutable).parent.path}/venv/bin/python',
+    ];
+    final systemCandidates = ['python3', 'python'];
+
+    for (final cmd in [...venvCandidates, ...systemCandidates]) {
       try {
         final r = await Process.run(cmd, ['--version']);
-        debugPrint('PYTHON $r $cmd');
-        if (r.exitCode == 0) return cmd;
-      } catch (e) {
-        debugPrint('[Bluelink] Python check failed for $cmd: $e');
+        if (r.exitCode == 0) {
+          debugPrint('[Bluelink] Using Python: $cmd');
+          return cmd;
+        }
+      } catch (_) {
+        // Not found at this path — try next.
       }
     }
     throw BluelinkApiException(
-      'Python 3 not found.\nRun: sudo apt install python3 python3-pip',
+      'Python 3 not found.\n\n'
+      'Option A (simplest):\n'
+      '  pip install hyundai-kia-connect-api --break-system-packages\n\n'
+      'Option B (venv):\n'
+      '  python3 -m venv ~/.local/share/konapod/venv\n'
+      '  ~/.local/share/konapod/venv/bin/pip install hyundai-kia-connect-api',
     );
   }
 
@@ -101,7 +120,7 @@ class BluelinkService {
 
   Future<List<Vehicle>> _fetchFromPython() async {
     final python = await _findPython();
-    final script = _findScript();
+    final script = findScript();
 
     if (!File(script).existsSync()) {
       throw BluelinkApiException(
