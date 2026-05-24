@@ -243,7 +243,7 @@ Here we see the car's engine is on.
 
 It's useful to check if you've forgotten to lock your car.
 
-![Status Page Engine On](./assets/screeshots/status_unlocked.png)
+![Status Page Unlocked](./assets/screeshots/status_unlocked.png)
 
 Here the current tyre pressures are reported. This reading is only
 available while the car is being driven.
