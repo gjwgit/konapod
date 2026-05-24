@@ -239,16 +239,16 @@ Status Page - Here we see some doors are open as well as the boot.
 
 Here we see the car's engine is on.
 
-![Status Page Engine On](./assets/screeshots/status_engine_on.png)
+![Status Page Engine On](./assets/screenshots/status_engine_on.png)
 
 It's useful to check if you've forgotten to lock your car.
 
-![Status Page Unlocked](./assets/screeshots/status_unlocked.png)
+![Status Page Unlocked](./assets/screenshots/status_unlocked.png)
 
 Here the current tyre pressures are reported. This reading is only
 available while the car is being driven.
 
-![Comfort Page Tyre Pressures](./assets/screeshots/comfort_tyres.png)
+![Comfort Page Tyre Pressures](./assets/screenshots/comfort_tyres.png)
 
 Energy Page - The status of the battery and other energy related
 statistics are presented here.
