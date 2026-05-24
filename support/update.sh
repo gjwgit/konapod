@@ -26,8 +26,12 @@ test -f lib/main.dart && IS_APP=true
 
 SCRIPTS=${HOME}/projects/scripts/
 FILES=(
-    ${SCRIPTS}support/update.sh support/update.sh
+    ${SCRIPTS}support/loc.sh support/loc.sh
     ${SCRIPTS}support/meld_zip_from_claude.sh support/meld_zip_from_claude.sh
+    ${SCRIPTS}support/flutter.mk support/flutter.mk
+    ${SCRIPTS}support/update.sh support/update.sh
+    ${SCRIPTS}flutter/.gitignore .gitignore
+    ${SCRIPTS}Makefile Makefile
 )
 
 length=${#FILES[@]}
@@ -52,12 +56,17 @@ for ((i=0; i < length; i+=2)); do
 
 	if [[ $inode1 == $inode2 ]]; then
 	    echo "HARD LINK $f1 $f2"
-	    continue
 	else
-	    echo "MUST LINK ln $f1 $f2"
+	    if cmp -s "$f1" "$f2"; then
+		echo "IDENTICIAL $f1 $f2"
+	    else
+		echo "DIFF LINK? ln $f1 $f2"
+		meld "$f1" "$f2" 2> /dev/null
+	    fi
 	    ln --interactive $f1 $f2
-	    continue
 	fi
+
+	continue
 
 	# 20260217 gjw For license.dart do not consider the first line
 	# in the comparison nor the 5th line which might be Copyright
@@ -154,8 +163,6 @@ done
 
 SCRIPTSBB=${HOME}/projects/scriptsbb/flutter
 FILESBB=(
-    Makefile ${SCRIPTSBB}/Makefile.tmpl
-    .gitignore ${SCRIPTSBB}/gitignore
     .pubignore ${SCRIPTSBB}/pubignore
     .github/workflows/ci.yaml ${SCRIPTSBB}/github/workflows/ci.yaml
     .github/workflows/installers.yaml ${SCRIPTSBB}/github/workflows/installers.yaml
@@ -163,11 +170,7 @@ FILESBB=(
     installers/deb.sh ${SCRIPTSBB}/installers/deb.sh
     installers/update.sh ${SCRIPTSBB}/installers/update.sh
     support/modules.mk  ${SCRIPTSBB}/../support/modules.mk
-    support/flutter.mk  ${SCRIPTSBB}/../support/flutter.mk
     support/git.mk  ${SCRIPTSBB}/../support/git.mk
-    support/loc.sh  ${SCRIPTSBB}/../support/loc.sh
-    support/meld_zip_from_claude.sh  ${SCRIPTSBB}/../support/meld_zip_from_claude.sh
-    support/update.sh  ${SCRIPTSBB}/../support/update.sh
 )
 
 # 20260217 gjw Handle different licenses for applications (GPL) and

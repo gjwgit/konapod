@@ -62,7 +62,15 @@ a Pull Request. The app is implemented in
 ## Introduction
 
 A Flutter app to view your Hyundai Bluelink vehicle data (currently
-for Australia / NZ but please send in PRs for other regions).
+for Australia / NZ but please send in PRs for other regions). All of
+your extracted data is stored securely and privately within your
+personal online datastore (Pod) hosted within your Data Vault on a
+Solid server.
+
+Solid Pods are a new approach to handling your personal data on the
+World Wide Web and is the latest innovation from the inventor of the
+WWW, Sir Tim Berners-Lee. Obtain a Pod for yourself on any Solid
+server and link it to your app.
 
 ---
 
