@@ -1,7 +1,7 @@
 name: konapod
 description: Hyundai Konapod – Vehicle Dashboard
 publish_to: 'none'
-version: 0.2.42+4
+version: 0.2.42+5
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -36,6 +36,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # 20260525 gjw macOS build on git started failing.
+  config:
+    enable-swift-package-manager: false
   assets:
     - assets/images/app_image.jpg
     - assets/images/app_icon.png
