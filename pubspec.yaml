@@ -22,7 +22,7 @@ dependencies:
   printing: ^5.13.1
   provider: ^6.1.5
   solidpod: ^0.12.4
-  solidui: ^0.3.21
+  solidui: ^0.3.51
   uuid: ^4.5.3
 
 dependency_overrides:
