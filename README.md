@@ -167,7 +167,7 @@ python3 -m venv ~/.local/share/konapod/venv
 KonaPod will find and use this venv automatically — no further
 configuration needed. The app searches the following locations in order:
 
-```
+```console
 ~/.local/share/konapod/venv/bin/python
 ~/.konapod-venv/bin/python
 <app binary dir>/venv/bin/python
@@ -211,6 +211,7 @@ blank password (or your login password). After that the keyring will unlock
 automatically when you log in to the desktop.
 
 ---
+
 ## 🔌🚗 Showcase 🌳🌞
 
 Under settings you can specify your username, password and pin to
