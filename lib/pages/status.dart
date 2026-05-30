@@ -34,6 +34,7 @@ import 'package:konapod/pages/section_label.dart';
 import 'package:konapod/pages/timestamp_row.dart';
 import 'package:konapod/widgets/doors_section.dart';
 import 'package:konapod/widgets/hero_card.dart';
+import 'package:konapod/widgets/location_map_card.dart';
 import 'package:konapod/widgets/sections_comfort.dart';
 import 'package:konapod/widgets/warnings_section.dart';
 import 'package:konapod/widgets/windows_section.dart';
@@ -87,6 +88,16 @@ class StatusPage extends StatelessWidget {
                 'colour, trim, and fuel type.',
           ),
           InfoSection(v: v),
+          if (v.latitude != null && v.longitude != null) ...[
+            const Gap(16),
+            const SectionLabel(
+              'Location',
+              tooltip: '**Location**\n\n'
+                  'The last known GPS position of the vehicle as reported '
+                  'by Bluelink, shown on a map.',
+            ),
+            LocationMapCard(v: v),
+          ],
           if (v.extras.isNotEmpty) ...[
             const Gap(16),
             const SectionLabel('Additional Data'),

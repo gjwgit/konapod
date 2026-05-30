@@ -1,7 +1,7 @@
 name: konapod
 description: Hyundai Konapod – Vehicle Dashboard
 publish_to: 'none'
-version: 0.2.42+5
+version: 0.2.43+5
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -13,10 +13,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   file_picker: ^11.0.2
   fl_chart: ^0.70.2
+  flutter_map: ^7.0.2
   flutter_secure_storage: ^10.0.0
   gap: ^3.0.1
   http: ^1.6.0
   intl: ^0.20.2
+  latlong2: ^0.9.1
   markdown_tooltip: ^0.0.10
   pdf: ^3.11.1
   printing: ^5.13.1
