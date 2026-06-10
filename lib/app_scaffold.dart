@@ -39,6 +39,7 @@ import 'package:konapod/pages/comfort.dart';
 import 'package:konapod/pages/energy.dart';
 import 'package:konapod/pages/no_data_placeholder.dart';
 import 'package:konapod/pages/status.dart';
+import 'package:konapod/screens/backup_screen.dart';
 import 'package:konapod/screens/history_screen.dart';
 import 'package:konapod/screens/logbook_screen.dart';
 import 'package:konapod/screens/settings_screen.dart';
@@ -238,6 +239,16 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: _PageWrapper(
             title: 'Settings',
             child: SettingsScreen(),
+          ),
+        ),
+        const SolidMenuItem(
+          title: 'Backup',
+          icon: Icons.save_alt,
+          tooltip: '**Backup**\n\nExport all Pod data to a JSON file, '
+              'or restore it from a backup.',
+          child: _PageWrapper(
+            title: 'Backup',
+            child: BackupScreen(),
           ),
         ),
       ],

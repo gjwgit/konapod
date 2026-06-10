@@ -221,6 +221,37 @@ class PodService {
     await writePod('index.ttl', ttl, overwrite: true);
   }
 
+  // ── Raw file access (used by backup/restore) ──────────────────────────────
+
+  /// Read a pod file's raw (decrypted) Turtle content. Returns null if the
+  /// file does not exist or cannot be read.
+  static Future<String?> readRawFile(String filename) async {
+    try {
+      final ttl = await readPod(filename);
+      return ttl;
+    } catch (e) {
+      dev.log('[Pod] readRawFile error ($filename): $e', name: 'PodService');
+      return null;
+    }
+  }
+
+  /// Write raw Turtle [content] to [filename] on the pod, overwriting.
+  static Future<void> writeRawFile(String filename, String content) async {
+    await writePod(filename, content, overwrite: true);
+  }
+
+  /// Return the complete set of data filenames to back up: the index, all
+  /// status snapshots it references, latest.ttl, the logbook, and the
+  /// battery observations file.
+  static Future<List<String>> backupFilenames() async {
+    final names = <String>{'index.ttl', 'latest.ttl', _logFile,
+        'battery_observations.ttl'};
+    // Add every snapshot referenced by the index.
+    final snaps = await _readIndex();
+    names.addAll(snaps);
+    return names.toList();
+  }
+
   // ── Log book ──────────────────────────────────────────────────────────────
 
   static const _logFile = 'logbook.ttl';

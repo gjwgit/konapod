@@ -1,6 +1,6 @@
 /// App entry point: initialises providers, theme and SolidLogin wrapper.
 ///
-// Time-stamp: <Friday 2026-05-22 13:43:15 +1000 Graham Williams>
+// Time-stamp: <Wednesday 2026-06-10 14:37:34 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -96,6 +96,14 @@ class _KonapodAppState extends State<KonapodApp> {
         title: appName.toUpperCase().replaceAll(' - ', '\n'),
         image: const AssetImage('assets/images/app_image.jpg'),
         logo: const AssetImage('assets/images/app_icon.png'),
+        link: 'https://github.com/gjwgit/konapod',
+        // clientId:
+        //     'https://solidcommunity.au/apps/konapod/client-profile.jsonld',
+        // redirectUris: [
+        //   'https://solidcommunity.au/apps/konapod/redirect.html',
+        //   'com.togaware.konapod://redirect',
+        //   'http://localhost:4400/redirect',
+        // ],
         child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
       ),
     );
