@@ -40,8 +40,8 @@ class BackupService {
   /// {
   ///   "app": "konapod",
   ///   "formatVersion": 1,
-  ///   "exportedAt": "<ISO8601>",
-  ///   "files": { "<filename.ttl>": "<raw turtle>", ... }
+  ///   "exportedAt": "`<ISO8601>`",
+  ///   "files": { "`<filename.ttl>`": "`<raw turtle>`", ... }
   /// }
   static Future<String> exportAll() async {
     final filenames = await PodService.backupFilenames();
