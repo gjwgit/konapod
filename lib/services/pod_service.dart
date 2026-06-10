@@ -244,8 +244,12 @@ class PodService {
   /// status snapshots it references, latest.ttl, the logbook, and the
   /// battery observations file.
   static Future<List<String>> backupFilenames() async {
-    final names = <String>{'index.ttl', 'latest.ttl', _logFile,
-        'battery_observations.ttl'};
+    final names = <String>{
+      'index.ttl',
+      'latest.ttl',
+      _logFile,
+      'battery_observations.ttl',
+    };
     // Add every snapshot referenced by the index.
     final snaps = await _readIndex();
     names.addAll(snaps);

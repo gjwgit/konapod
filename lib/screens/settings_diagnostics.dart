@@ -209,20 +209,20 @@ class DiagDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Testing connection…'),
-    content: SingleChildScrollView(
-      child: ValueListenableBuilder<int>(
-        valueListenable: notifier,
-        builder: (_, __, ___) => DiagStepList(steps: steps),
-      ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Cancel'),
-      ),
-    ],
-  );
+        title: const Text('Testing connection…'),
+        content: SingleChildScrollView(
+          child: ValueListenableBuilder<int>(
+            valueListenable: notifier,
+            builder: (_, __, ___) => DiagStepList(steps: steps),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
 }
 
 // ── Step list widget ──────────────────────────────────────────────────────────
@@ -253,7 +253,8 @@ class DiagStepList extends StatelessWidget {
                     : Icon(
                         s.ok! ? Icons.check_circle : Icons.cancel,
                         size: 18,
-                        color: s.ok! ? HyundaiColors.success : HyundaiColors.error,
+                        color:
+                            s.ok! ? HyundaiColors.success : HyundaiColors.error,
                       ),
               ),
               const Gap(6),

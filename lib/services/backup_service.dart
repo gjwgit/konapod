@@ -74,7 +74,7 @@ class BackupService {
     try {
       backup = jsonDecode(jsonStr) as Map<String, dynamic>;
     } catch (e) {
-      return RestoreResult(error: 'Not a valid JSON backup file.');
+      return const RestoreResult(error: 'Not a valid JSON backup file.');
     }
 
     if (backup['app'] != 'konapod') {
