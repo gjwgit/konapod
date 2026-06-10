@@ -23,8 +23,8 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.1
   provider: ^6.1.5
-  solidpod: ^0.12.4
-  solidui: ^0.3.51
+  solidpod: ^1.0.5
+  solidui: ^1.0.6
   uuid: ^4.5.3
 
 dependency_overrides:
