@@ -40,8 +40,8 @@ class BackupService {
   /// {
   ///   "app": "konapod",
   ///   "formatVersion": 1,
-  ///   "exportedAt": "`<ISO8601>`",
-  ///   "files": { "`<filename.ttl>`": "`<raw turtle>`", ... }
+  ///   "exportedAt": "<ISO8601>",
+  ///   "files": { "<filename.ttl>": "<raw turtle>", ... }
   /// }
   static Future<String> exportAll() async {
     final filenames = await PodService.backupFilenames();
@@ -74,7 +74,7 @@ class BackupService {
     try {
       backup = jsonDecode(jsonStr) as Map<String, dynamic>;
     } catch (e) {
-      return const RestoreResult(error: 'Not a valid JSON backup file.');
+      return RestoreResult(error: 'Not a valid JSON backup file.');
     }
 
     if (backup['app'] != 'konapod') {
