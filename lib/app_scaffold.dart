@@ -233,15 +233,6 @@ class _AppScaffoldState extends State<AppScaffold> {
           ),
         ),
         const SolidMenuItem(
-          title: 'Settings',
-          icon: Icons.settings,
-          tooltip: '**Settings**\n\nBluelink credentials and app preferences.',
-          child: _PageWrapper(
-            title: 'Settings',
-            child: SettingsScreen(),
-          ),
-        ),
-        const SolidMenuItem(
           title: 'Backup',
           icon: Icons.save_alt,
           tooltip: '**Backup**\n\nExport all Pod data to a JSON file, '
@@ -249,6 +240,15 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: _PageWrapper(
             title: 'Backup',
             child: BackupScreen(),
+          ),
+        ),
+        const SolidMenuItem(
+          title: 'Settings',
+          icon: Icons.settings,
+          tooltip: '**Settings**\n\nBluelink credentials and app preferences.',
+          child: _PageWrapper(
+            title: 'Settings',
+            child: SettingsScreen(),
           ),
         ),
       ],

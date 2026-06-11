@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Reorder SETTINGS/BACKUP [0.2.45 20260611 gjw]
 + Add a BACKUP service [0.2.44 20260610 gjw]
 + Add a map when GPS coords are available [0.2.43 20260530 gjw]
 + Updated log layout and improve cehcks of install [0.2.42 20260525 gjw]
