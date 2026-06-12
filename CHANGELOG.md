@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Remove redundant EXPORT button from app bar [0.2.46 20260612 gjw]
 + Reorder SETTINGS/BACKUP [0.2.45 20260611 gjw]
 + Add a BACKUP service [0.2.44 20260610 gjw]
 + Add a map when GPS coords are available [0.2.43 20260530 gjw]

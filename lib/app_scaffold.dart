@@ -25,9 +25,6 @@
 
 library;
 
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
@@ -297,15 +294,6 @@ class _AppScaffoldState extends State<AppScaffold> {
             onPressed: () => _loadFromPod(provider),
             color: Colors.white70,
           ),
-
-          // Export to JSON file
-          SolidAppBarAction(
-            icon: Icons.download_for_offline_outlined,
-            tooltip:
-                '**Export JSON**\n\nSave current vehicle data as a JSON file\nto your Downloads folder.',
-            onPressed: provider.hasData ? () => _exportJson(provider) : () {},
-            color: provider.hasData ? Colors.white : Colors.white30,
-          ),
         ],
       ),
 
@@ -404,47 +392,6 @@ class _AppScaffoldState extends State<AppScaffold> {
       messenger.showSnackBar(
         SnackBar(
           content: Text(provider.errorMessage ?? 'Load failed'),
-          backgroundColor: HyundaiColors.error,
-        ),
-      );
-    }
-  }
-
-  Future<void> _exportJson(AppProvider provider) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      final rawJson = await provider.getRawJsonForExport();
-      if (rawJson == null) {
-        if (!mounted) return;
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text('No data to export'),
-            backgroundColor: HyundaiColors.error,
-          ),
-        );
-        return;
-      }
-      final filename =
-          'konapod_${DateTime.now().toIso8601String().replaceAll(':', '-').substring(0, 19)}.json';
-      final home = Platform.environment['HOME'] ?? '.';
-      final downloads = Directory('$home/Downloads');
-      final dir = downloads.existsSync() ? downloads : Directory(home);
-      final file = File('${dir.path}/$filename');
-      await file
-          .writeAsString(const JsonEncoder.withIndent('  ').convert(rawJson));
-      if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text('Exported to ${file.path}'),
-          backgroundColor: HyundaiColors.success,
-          duration: const Duration(seconds: 4),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text('Export failed: $e'),
           backgroundColor: HyundaiColors.error,
         ),
       );
