@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Improved error checking for login failure [0.2.47 20260619 gjw]
 + Remove redundant EXPORT button from app bar [0.2.46 20260612 gjw]
 + Reorder SETTINGS/BACKUP [0.2.45 20260611 gjw]
 + Add a BACKUP service [0.2.44 20260610 gjw]

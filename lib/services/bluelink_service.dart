@@ -159,7 +159,11 @@ class BluelinkService {
 
     if (stdout.isEmpty) {
       throw BluelinkApiException(
-        'No output from Python script.\nstderr: $stderr',
+        'The login helper exited without output '
+        '(exit code ${result.exitCode}).'
+        '${stderr.isNotEmpty ? '\n\n$stderr' : ''}'
+        '\n\nIf this persists, log out and back in on the official Hyundai '
+        'Bluelink / Kia Connect app, then try again.',
       );
     }
 
@@ -174,9 +178,39 @@ class BluelinkService {
     }
 
     if (data.containsKey('error')) {
-      throw BluelinkApiException(
-        '${data['error']}${data['fix'] != null ? '\n\nFix: ${data['fix']}' : ''}',
-      );
+      final error = '${data['error']}';
+      final fix = data['fix'];
+
+      // The Bluelink/Kia Connect server commonly rejects a login that works
+      // fine in the official app, especially after repeated API attempts —
+      // logging out and back in via the official app re-establishes a valid
+      // session. Surface that hint for authentication failures.
+      final isAuthFailure = error.toLowerCase().contains('login') ||
+          error.toLowerCase().contains('auth');
+
+      final buffer = StringBuffer(error);
+      if (fix != null) {
+        buffer.write('\n\nFix: $fix');
+      }
+      if (isAuthFailure) {
+        buffer.write(
+          '\n\nIf your credentials are correct but login keeps failing, '
+          'log out and back in on the official Hyundai Bluelink / Kia Connect '
+          'app, then try again. Repeated attempts can temporarily lock the '
+          'account until the official app re-establishes a session.',
+        );
+      }
+
+      // Log the Python traceback (not shown in the user dialog) to aid future
+      // debugging without overwhelming the user.
+      if (data['traceback'] != null) {
+        dev.log(
+          '[Bluelink] script traceback:\n${data['traceback']}',
+          name: 'BluelinkService',
+        );
+      }
+
+      throw BluelinkApiException(buffer.toString());
     }
 
     final rawList =
