@@ -100,7 +100,7 @@ class _KonapodAppState extends State<KonapodApp> {
         clientId:
             'https://solidcommunity.au/apps/konapod/client-profile.jsonld',
         redirectUris: [
-          'https://solidcommunity.au/apps/konapod/redirect.html',
+          'https://konapod.solidcommunity.au/redirect.html',
           'com.togaware.konapod://redirect',
           'http://localhost:4400/redirect',
         ],
