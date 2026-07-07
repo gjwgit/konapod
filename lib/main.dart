@@ -98,11 +98,11 @@ class _KonapodAppState extends State<KonapodApp> {
         logo: const AssetImage('assets/images/app_icon.png'),
         link: 'https://github.com/gjwgit/konapod',
         clientId:
-            'https://solidcommunity.au/apps/konapod/client-profile.jsonld',
+            'https://konapod.solidcommunity.au/client-profile.jsonld',
         redirectUris: [
           'https://konapod.solidcommunity.au/redirect.html',
           'com.togaware.konapod://redirect',
-          'http://localhost:4400/redirect',
+          'http://localhost:4400/redirect.html',
         ],
         child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
       ),
