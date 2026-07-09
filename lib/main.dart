@@ -28,6 +28,7 @@
 
 library;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -97,13 +98,13 @@ class _KonapodAppState extends State<KonapodApp> {
         image: const AssetImage('assets/images/app_image.jpg'),
         logo: const AssetImage('assets/images/app_icon.png'),
         link: 'https://github.com/gjwgit/konapod',
-        clientId:
-            'https://konapod.solidcommunity.au/client-profile.jsonld',
-        redirectUris: [
-          'https://konapod.solidcommunity.au/redirect.html',
-          'com.togaware.konapod://redirect',
-          'http://localhost:4400/redirect.html',
-        ],
+        clientId: 'https://gjwgit.github.io/konapod/client-profile.jsonld',
+        redirectUris: kIsWeb
+            ? ['${Uri.base.origin}/redirect.html']
+            : const [
+                'com.togaware.konapod://redirect',
+                'http://localhost:4400/redirect.html',
+              ],
         child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
       ),
     );

@@ -1,18 +1,16 @@
 {
   "@context": "https://www.w3.org/ns/solid/oidc-context.jsonld",
-  "client_id": "https://konapod.solidcommunity.au/client-profile.jsonld",
+  "client_id": "https://gjwgit.github.io/konapod/client-profile.jsonld",
   "client_name": "KonaPod",
   "application_type": "native",
   "redirect_uris": [
     "https://konapod.solidcommunity.au/redirect.html",
     "com.togaware.konapod://redirect",
-    "http://localhost:4400/redirect",
     "http://localhost:4400/redirect.html"
   ],
   "post_logout_redirect_uris": [
     "https://konapod.solidcommunity.au/redirect.html",
     "com.togaware.konapod://redirect",
-    "http://localhost:4400/redirect",
     "http://localhost:4400/redirect.html"
   ],
   "scope": "openid profile offline_access webid",
