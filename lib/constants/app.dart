@@ -1,6 +1,6 @@
 /// App-wide constants: name, version, description and pod path.
 ///
-// Time-stamp: <Thursday 2026-03-19 15:06:18 +1100 Graham Williams>
+// Time-stamp: <Saturday 2026-07-04 08:40:20 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -27,7 +27,7 @@
 
 library;
 
-const String appName = 'Kona Pod - Vehicle Stats';
+const String appName = 'Kona Pod - Electric Vehicle App';
 const String appVersion = '0.0.0';
 const String appDescription =
     'Hyundai Bluelink vehicle dashboard with Solid Pod integration.';

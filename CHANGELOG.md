@@ -18,7 +18,7 @@ AU](https://solidcommunity.au) or directly: for **Android** as
 [dmg](https://solidcommunity.au/installers/konapod-macos.dmg) or
 [zip](https://solidcommunity.au/installers/konapod-macos.zip); for
 **Windows** as
-[inno](https://solidcommunity.au/installers/konapod-windows-inno.exe)
+[exe](https://solidcommunity.au/installers/konapod-windows-inno.exe)
 or [zip](https://solidcommunity.au/installers/konapod-windows.zip).
 
 Contributions are welcome. Visit
