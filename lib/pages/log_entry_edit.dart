@@ -54,6 +54,8 @@ class _LogEntryEditState extends State<LogEntryEdit> {
   late final TextEditingController _batteryRemainCtrl;
   final _locationKey = GlobalKey<LogLocationSectionState>();
   bool _fetchingEnd = false;
+  // 20260724 gjw Validation message shown under the Title field.
+  String? _titleError;
 
   bool get _isNew => widget.entry == null;
 
@@ -285,10 +287,17 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     TextField(
                       controller: _title,
                       autofocus: _isNew,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      onChanged: (_) {
+                        // 20260724 gjw Clear the error once the user types.
+                        if (_titleError != null) {
+                          setState(() => _titleError = null);
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
                         isDense: true,
                         hintText: 'e.g. Charged at shopping centre',
+                        errorText: _titleError,
                       ),
                     ),
                     const Gap(16),
@@ -411,7 +420,15 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                   const Spacer(),
                   FilledButton(
                     onPressed: () {
-                      if (_title.text.trim().isEmpty) return;
+                      // 20260724 gjw Explain that a title is required rather
+                      // than silently doing nothing.
+                      if (_title.text.trim().isEmpty) {
+                        setState(
+                          () => _titleError =
+                              'A TITLE is required to add an entry.',
+                        );
+                        return;
+                      }
                       Navigator.of(context).pop(_buildEntry());
                     },
                     child: Text(_isNew ? 'Add Entry' : 'Save'),

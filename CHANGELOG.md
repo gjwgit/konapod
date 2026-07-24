@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Note missing log title rather than silent ignore [0.2.49 20260724 gjw]
 + Update solidui/solidpod dependencies [0.2.48 20260703 gjw]
 + Improved error checking for login failure [0.2.47 20260619 gjw]
 + Remove redundant EXPORT button from app bar [0.2.46 20260612 gjw]
