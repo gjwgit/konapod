@@ -35,6 +35,7 @@ import 'package:konapod/screens/history_export.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/services/pod_service.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/error_dialog.dart';
 
 /// History screen — browse, load, and delete archived snapshots from the pod.
 
@@ -121,11 +122,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final error = await PodService.deleteStatusFile(filename);
     if (!mounted) return;
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Delete failed: $error'),
-          backgroundColor: HyundaiColors.error,
-        ),
+      // 20260725 gjw Errors use a modal dialog rather than a SnackBar.
+      await showErrorDialog(
+        context,
+        title: 'Delete failed',
+        message: error,
       );
     } else {
       setState(() => _files.remove(filename));
