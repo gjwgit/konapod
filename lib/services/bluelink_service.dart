@@ -138,6 +138,13 @@ class BluelinkService {
     }
 
     dev.log('[Bluelink] Running Python script…', name: 'BluelinkService');
+    // 20260803 gjw Log the interpreter and script actually used — a stale
+    // script copy or a venv with an outdated hyundai_kia_connect_api has
+    // caused wrong timestamps before, and this pins it down immediately.
+    dev.log(
+      '[Bluelink] python=$python script=$script',
+      name: 'BluelinkService',
+    );
 
     final result = await Process.run(
       python,
