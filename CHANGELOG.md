@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Last updated for more accurate charge end time [0.2.51 20260803 gjw]
 + Review and fix snackbars and tooltips [0.2.50 20260725 gjw]
 + Note missing log title rather than silent ignore [0.2.49 20260724 gjw]
 + Update solidui/solidpod dependencies [0.2.48 20260703 gjw]

@@ -182,9 +182,21 @@ class _LogEntryEditState extends State<LogEntryEdit> {
 
       // ── Derived charge values ──────────────────────────────────────────────
 
-      // Duration: from entry timestamp to now.
+      // Duration: from entry timestamp to the charge end time. The API has no
+      // charge-session history, but the car reports state to the server when
+      // charging stops, so when not charging the snapshot's lastUpdated is
+      // typically the charge-stop time — more accurate than now. Fall back to
+      // now while still charging or if lastUpdated is missing/stale. 20260726 gjw
       final now = DateTime.now();
-      final durationMin = now.difference(_timestamp).inMinutes.clamp(0, 9999);
+      var end = now;
+      final reported = v.lastUpdated;
+      if (v.isChargingOn != true &&
+          reported != null &&
+          reported.isAfter(_timestamp) &&
+          reported.isBefore(now)) {
+        end = reported;
+      }
+      final durationMin = end.difference(_timestamp).inMinutes.clamp(0, 9999);
 
       // Energy delivered: end remaining kWh − start remaining kWh.
       // Use the directly measured remaining values — more accurate than
