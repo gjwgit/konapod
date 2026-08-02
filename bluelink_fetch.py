@@ -91,6 +91,11 @@ def main():
         for vid, v in vm.vehicles.items():
             d = vehicle_to_dict(v)
             d['vehicleId'] = vid
+            # 20260803 gjw last_updated_at comes back naive but is UTC; stamp it
+            # so the Dart side parses the correct local time.
+            lu = getattr(v, 'last_updated_at', None)
+            if isinstance(lu, datetime) and lu.tzinfo is None:
+                d['last_updated_at'] = str(lu.replace(tzinfo=timezone.utc).astimezone())
             vehicles.append(d)
 
         if debug:
