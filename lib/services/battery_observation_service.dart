@@ -14,6 +14,7 @@ import 'dart:developer' as dev;
 import 'package:flutter/foundation.dart';
 
 import 'package:solidpod/solidpod.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:konapod/models/battery_observation.dart';
 
@@ -157,12 +158,14 @@ class BatteryObservationService {
 
   static Future<String?> _write(String ttl) async {
     try {
-      await writePod(_file, ttl);
+      await SolidPendingWrites.track(writePod(_file, ttl));
       return null;
     } catch (_) {
       // File doesn't exist yet or overwrite needed.
       try {
-        await writePod(_file, ttl, overwrite: true);
+        await SolidPendingWrites.track(
+          writePod(_file, ttl, overwrite: true),
+        );
         return null;
       } catch (e) {
         return e.toString();

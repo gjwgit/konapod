@@ -34,13 +34,14 @@ import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:konapod/app_scaffold.dart';
 import 'package:konapod/constants/app.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -48,6 +49,14 @@ void main() {
   // requests.
 
   SolidSecurityKeyCentralManager.instance;
+
+  // Route the desktop window-close button through the app so an editor with
+  // unsaved changes can prompt to save rather than the edit being lost.
+
+  if (isDesktop) {
+    await windowManager.ensureInitialized();
+    await SolidWindowCloseGuard.enable();
+  }
 
   runApp(
     ChangeNotifierProvider(
@@ -104,7 +113,11 @@ class _KonapodAppState extends State<KonapodApp> {
           'com.togaware.konapod://redirect',
           'http://localhost:4400/redirect',
         ],
-        child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
+        // The listener is mounted once, inside MaterialApp, so a Pod write
+        // that nothing is awaiting can still report its failure.
+        child: SolidWriteFailureListener(
+          child: _AutoLoginWrapper(themeNotifier: _themeNotifier),
+        ),
       ),
     );
   }

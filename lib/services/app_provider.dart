@@ -397,6 +397,12 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
+  /// Write the log book to the Pod.
+  ///
+  /// Rethrows on failure: the log entry editor awaits this and must see the
+  /// error, otherwise it treats an entry that was never written as saved and
+  /// stops prompting for it when the window is closed.
+
   Future<void> saveLogToPod() async {
     try {
       await PodService.saveLogEntries(
@@ -404,6 +410,7 @@ class AppProvider extends ChangeNotifier {
       );
     } catch (e) {
       debugPrint('[AppProvider] saveLogToPod error: $e');
+      rethrow;
     }
   }
 }

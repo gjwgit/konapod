@@ -31,6 +31,7 @@ import 'dart:developer' as dev;
 import 'package:flutter/foundation.dart';
 
 import 'package:solidpod/solidpod.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:konapod/utils/pod_utils.dart';
 
@@ -81,10 +82,12 @@ class PodService {
       final ttl = _jsonToTtl('vehicleStatus', json);
 
       dev.log('[Pod] Writing $filename...', name: 'PodService');
-      await writePod(filename, ttl);
+      await SolidPendingWrites.track(writePod(filename, ttl));
       dev.log('[Pod] Saved $filename', name: 'PodService');
 
-      await writePod('latest.ttl', ttl, overwrite: true);
+      await SolidPendingWrites.track(
+        writePod('latest.ttl', ttl, overwrite: true),
+      );
       dev.log('[Pod] Updated latest.ttl', name: 'PodService');
 
       final index = await _readIndex();
@@ -180,7 +183,7 @@ class PodService {
       }
       final json = const JsonEncoder.withIndent('  ').convert(data);
       final ttl = _jsonToTtl('vehicleStatus', json);
-      await writePod(filename, ttl);
+      await SolidPendingWrites.track(writePod(filename, ttl));
       dev.log('[Pod] Restored $filename', name: 'PodService');
       index.add(filename);
       index.sort((a, b) => b.compareTo(a));
@@ -218,7 +221,9 @@ class PodService {
 
   static Future<void> _writeIndex(List<String> index) async {
     final ttl = _jsonToTtl('snapshotIndex', jsonEncode(index));
-    await writePod('index.ttl', ttl, overwrite: true);
+    await SolidPendingWrites.track(
+      writePod('index.ttl', ttl, overwrite: true),
+    );
   }
 
   // ── Raw file access (used by backup/restore) ──────────────────────────────
@@ -237,7 +242,9 @@ class PodService {
 
   /// Write raw Turtle [content] to [filename] on the pod, overwriting.
   static Future<void> writeRawFile(String filename, String content) async {
-    await writePod(filename, content, overwrite: true);
+    await SolidPendingWrites.track(
+      writePod(filename, content, overwrite: true),
+    );
   }
 
   /// Return the complete set of data filenames to back up: the index, all
@@ -277,16 +284,22 @@ class PodService {
   }
 
   /// Save all log entries to the pod.
+  ///
+  /// Rethrows on failure. The log entry editor awaits this and must see the
+  /// error: swallowing it would mark a lost entry as saved.
 
   static Future<void> saveLogEntries(
     List<Map<String, dynamic>> entries,
   ) async {
     try {
       final ttl = _jsonToTtl('logEntries', jsonEncode(entries));
-      await writePod(_logFile, ttl, overwrite: true);
+      await SolidPendingWrites.track(
+        writePod(_logFile, ttl, overwrite: true),
+      );
       dev.log('[Pod] Saved ${entries.length} log entries', name: 'PodService');
     } catch (e) {
       dev.log('[Pod] saveLogEntries error: $e', name: 'PodService');
+      rethrow;
     }
   }
 }

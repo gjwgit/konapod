@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Prompt to save unsaved log entry on window close [0.2.53 20260808 gjw]
 + Debug out of date python bluelink script [0.2.22 20260803 gjw]
 + Last updated for more accurate charge end time [0.2.51 20260803 gjw]
 + Review and fix snackbars and tooltips [0.2.50 20260725 gjw]

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/pages/log_entry_edit.dart';
@@ -110,18 +111,28 @@ class _LogbookScreenState extends State<LogbookScreen> {
     AppProvider provider,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
-    final entry = await showDialog<LogEntry>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => LogEntryEdit(vehicle: provider.selectedVehicle),
+      builder: (_) => LogEntryEdit(
+        vehicle: provider.selectedVehicle,
+        onSave: (entry) async {
+          // The editor may save more than once (window close, then Save), so
+          // update an entry it already added rather than duplicating it.
+          if (provider.logEntries.any((e) => e.id == entry.id)) {
+            provider.updateLogEntry(entry);
+          } else {
+            provider.addLogEntry(entry);
+          }
+          // Awaited and left to throw: LogEntryEdit must see a failure so it
+          // does not mark the entry saved, and a window close waits on it.
+          await provider.saveLogToPod();
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Log entry saved.')),
+          );
+        },
+      ),
     );
-    if (entry != null) {
-      provider.addLogEntry(entry);
-      await provider.saveLogToPod();
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Log entry saved.')),
-      );
-    }
   }
 
   Future<void> _editEntry(
@@ -129,18 +140,18 @@ class _LogbookScreenState extends State<LogbookScreen> {
     LogEntry entry,
     AppProvider provider,
   ) async {
-    final updated = await showDialog<LogEntry>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => LogEntryEdit(
         entry: entry,
         vehicle: provider.selectedVehicle,
+        onSave: (updated) async {
+          provider.updateLogEntry(updated);
+          await provider.saveLogToPod();
+        },
       ),
     );
-    if (updated != null) {
-      provider.updateLogEntry(updated);
-      await provider.saveLogToPod();
-    }
   }
 
   void _deleteEntry(
@@ -172,7 +183,12 @@ class _LogbookScreenState extends State<LogbookScreen> {
     ).then((confirmed) {
       if (confirmed == true) {
         provider.deleteLogEntry(entry.id);
-        provider.saveLogToPod();
+        // Nothing awaits this write, so watch it: otherwise a failure leaves
+        // the entry deleted on screen but still on the Pod, silently.
+        SolidWriteFailures.watch(
+          provider.saveLogToPod(),
+          during: 'deleting the log entry',
+        );
       }
     });
   }
