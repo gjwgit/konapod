@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Edit the charge finish time in the log entry editor [0.2.54 20260905 gjw]
 + Prompt to save unsaved log entry on window close [0.2.53 20260808 gjw]
 + Debug out of date python bluelink script [0.2.52 20260803 gjw]
 + Last updated for more accurate charge end time [0.2.51 20260803 gjw]

@@ -46,13 +46,16 @@ class LogTimestampField extends StatelessWidget {
                 isDense: true,
                 suffixIcon: Icon(Icons.schedule_outlined, size: 18),
               ),
-              child: Text(_fmt(timestamp)),
+              child: Text(fmt(timestamp)),
             ),
           ),
         ],
       );
 
-  static String _fmt(DateTime dt) {
+  /// Format a log book date and time as `dd/mm/yyyy  hh:mm`. Shared with
+  /// the charge finish time field so both read the same.
+
+  static String fmt(DateTime dt) {
     final d = '${dt.day.toString().padLeft(2, '0')}/'
         '${dt.month.toString().padLeft(2, '0')}/'
         '${dt.year}';

@@ -443,6 +443,7 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
                     LogChargeSection(
                       key: _chargeKey,
                       entry: widget.entry,
+                      startTimestamp: _timestamp,
                       startRemainCtrl: _startBatteryRemainCtrl,
                       endRemainCtrl: _batteryRemainCtrl,
                       endReadingsContent: LogEndReadingsSection(

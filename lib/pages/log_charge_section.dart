@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/log_entry.dart';
+import 'package:konapod/pages/log_finish_time_field.dart';
 import 'package:konapod/widgets/labeled_value_field.dart';
 
 /// Holds the values read from a [LogChargeSection].
@@ -78,12 +79,19 @@ class LogChargeSection extends StatefulWidget {
   /// See [startRemainCtrl] for behaviour.
   final TextEditingController? endRemainCtrl;
 
+  /// When the entry starts — the editor's date and time. The finish time is
+  /// this plus the duration, so editing the finish time sets the duration.
+  /// Passed in rather than read from [entry] because the editor lets the
+  /// user change it.
+  final DateTime startTimestamp;
+
   const LogChargeSection({
     super.key,
     this.entry,
     this.endReadingsContent,
     this.startRemainCtrl,
     this.endRemainCtrl,
+    required this.startTimestamp,
   });
 
   @override
@@ -132,6 +140,11 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _costPerKwh.addListener(_recalcTotalCost);
     widget.startRemainCtrl?.addListener(_recalcTotalCost);
     widget.endRemainCtrl?.addListener(_recalcTotalCost);
+
+    // The finish time is displayed beside the duration, so it has to be
+    // redrawn whenever the duration is edited.
+    _durationHours.addListener(_durationChanged);
+    _durationMinutes.addListener(_durationChanged);
   }
 
   @override
@@ -139,6 +152,8 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _costPerKwh.removeListener(_recalcTotalCost);
     widget.startRemainCtrl?.removeListener(_recalcTotalCost);
     widget.endRemainCtrl?.removeListener(_recalcTotalCost);
+    _durationHours.removeListener(_durationChanged);
+    _durationMinutes.removeListener(_durationChanged);
     _vendor.dispose();
     _energy.dispose();
     _rate.dispose();
@@ -160,6 +175,54 @@ class LogChargeSectionState extends State<LogChargeSection> {
     final h = int.tryParse(hStr) ?? 0;
     final m = int.tryParse(mStr) ?? 0;
     return h * 60 + m;
+  }
+
+  void _durationChanged() {
+    if (mounted) setState(() {});
+  }
+
+  /// When the charge finished — the entry's date and time plus the duration
+  /// — or null while the duration is blank.
+
+  DateTime? get _finish {
+    final mins = _readDurationMinutes();
+    return mins == null
+        ? null
+        : widget.startTimestamp.add(Duration(minutes: mins));
+  }
+
+  /// Pick the finish date and time, and store the result as a duration. A
+  /// finish before the start becomes a zero duration rather than a negative
+  /// one.
+
+  Future<void> _pickFinish() async {
+    final start = widget.startTimestamp;
+    final initial = _finish ?? start;
+    var lastDate = DateTime.now().add(const Duration(days: 1));
+    // A long duration can already put the finish beyond tomorrow, and the
+    // date picker requires the initial date to be within its range.
+    if (initial.isAfter(lastDate)) lastDate = initial;
+    final date = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(start.year, start.month, start.day),
+      lastDate: lastDate,
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initial),
+    );
+    if (time == null || !mounted) return;
+    final mins =
+        DateTime(date.year, date.month, date.day, time.hour, time.minute)
+            .difference(start)
+            .inMinutes
+            .clamp(0, 9999);
+    // Writing the controllers fires [_durationChanged], which redraws the
+    // finish time.
+    _durationHours.text = (mins ~/ 60).toString();
+    _durationMinutes.text = (mins % 60).toString();
   }
 
   /// Recalculate total cost from delta charge × cost/kWh and update the
@@ -276,34 +339,46 @@ class LogChargeSectionState extends State<LogChargeSection> {
             ],
           ),
           const Gap(10),
-          // Duration (split into hours + minutes) + Cost per kWh
+          // Duration (split into hours + minutes) + the finish time it
+          // implies, either of which can be edited to set the other.
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    LabeledValueField(
-                      labelText: 'Duration',
-                      unit: 'h',
-                      controller: _durationHours,
-                      keyboardType: TextInputType.number,
-                      fieldWidth: 56,
-                    ),
-                    const Gap(8),
-                    LabeledValueField(
-                      labelText: ' ',
-                      unit: 'm',
-                      controller: _durationMinutes,
-                      keyboardType: TextInputType.number,
-                      fieldWidth: 56,
-                    ),
-                  ],
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LabeledValueField(
+                    labelText: 'Duration',
+                    unit: 'h',
+                    controller: _durationHours,
+                    keyboardType: TextInputType.number,
+                    fieldWidth: 56,
+                  ),
+                  const Gap(8),
+                  LabeledValueField(
+                    labelText: ' ',
+                    unit: 'm',
+                    controller: _durationMinutes,
+                    keyboardType: TextInputType.number,
+                    fieldWidth: 56,
+                  ),
+                ],
               ),
               const Gap(16),
+              Expanded(
+                child: LogFinishTimeField(
+                  finish: _finish,
+                  onTap: _pickFinish,
+                ),
+              ),
+            ],
+          ),
+          const Gap(10),
+          // Cost per kWh + total cost
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Expanded(
                 child: TextField(
                   controller: _costPerKwh,
@@ -318,21 +393,22 @@ class LogChargeSectionState extends State<LogChargeSection> {
                   ),
                 ),
               ),
+              const Gap(16),
+              Expanded(
+                child: TextField(
+                  controller: _totalCost,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                    labelText: 'Total cost',
+                    prefixText: r'$ ',
+                  ),
+                ),
+              ),
             ],
-          ),
-          const Gap(10),
-          // Total cost
-          TextField(
-            controller: _totalCost,
-            keyboardType: const TextInputType.numberWithOptions(
-              decimal: true,
-            ),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              isDense: true,
-              labelText: 'Total cost',
-              prefixText: r'$ ',
-            ),
           ),
         ],
       ],
