@@ -167,7 +167,7 @@ class HistoryExport {
           build: (ctx) => [
             pw.Text(
               'KonaPod - Vehicle Status History',
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 18,
                 fontWeight: pw.FontWeight.bold,
               ),
@@ -196,7 +196,7 @@ class HistoryExport {
                         children: [
                           pw.Text(
                             _formatTitle(f),
-                            style: pw.TextStyle(
+                            style: const pw.TextStyle(
                               fontSize: 11,
                               fontWeight: pw.FontWeight.bold,
                             ),

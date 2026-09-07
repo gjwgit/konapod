@@ -161,7 +161,7 @@ class LogbookExport {
             children: [
               pw.Text(
                 'Kona Pod - Log Book',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 18,
                   fontWeight: pw.FontWeight.bold,
                 ),
@@ -247,7 +247,7 @@ class LogbookExport {
               children: [
                 pw.Text(
                   heading,
-                  style: pw.TextStyle(
+                  style: const pw.TextStyle(
                     fontSize: 11,
                     fontWeight: pw.FontWeight.bold,
                   ),
