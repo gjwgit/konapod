@@ -110,7 +110,7 @@ class PodService {
   static Future<Map<String, dynamic>?> loadLatestStatus() async {
     try {
       final index = await _readIndex();
-      if (index.isNotEmpty) return loadStatusFile(index.first);
+      if (index.isNotEmpty) return await loadStatusFile(index.first);
     } catch (_) {}
     try {
       final ttl = await readPod('latest.ttl');
