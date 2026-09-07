@@ -1,4 +1,4 @@
-/// Labeled numeric input with unit label snug to the right of the value.
+/// Labelled numeric input with unit label snug to the right of the value.
 ///
 // Time-stamp: <2026-05-22>
 ///

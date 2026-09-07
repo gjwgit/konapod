@@ -12,7 +12,6 @@
 library;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -74,17 +73,20 @@ class _BackupScreenState extends State<BackupScreen> {
       }
 
       final stamp = DateFormat('yyyyMMdd-HHmmss').format(DateTime.now());
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save konapod backup',
         fileName: 'konapod-backup-$stamp.json',
         type: FileType.custom,
         allowedExtensions: ['json'],
+        bytes: utf8.encode(json),
       );
-      if (savePath == null) {
+      if (savedUri == null) {
         setState(() => _status = null);
         return;
       }
-      await File(savePath).writeAsBytes(utf8.encode(json));
+      final savePath = savedUri.scheme == 'file'
+          ? savedUri.toFilePath()
+          : savedUri.toString();
       if (!mounted) return;
       setState(() => _status = 'Backup saved to $savePath');
       messenger.showSnackBar(SnackBar(content: Text('Saved to $savePath')));
@@ -129,22 +131,16 @@ class _BackupScreenState extends State<BackupScreen> {
       _status = 'Selecting backup file…';
     });
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         dialogTitle: 'Select konapod backup JSON',
         type: FileType.custom,
         allowedExtensions: ['json'],
-        withData: true,
       );
-      if (result == null || result.files.isEmpty) {
+      if (file == null) {
         setState(() => _status = null);
         return;
       }
-      final bytes = result.files.first.bytes;
-      if (bytes == null) {
-        if (!mounted) return;
-        setState(() => _status = 'Could not read file.');
-        return;
-      }
+      final bytes = await file.readAsBytes();
 
       setState(() => _status = 'Restoring data to your Pod…');
       final res = await BackupService.importAll(utf8.decode(bytes));
