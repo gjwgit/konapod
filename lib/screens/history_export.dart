@@ -26,7 +26,6 @@
 library;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -79,14 +78,17 @@ class HistoryExport {
         return;
       }
 
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save History as JSON',
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
+        bytes: utf8.encode(json),
       );
-      if (savePath == null) return;
-      await File(savePath).writeAsString(json);
+      if (savedUri == null) return;
+      final savePath = savedUri.scheme == 'file'
+          ? savedUri.toFilePath()
+          : savedUri.toString();
       if (!context.mounted) return;
       messenger.showSnackBar(
         SnackBar(
@@ -109,21 +111,13 @@ class HistoryExport {
   static Future<void> importJson(BuildContext context) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         dialogTitle: 'Select History JSON file',
         type: FileType.custom,
         allowedExtensions: ['json'],
-        withData: true,
       );
-      if (result == null || result.files.isEmpty) return;
-      final bytes = result.files.first.bytes;
-      if (bytes == null) {
-        if (!context.mounted) return;
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Could not read file.')),
-        );
-        return;
-      }
+      if (file == null) return;
+      final bytes = await file.readAsBytes();
       final bundle = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
       final snapshots =
           (bundle['snapshots'] as List).cast<Map<String, dynamic>>();
@@ -173,7 +167,7 @@ class HistoryExport {
           build: (ctx) => [
             pw.Text(
               'KonaPod - Vehicle Status History',
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 18,
                 fontWeight: pw.FontWeight.bold,
               ),
@@ -202,7 +196,7 @@ class HistoryExport {
                         children: [
                           pw.Text(
                             _formatTitle(f),
-                            style: pw.TextStyle(
+                            style: const pw.TextStyle(
                               fontSize: 11,
                               fontWeight: pw.FontWeight.bold,
                             ),
@@ -235,14 +229,17 @@ class HistoryExport {
         return;
       }
 
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save History as PDF',
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: ['pdf'],
+        bytes: pdfBytes,
       );
-      if (savePath == null) return;
-      await File(savePath).writeAsBytes(pdfBytes);
+      if (savedUri == null) return;
+      final savePath = savedUri.scheme == 'file'
+          ? savedUri.toFilePath()
+          : savedUri.toString();
       if (!context.mounted) return;
       messenger.showSnackBar(
         SnackBar(content: Text('Saved to $savePath')),

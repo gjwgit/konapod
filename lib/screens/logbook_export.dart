@@ -11,7 +11,6 @@
 library;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -49,14 +48,17 @@ class LogbookExport {
         return;
       }
 
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save Log Book as JSON',
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
+        bytes: utf8.encode(json),
       );
-      if (savePath == null) return;
-      await File(savePath).writeAsBytes(utf8.encode(json));
+      if (savedUri == null) return;
+      final savePath = savedUri.scheme == 'file'
+          ? savedUri.toFilePath()
+          : savedUri.toString();
       if (!context.mounted) return;
       messenger.showSnackBar(SnackBar(content: Text('Saved to $savePath')));
     } catch (e) {
@@ -73,21 +75,13 @@ class LogbookExport {
   ) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         dialogTitle: 'Select Log Book JSON file',
         type: FileType.custom,
         allowedExtensions: ['json'],
-        withData: true,
       );
-      if (result == null || result.files.isEmpty) return;
-      final bytes = result.files.first.bytes;
-      if (bytes == null) {
-        if (!context.mounted) return;
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Could not read file.')),
-        );
-        return;
-      }
+      if (file == null) return;
+      final bytes = await file.readAsBytes();
 
       final List<dynamic> raw = jsonDecode(utf8.decode(bytes));
       final imported =
@@ -167,7 +161,7 @@ class LogbookExport {
             children: [
               pw.Text(
                 'Kona Pod - Log Book',
-                style: pw.TextStyle(
+                style: const pw.TextStyle(
                   fontSize: 18,
                   fontWeight: pw.FontWeight.bold,
                 ),
@@ -253,7 +247,7 @@ class LogbookExport {
               children: [
                 pw.Text(
                   heading,
-                  style: pw.TextStyle(
+                  style: const pw.TextStyle(
                     fontSize: 11,
                     fontWeight: pw.FontWeight.bold,
                   ),
@@ -329,14 +323,17 @@ class LogbookExport {
         return;
       }
 
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save Log Book as PDF',
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: ['pdf'],
+        bytes: pdfBytes,
       );
-      if (savePath == null) return;
-      await File(savePath).writeAsBytes(pdfBytes);
+      if (savedUri == null) return;
+      final savePath = savedUri.scheme == 'file'
+          ? savedUri.toFilePath()
+          : savedUri.toString();
       if (!context.mounted) return;
       messenger.showSnackBar(SnackBar(content: Text('Saved to $savePath')));
     } catch (e) {

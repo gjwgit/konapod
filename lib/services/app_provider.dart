@@ -83,7 +83,11 @@ class AppProvider extends ChangeNotifier {
       final password = await _storage.read(key: 'bl_password');
       final pin = await _storage.read(key: 'bl_pin');
       if (username != null && password != null && pin != null) {
-        return login(username: username, password: password, pin: pin);
+        return await login(
+          username: username,
+          password: password,
+          pin: pin,
+        );
       }
       return false;
     } catch (e) {
