@@ -44,6 +44,7 @@ import 'package:konapod/screens/stats_screen.dart';
 import 'package:konapod/screens/visuals_screen.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/error_dialog.dart';
 import 'package:konapod/widgets/setup_dialog.dart';
 
 /// Main app scaffold wrapping the SolidScaffold.
@@ -372,28 +373,32 @@ class _AppScaffoldState extends State<AppScaffold> {
     final messenger = ScaffoldMessenger.of(context);
     final ok = await provider.saveToPod();
     if (!mounted) return;
+    // 20260725 gjw Errors use a modal dialog; SnackBar only confirms success.
+    if (!ok) {
+      await showErrorDialog(
+        context,
+        title: 'Save failed',
+        message: provider.errorMessage ?? 'Could not save snapshot to Pod.',
+      );
+      return;
+    }
     messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          ok
-              ? 'Snapshot saved to pod!'
-              : 'Save failed: ${provider.errorMessage}',
-        ),
-        backgroundColor: ok ? HyundaiColors.success : HyundaiColors.error,
+      const SnackBar(
+        content: Text('Snapshot saved to pod!'),
+        backgroundColor: HyundaiColors.success,
       ),
     );
   }
 
   Future<void> _loadFromPod(AppProvider provider) async {
-    final messenger = ScaffoldMessenger.of(context);
     final ok = await provider.loadFromPod();
     if (!mounted) return;
     if (!ok) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(provider.errorMessage ?? 'Load failed'),
-          backgroundColor: HyundaiColors.error,
-        ),
+      // 20260725 gjw Errors use a modal dialog rather than a SnackBar.
+      await showErrorDialog(
+        context,
+        title: 'Load failed',
+        message: provider.errorMessage ?? 'Could not load snapshot from Pod.',
       );
     }
   }

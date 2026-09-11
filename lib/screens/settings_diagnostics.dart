@@ -53,7 +53,13 @@ Future<void> runConnectionTest({
     builder: (_) => DiagDialog(steps: steps, notifier: notifier),
   );
 
-  Future<void> tick(String label, Future<String?> Function() work) async {
+  // 20260803 gjw [okDetail] supplies a detail line for a step that PASSED
+  // (evaluated after [work], so it can report values the step resolved).
+  Future<void> tick(
+    String label,
+    Future<String?> Function() work, {
+    String? Function()? okDetail,
+  }) async {
     addOrUpdate(label: label); // in-progress
     String? err;
     try {
@@ -61,7 +67,11 @@ Future<void> runConnectionTest({
     } catch (e) {
       err = e.toString();
     }
-    addOrUpdate(label: label, ok: err == null, detail: err);
+    addOrUpdate(
+      label: label,
+      ok: err == null,
+      detail: err ?? okDetail?.call(),
+    );
   }
 
   void finish() {
@@ -110,15 +120,21 @@ Future<void> runConnectionTest({
   // 2. bluelink_fetch.py present?
   final svc = BluelinkService();
   String? scriptPath;
-  await tick('bluelink_fetch.py found', () async {
-    final path = svc.findScript();
-    if (!File(path).existsSync()) {
-      return 'Script not found at:\n$path\n\n'
-          'Place bluelink_fetch.py next to the app binary.';
-    }
-    scriptPath = path;
-    return null;
-  });
+  await tick(
+    'bluelink_fetch.py found',
+    () async {
+      final path = svc.findScript();
+      if (!File(path).existsSync()) {
+        return 'Script not found at:\n$path\n\n'
+            'Place bluelink_fetch.py next to the app binary.';
+      }
+      scriptPath = path;
+      return null;
+    },
+    // 20260803 gjw Show which copy of the script was actually resolved —
+    // several can exist on a dev machine and the first match wins.
+    okDetail: () => scriptPath,
+  );
   if (scriptPath == null) {
     finish();
     return;

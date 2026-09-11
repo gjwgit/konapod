@@ -18,7 +18,7 @@ AU](https://solidcommunity.au) or directly: for **Android** as
 [dmg](https://solidcommunity.au/installers/konapod-macos.dmg) or
 [zip](https://solidcommunity.au/installers/konapod-macos.zip); for
 **Windows** as
-[inno](https://solidcommunity.au/installers/konapod-windows-inno.exe)
+[exe](https://solidcommunity.au/installers/konapod-windows-inno.exe)
 or [zip](https://solidcommunity.au/installers/konapod-windows.zip).
 
 Contributions are welcome. Visit
@@ -37,6 +37,12 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Edit the charge finish time in the log entry editor [0.2.54 20260905 gjw]
++ Prompt to save unsaved log entry on window close [0.2.53 20260808 gjw]
++ Debug out of date python bluelink script [0.2.52 20260803 gjw]
++ Last updated for more accurate charge end time [0.2.51 20260803 gjw]
++ Review and fix snackbars and tooltips [0.2.50 20260725 gjw]
++ Note missing log title rather than silent ignore [0.2.49 20260724 gjw]
 + Update solidui/solidpod dependencies [0.2.48 20260703 gjw]
 + Improved error checking for login failure [0.2.47 20260619 gjw]
 + Remove redundant EXPORT button from app bar [0.2.46 20260612 gjw]

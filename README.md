@@ -55,7 +55,7 @@ from the [Solid Community AU](https://solidcommunity.au) repository:
   [dmg](https://solidcommunity.au/installers/konapod-macos.dmg) or
   [zip](https://solidcommunity.au/installers/konapod-macos.zip);
 + **Windows**
-  [inno](https://solidcommunity.au/installers/konapod-windows-inno.exe) or
+  [exe](https://solidcommunity.au/installers/konapod-windows-inno.exe) or
   [zip](https://solidcommunity.au/installers/konapod-windows.zip).
 
 [Installation

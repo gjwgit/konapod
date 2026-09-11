@@ -10,18 +10,22 @@
 
 library;
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 
 import 'package:emacs_text_field/emacs_text_field.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/pages/log_charge_section.dart';
+import 'package:konapod/pages/log_end_readings_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 import 'package:konapod/pages/log_location_section.dart';
+import 'package:konapod/pages/log_timestamp_field.dart';
 import 'package:konapod/services/app_provider.dart';
 
 const _uuid = Uuid();
@@ -33,13 +37,23 @@ class LogEntryEdit extends StatefulWidget {
   /// Current vehicle — used to pre-populate fields for new entries.
   final Vehicle? vehicle;
 
-  const LogEntryEdit({super.key, this.entry, this.vehicle});
+  /// Called with the entry when the user saves. The caller updates the
+  /// provider and writes to the Pod.
+  ///
+  /// Returns a future that completes when the Pod write is done. It MUST be
+  /// awaited by the caller's implementation: closing the app window waits on
+  /// this before quitting, so a fire-and-forget write would be killed
+  /// mid-flight and the entry silently lost. And it must let a failure throw
+  /// rather than swallow it, or the editor marks a lost entry as saved.
+  final Future<void> Function(LogEntry)? onSave;
+
+  const LogEntryEdit({super.key, this.entry, this.vehicle, this.onSave});
 
   @override
   State<LogEntryEdit> createState() => _LogEntryEditState();
 }
 
-class _LogEntryEditState extends State<LogEntryEdit> {
+class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
   late final TextEditingController _title;
   late final TextEditingController _note;
   late final TextEditingController _startOdometer;
@@ -54,6 +68,16 @@ class _LogEntryEditState extends State<LogEntryEdit> {
   late final TextEditingController _batteryRemainCtrl;
   final _locationKey = GlobalKey<LogLocationSectionState>();
   bool _fetchingEnd = false;
+  // 20260724 gjw Validation message shown under the Title field.
+  String? _titleError;
+  bool _saving = false;
+  // The entry id is fixed for the life of the editor so that a re-save of an
+  // entry added from this dialog updates it rather than adding a duplicate,
+  // and so [_hasChanges] is not fooled by a fresh uuid on every comparison.
+  late final String _entryId;
+  // The entry as last saved, used by [_hasChanges]. Taken after the first
+  // frame, once the charge and location sections exist to be read.
+  Map<String, dynamic>? _saved;
 
   bool get _isNew => widget.entry == null;
 
@@ -63,6 +87,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
     final e = widget.entry;
     final v = widget.vehicle;
 
+    _entryId = e?.id ?? _uuid.v4();
     _timestamp = e?.timestamp ?? DateTime.now();
 
     _title = TextEditingController(text: e?.title ?? '');
@@ -109,7 +134,44 @@ class _LogEntryEditState extends State<LogEntryEdit> {
     _batteryRemainCtrl = TextEditingController(
       text: remain != null ? (remain / 3600).toStringAsFixed(1) : '',
     );
+
+    // The charge and location sections are separate States reached through
+    // their GlobalKeys, so the baseline can only be read once they are built.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _snapshotSavedState());
   }
+
+  /// Record the current field values as the last-saved baseline.
+
+  void _snapshotSavedState() {
+    if (mounted) _saved = _buildEntry().toJson();
+  }
+
+  /// Whether the user has edits that saving would keep and quitting would
+  /// lose. Compares what Save would write against the last-saved baseline,
+  /// so it covers the charge and location sections too.
+
+  bool get _hasChanges {
+    final saved = _saved;
+    // Before the first frame there is nothing the user can have typed.
+    if (saved == null) return false;
+    return !mapEquals(saved, _buildEntry().toJson());
+  }
+
+  // The window-close prompt comes from UnsavedChangesMixin, which needs to
+  // know what counts as unsaved and how to save it.
+
+  @override
+  bool get hasUnsavedChanges => _hasChanges;
+
+  @override
+  bool get canSaveUnsavedChanges => _title.text.trim().isNotEmpty;
+
+  /// Only `true` once the entry is actually on the Pod. The window is
+  /// destroyed the moment this returns `true`, so a failed write has to keep
+  /// the editor open with the entry intact instead.
+
+  @override
+  Future<bool> saveUnsavedChanges() => _save();
 
   @override
   void dispose() {
@@ -127,7 +189,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
   }
 
   LogEntry _buildEntry() => LogEntry(
-        id: widget.entry?.id ?? _uuid.v4(),
+        id: _entryId,
         timestamp: _timestamp,
         title: _title.text.trim(),
         note: _note.text.trim(),
@@ -158,6 +220,43 @@ class _LogEntryEditState extends State<LogEntryEdit> {
         chargeTotalCost: _chargeKey.currentState!.currentValues.totalCost,
       );
 
+  /// Hand the entry to [LogEntryEdit.onSave] and report whether it was saved.
+  ///
+  /// Never pops: on the window-close path the whole window is going away, not
+  /// just this route. The Save button pops for itself once this succeeds.
+
+  Future<bool> _save() async {
+    // 20260724 gjw Explain that a title is required rather than silently
+    // doing nothing.
+    if (_title.text.trim().isEmpty) {
+      setState(() => _titleError = 'A TITLE is required to add an entry.');
+      return false;
+    }
+    setState(() => _saving = true);
+    try {
+      // Awaited so a window close waits for the Pod write to complete.
+      await widget.onSave?.call(_buildEntry());
+      // Snapshot only once the write has actually landed. Marking the entry
+      // saved after a failed write would silence the window-close prompt and
+      // lose the very entry the user asked to keep.
+      _snapshotSavedState();
+      return true;
+    } catch (e) {
+      SolidWriteFailures.report('Failed saving the log entry.\n\n$e');
+      return false;
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  /// Save and, once the write has landed, close the dialog.
+
+  Future<void> _saveAndClose() async {
+    if (!await _save()) return;
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
   /// Refresh from Bluelink and populate end readings with current vehicle state.
   Future<void> _fetchEndReadings() async {
     setState(() => _fetchingEnd = true);
@@ -180,9 +279,21 @@ class _LogEntryEditState extends State<LogEntryEdit> {
 
       // ── Derived charge values ──────────────────────────────────────────────
 
-      // Duration: from entry timestamp to now.
+      // Duration: from entry timestamp to the charge end time. The API has no
+      // charge-session history, but the car reports state to the server when
+      // charging stops, so when not charging the snapshot's lastUpdated is
+      // typically the charge-stop time — more accurate than now. Fall back to
+      // now while still charging or if lastUpdated is missing/stale. 20260726 gjw
       final now = DateTime.now();
-      final durationMin = now.difference(_timestamp).inMinutes.clamp(0, 9999);
+      var end = now;
+      final reported = v.lastUpdated;
+      if (v.isChargingOn != true &&
+          reported != null &&
+          reported.isAfter(_timestamp) &&
+          reported.isBefore(now)) {
+        end = reported;
+      }
+      final durationMin = end.difference(_timestamp).inMinutes.clamp(0, 9999);
 
       // Energy delivered: end remaining kWh − start remaining kWh.
       // Use the directly measured remaining values — more accurate than
@@ -285,27 +396,25 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     TextField(
                       controller: _title,
                       autofocus: _isNew,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                      onChanged: (_) {
+                        // 20260724 gjw Clear the error once the user types.
+                        if (_titleError != null) {
+                          setState(() => _titleError = null);
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
                         isDense: true,
                         hintText: 'e.g. Charged at shopping centre',
+                        errorText: _titleError,
                       ),
                     ),
                     const Gap(16),
                     // Date & time
-                    LogSectionLabel('Date & Time', cs),
-                    const Gap(8),
-                    InkWell(
+                    LogTimestampField(
+                      cs: cs,
+                      timestamp: _timestamp,
                       onTap: _pickDateTime,
-                      borderRadius: BorderRadius.circular(4),
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          suffixIcon: Icon(Icons.schedule_outlined, size: 18),
-                        ),
-                        child: Text(_fmtDateTime(_timestamp)),
-                      ),
                     ),
                     const Gap(16),
                     // Location
@@ -334,49 +443,19 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                     LogChargeSection(
                       key: _chargeKey,
                       entry: widget.entry,
+                      startTimestamp: _timestamp,
                       startRemainCtrl: _startBatteryRemainCtrl,
                       endRemainCtrl: _batteryRemainCtrl,
-                      endReadingsContent: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Gap(12),
-                          Row(
-                            children: [
-                              LogSectionLabel('End Readings', cs),
-                              const Spacer(),
-                              // Fetch from Bluelink button
-                              if (context.watch<AppProvider>().isAuthenticated)
-                                TextButton.icon(
-                                  icon: _fetchingEnd
-                                      ? const SizedBox(
-                                          width: 14,
-                                          height: 14,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.cloud_download_outlined,
-                                          size: 16,
-                                        ),
-                                  label: const Text('From Bluelink'),
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    visualDensity: VisualDensity.compact,
-                                  ),
-                                  onPressed:
-                                      _fetchingEnd ? null : _fetchEndReadings,
-                                ),
-                            ],
-                          ),
-                          const Gap(8),
-                          LogReadingsGrid(
-                            odoCtrl: _odometer,
-                            battCtrl: _batteryLevelCtrl,
-                            remainCtrl: _batteryRemainCtrl,
-                            rangeCtrl: _evRangeCtrl,
-                          ),
-                        ],
+                      endReadingsContent: LogEndReadingsSection(
+                        cs: cs,
+                        fetching: _fetchingEnd,
+                        onFetch: context.watch<AppProvider>().isAuthenticated
+                            ? _fetchEndReadings
+                            : null,
+                        odoCtrl: _odometer,
+                        battCtrl: _batteryLevelCtrl,
+                        remainCtrl: _batteryRemainCtrl,
+                        rangeCtrl: _evRangeCtrl,
                       ),
                     ),
                     const Gap(16),
@@ -410,10 +489,7 @@ class _LogEntryEditState extends State<LogEntryEdit> {
                   ),
                   const Spacer(),
                   FilledButton(
-                    onPressed: () {
-                      if (_title.text.trim().isEmpty) return;
-                      Navigator.of(context).pop(_buildEntry());
-                    },
+                    onPressed: _saving ? null : _saveAndClose,
                     child: Text(_isNew ? 'Add Entry' : 'Save'),
                   ),
                 ],
@@ -423,14 +499,5 @@ class _LogEntryEditState extends State<LogEntryEdit> {
         ),
       ),
     );
-  }
-
-  String _fmtDateTime(DateTime dt) {
-    final d = '${dt.day.toString().padLeft(2, '0')}/'
-        '${dt.month.toString().padLeft(2, '0')}/'
-        '${dt.year}';
-    final t = '${dt.hour.toString().padLeft(2, '0')}:'
-        '${dt.minute.toString().padLeft(2, '0')}';
-    return '$d  $t';
   }
 }
