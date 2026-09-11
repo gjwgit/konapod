@@ -72,7 +72,8 @@ class LogChargeSection extends StatefulWidget {
   /// as a text string). When provided together with [endRemainCtrl], the
   /// total cost field is auto-recalculated as
   /// `(endRemain − startRemain) × costPerKwh` whenever any of those three
-  /// inputs change.
+  /// inputs change — but only while the energy delivered field is blank,
+  /// since that field takes precedence as the energy figure.
   final TextEditingController? startRemainCtrl;
 
   /// Optional controller holding the end battery remaining value (in kWh).
@@ -136,7 +137,9 @@ class LogChargeSectionState extends State<LogChargeSection> {
       text: e?.chargeTotalCost?.toStringAsFixed(2) ?? '',
     );
 
-    // Auto-recalc total cost when cost/kWh or either remain value changes.
+    // Auto-recalc total cost when the energy delivered, the cost/kWh, or
+    // either remain value changes.
+    _energy.addListener(_recalcTotalCost);
     _costPerKwh.addListener(_recalcTotalCost);
     widget.startRemainCtrl?.addListener(_recalcTotalCost);
     widget.endRemainCtrl?.addListener(_recalcTotalCost);
@@ -149,6 +152,7 @@ class LogChargeSectionState extends State<LogChargeSection> {
 
   @override
   void dispose() {
+    _energy.removeListener(_recalcTotalCost);
     _costPerKwh.removeListener(_recalcTotalCost);
     widget.startRemainCtrl?.removeListener(_recalcTotalCost);
     widget.endRemainCtrl?.removeListener(_recalcTotalCost);
@@ -225,26 +229,29 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _durationMinutes.text = (mins % 60).toString();
   }
 
-  /// Recalculate total cost from delta charge × cost/kWh and update the
-  /// total cost field. Only fires when all three inputs are present and
-  /// the resulting delta is positive.
+  /// Recalculate total cost from energy delivered × cost/kWh and update the
+  /// total cost field. The energy delivered field is the energy figure; when
+  /// it is blank the battery remaining delta stands in for it. Only fires
+  /// when both inputs are present and the energy is positive.
 
   void _recalcTotalCost() {
     final costPerKwh = double.tryParse(_costPerKwh.text.trim());
     if (costPerKwh == null || costPerKwh <= 0) return;
 
-    final startRemain = double.tryParse(
-      widget.startRemainCtrl?.text.trim() ?? '',
-    );
-    final endRemain = double.tryParse(
-      widget.endRemainCtrl?.text.trim() ?? '',
-    );
-    if (startRemain == null || endRemain == null) return;
+    var energy = double.tryParse(_energy.text.trim());
+    if (energy == null) {
+      final startRemain = double.tryParse(
+        widget.startRemainCtrl?.text.trim() ?? '',
+      );
+      final endRemain = double.tryParse(
+        widget.endRemainCtrl?.text.trim() ?? '',
+      );
+      if (startRemain == null || endRemain == null) return;
+      energy = endRemain - startRemain;
+    }
+    if (energy <= 0) return;
 
-    final delta = endRemain - startRemain;
-    if (delta <= 0) return;
-
-    final newTotal = (delta * costPerKwh).toStringAsFixed(2);
+    final newTotal = (energy * costPerKwh).toStringAsFixed(2);
     if (_totalCost.text != newTotal) {
       _totalCost.text = newTotal;
     }
