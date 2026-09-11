@@ -31,15 +31,18 @@ dependencies:
 # 20260911 gjw TEMPORARY. The published solidpod and solid_auth clear the
 # session on every start, so the login page always appears — see
 # anusii/solidpod#717 and anusii/solid_auth#53. These overrides pick up the
-# fixes from the local clones, which must stay on the fix branches
-# (gjw/716_single_flight_session_restore and gjw/52_secure_token_store) for
-# the fixes to be present. Remove this section once both are released.
+# fixes from the GitHub fix branches. Remove this section once both are
+# released.
 
 dependency_overrides:
   solid_auth:
-    path: ../../anusii/solid_auth
+    git:
+      url: https://github.com/anusii/solid_auth.git
+      ref: gjw/52_secure_token_store
   solidpod:
-    path: ../../anusii/solidpod
+    git:
+      url: https://github.com/anusii/solidpod.git
+      ref: gjw/716_single_flight_session_restore
   intl: ^0.20.2
 
 dev_dependencies:
