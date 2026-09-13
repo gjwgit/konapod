@@ -32,6 +32,10 @@ android {
 
         manifestPlaceholders["appAuthRedirectScheme"] = "com.togaware.konapod"
 
+        // oidcRedirectScheme is required by oidc_android, which declares no
+        // default for it, so the manifest merger fails without it.
+        manifestPlaceholders["oidcRedirectScheme"] = "com.togaware.konapod"
+
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

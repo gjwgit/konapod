@@ -57,6 +57,14 @@ Future<void> main() async {
   if (isDesktop) {
     await windowManager.ensureInitialized();
     await SolidWindowCloseGuard.enable();
+
+    // 20260913 gjw Open at the size the window was last left at, and keep
+    // that size up to date as it is resized. The user sets the size, and
+    // turns off remembering it, under Settings in the profile menu. Until a
+    // size has been remembered the window opens at the default in the
+    // platform runner.
+
+    await SolidWindowSize.show(const WindowOptions());
   }
 
   runApp(
