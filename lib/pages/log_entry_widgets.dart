@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 
+import 'package:konapod/pages/remain_kwh_filler.dart';
 import 'package:konapod/widgets/labeled_value_field.dart';
 
 // ── Location display ──────────────────────────────────────────────────────────
@@ -97,12 +98,17 @@ class LogReadingsGrid extends StatelessWidget {
   final TextEditingController remainCtrl;
   final TextEditingController rangeCtrl;
 
+  /// Fills the kWh field from the battery % where the car reported no kWh
+  /// reading. Null when no estimate is on offer.
+  final RemainKwhFiller? remainFiller;
+
   const LogReadingsGrid({
     super.key,
     required this.odoCtrl,
     required this.battCtrl,
     required this.remainCtrl,
     required this.rangeCtrl,
+    this.remainFiller,
   });
 
   @override
@@ -142,6 +148,10 @@ class LogReadingsGrid extends StatelessWidget {
                   labelText: 'Remaining',
                   unit: 'kWh',
                   controller: remainCtrl,
+                  note: remainFiller != null && remainFiller!.isEstimate
+                      ? RemainKwhFiller.noteLabel
+                      : null,
+                  noteTooltip: remainFiller?.noteTooltip,
                 ),
               ),
               const Gap(16),

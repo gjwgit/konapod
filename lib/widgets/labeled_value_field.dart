@@ -10,6 +10,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:markdown_tooltip/markdown_tooltip.dart';
+
 /// Renders a label above a narrow input field with the unit immediately
 /// to the right:
 ///
@@ -31,6 +33,13 @@ class LabeledValueField extends StatelessWidget {
   /// values like duration hours/minutes.
   final double fieldWidth;
 
+  /// Optional word under the field saying something about the value shown —
+  /// that it is estimated rather than measured, say.
+  final String? note;
+
+  /// Markdown tooltip explaining [note].
+  final String? noteTooltip;
+
   const LabeledValueField({
     super.key,
     required this.labelText,
@@ -38,6 +47,8 @@ class LabeledValueField extends StatelessWidget {
     required this.controller,
     this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.fieldWidth = 96,
+    this.note,
+    this.noteTooltip,
   });
 
   @override
@@ -78,6 +89,21 @@ class LabeledValueField extends StatelessWidget {
             ),
           ],
         ),
+        if (note != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: MarkdownTooltip(
+              message: noteTooltip ?? note!,
+              child: Text(
+                note!,
+                style: TextStyle(
+                  color: cs.tertiary,
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

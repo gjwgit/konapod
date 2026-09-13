@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/pages/log_entry_widgets.dart';
+import 'package:konapod/pages/remain_kwh_filler.dart';
 
 /// The end vehicle readings, injected into the charging section by
 /// [LogEntryEdit]. A readings grid under a label row that carries the
@@ -36,6 +37,9 @@ class LogEndReadingsSection extends StatelessWidget {
   final TextEditingController remainCtrl;
   final TextEditingController rangeCtrl;
 
+  /// Fills the kWh field from the battery % where there is no kWh reading.
+  final RemainKwhFiller? remainFiller;
+
   const LogEndReadingsSection({
     super.key,
     required this.cs,
@@ -45,6 +49,7 @@ class LogEndReadingsSection extends StatelessWidget {
     required this.battCtrl,
     required this.remainCtrl,
     required this.rangeCtrl,
+    this.remainFiller,
   });
 
   @override
@@ -81,6 +86,7 @@ class LogEndReadingsSection extends StatelessWidget {
             battCtrl: battCtrl,
             remainCtrl: remainCtrl,
             rangeCtrl: rangeCtrl,
+            remainFiller: remainFiller,
           ),
         ],
       );

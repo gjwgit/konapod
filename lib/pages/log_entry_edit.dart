@@ -26,7 +26,10 @@ import 'package:konapod/pages/log_end_readings_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 import 'package:konapod/pages/log_location_section.dart';
 import 'package:konapod/pages/log_timestamp_field.dart';
+import 'package:konapod/pages/remain_kwh_filler.dart';
 import 'package:konapod/services/app_provider.dart';
+import 'package:konapod/services/battery_kwh_estimator.dart';
+import 'package:konapod/services/battery_observation_service.dart';
 
 const _uuid = Uuid();
 
@@ -67,6 +70,11 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
   late final TextEditingController _evRangeCtrl;
   late final TextEditingController _batteryRemainCtrl;
   final _locationKey = GlobalKey<LogLocationSectionState>();
+  // 20260914 gjw Estimate the energy remaining from the battery % for
+  // whichever of the start and end readings has no kWh figure.
+
+  late final RemainKwhFiller _startRemainFiller;
+  late final RemainKwhFiller _endRemainFiller;
   bool _fetchingEnd = false;
   // 20260724 gjw Validation message shown under the Title field.
   String? _titleError;
@@ -135,9 +143,43 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
       text: remain != null ? (remain / 3600).toStringAsFixed(1) : '',
     );
 
+    _startRemainFiller = RemainKwhFiller(
+      pctCtrl: _startBatteryLevelCtrl,
+      remainCtrl: _startBatteryRemainCtrl,
+      onChanged: _estimateChanged,
+    );
+    _endRemainFiller = RemainKwhFiller(
+      pctCtrl: _batteryLevelCtrl,
+      remainCtrl: _batteryRemainCtrl,
+      onChanged: _estimateChanged,
+    );
+    BatteryObservationService.load()
+        .then((obs) => _applyEstimator(BatteryKwhEstimator.fit(obs)));
+
     // The charge and location sections are separate States reached through
     // their GlobalKeys, so the baseline can only be read once they are built.
     WidgetsBinding.instance.addPostFrameCallback((_) => _snapshotSavedState());
+  }
+
+  /// Show or hide the estimated note as the fillers write and give way.
+
+  void _estimateChanged() {
+    if (mounted) setState(() {});
+  }
+
+  /// Take up the fit once the observations have loaded. What it fills in is
+  /// not a user edit, so a form nobody has touched stays untouched — else
+  /// closing it would prompt to save an entry the user never typed.
+
+  void _applyEstimator(BatteryKwhEstimator? estimator) {
+    if (estimator == null || !mounted) return;
+    // 20260914 gjw Before the first frame there is no baseline yet to move
+    // on — the post-frame snapshot takes the filled values as the baseline.
+
+    final wasClean = _saved != null && !_hasChanges;
+    _startRemainFiller.estimator = estimator;
+    _endRemainFiller.estimator = estimator;
+    if (wasClean) _snapshotSavedState();
   }
 
   /// Record the current field values as the last-saved baseline.
@@ -175,6 +217,8 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
 
   @override
   void dispose() {
+    _startRemainFiller.dispose();
+    _endRemainFiller.dispose();
     _title.dispose();
     _note.dispose();
     _startOdometer.dispose();
@@ -279,11 +323,12 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
 
       // ── Derived charge values ──────────────────────────────────────────────
 
-      // Duration: from entry timestamp to the charge end time. The API has no
-      // charge-session history, but the car reports state to the server when
-      // charging stops, so when not charging the snapshot's lastUpdated is
-      // typically the charge-stop time — more accurate than now. Fall back to
-      // now while still charging or if lastUpdated is missing/stale. 20260726 gjw
+      // 20260726 gjw Duration: from entry timestamp to the charge end time.
+      // The API has no charge-session history, but the car reports state to
+      // the server when charging stops, so when not charging the snapshot's
+      // lastUpdated is typically the charge-stop time — more accurate than now.
+      // Fall back to now while still charging or if lastUpdated is missing.
+
       final now = DateTime.now();
       var end = now;
       final reported = v.lastUpdated;
@@ -437,6 +482,7 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
                       battCtrl: _startBatteryLevelCtrl,
                       remainCtrl: _startBatteryRemainCtrl,
                       rangeCtrl: _startEvRangeCtrl,
+                      remainFiller: _startRemainFiller,
                     ),
                     // Charging session + end readings
                     const Gap(16),
@@ -456,6 +502,7 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
                         battCtrl: _batteryLevelCtrl,
                         remainCtrl: _batteryRemainCtrl,
                         rangeCtrl: _evRangeCtrl,
+                        remainFiller: _endRemainFiller,
                       ),
                     ),
                     const Gap(16),

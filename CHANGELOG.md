@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Estimate missing kWh readings from the battery % [0.2.58 20260914 gjw]
 + Update to solidpod 1.0.22 and solidui 1.0.41 [0.2.57 20260914 gjw]
 + Remember the window size between sessions [0.2.56 20260913 gjw]
 + Total cost auto-calculates from energy delivered [0.2.55 20260911 gjw]
