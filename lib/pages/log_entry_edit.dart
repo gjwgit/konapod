@@ -22,6 +22,7 @@ import 'package:uuid/uuid.dart';
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/models/vehicle.dart';
 import 'package:konapod/pages/log_charge_section.dart';
+import 'package:konapod/pages/log_end_fetch.dart';
 import 'package:konapod/pages/log_end_readings_section.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 import 'package:konapod/pages/log_location_section.dart';
@@ -301,70 +302,22 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
     Navigator.of(context).pop();
   }
 
-  /// Refresh from Bluelink and populate end readings with current vehicle state.
+  /// Refresh from Bluelink and populate end readings with current vehicle
+  /// state.
+
   Future<void> _fetchEndReadings() async {
     setState(() => _fetchingEnd = true);
     try {
-      final provider = context.read<AppProvider>();
-      await provider.refresh();
-      if (!mounted) return;
-      final v = provider.selectedVehicle;
-      if (v == null) return;
-      _odometer.text =
-          v.odometerKm != null ? v.odometerKm!.round().toString() : '';
-      final endBatt = v.batteryLevelPercent;
-      _batteryLevelCtrl.text =
-          endBatt != null ? endBatt.toStringAsFixed(0) : '';
-      _batteryRemainCtrl.text = v.batteryRemainKwh != null
-          ? (v.batteryRemainKwh! / 3600).toStringAsFixed(1)
-          : '';
-      _evRangeCtrl.text =
-          v.evRangeKm != null ? v.evRangeKm!.toStringAsFixed(0) : '';
-
-      // ── Derived charge values ──────────────────────────────────────────────
-
-      // 20260726 gjw Duration: from entry timestamp to the charge end time.
-      // The API has no charge-session history, but the car reports state to
-      // the server when charging stops, so when not charging the snapshot's
-      // lastUpdated is typically the charge-stop time — more accurate than now.
-      // Fall back to now while still charging or if lastUpdated is missing.
-
-      final now = DateTime.now();
-      var end = now;
-      final reported = v.lastUpdated;
-      if (v.isChargingOn != true &&
-          reported != null &&
-          reported.isAfter(_timestamp) &&
-          reported.isBefore(now)) {
-        end = reported;
-      }
-      final durationMin = end.difference(_timestamp).inMinutes.clamp(0, 9999);
-
-      // Energy delivered: end remaining kWh − start remaining kWh.
-      // Use the directly measured remaining values — more accurate than
-      // deriving from battery percentage × capacity.
-      final startRemain = double.tryParse(_startBatteryRemainCtrl.text.trim());
-      final endRemain =
-          v.batteryRemainKwh != null ? v.batteryRemainKwh! / 3600 : null;
-      double? energyKwh;
-      double? totalCost;
-      if (endRemain != null && startRemain != null) {
-        final delta = endRemain - startRemain;
-        if (delta > 0) {
-          energyKwh = delta;
-
-          // Total cost: energy × cost per kWh if available.
-          final costPerKwh = _chargeKey.currentState?.costPerKwh;
-          if (costPerKwh != null && costPerKwh > 0) {
-            totalCost = energyKwh * costPerKwh;
-          }
-        }
-      }
-
-      _chargeKey.currentState?.populateFromBluelink(
-        durationMinutes: durationMin,
-        energyKwh: energyKwh,
-        totalCost: totalCost,
+      await fetchEndReadings(
+        provider: context.read<AppProvider>(),
+        isMounted: () => mounted,
+        startTimestamp: _timestamp,
+        odoCtrl: _odometer,
+        battCtrl: _batteryLevelCtrl,
+        remainCtrl: _batteryRemainCtrl,
+        rangeCtrl: _evRangeCtrl,
+        startRemainCtrl: _startBatteryRemainCtrl,
+        charge: _chargeKey.currentState,
       );
     } finally {
       if (mounted) setState(() => _fetchingEnd = false);
