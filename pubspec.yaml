@@ -1,7 +1,7 @@
 name: konapod
 description: Hyundai Konapod – Vehicle Dashboard
 publish_to: 'none'
-version: 0.2.59+7
+version: 0.2.60+7
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -24,7 +24,7 @@ dependencies:
   printing: ^5.13.1
   provider: ^6.1.5
   solidpod: ^1.0.22
-  solidui: ^1.0.41
+  solidui: ^1.0.43
   uuid: ^4.5.3
   window_manager: ^0.5.1
 

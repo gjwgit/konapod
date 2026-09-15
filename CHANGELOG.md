@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Revert to skia for rendering not impeller [0.2.60 20260915 gjw]
 + Split the Bluelink end readings fetch into its own file [0.2.59 20260914 gjw]
 + Estimate missing kWh readings from the battery % [0.2.58 20260914 gjw]
 + Update to solidpod 1.0.22 and solidui 1.0.41 [0.2.57 20260914 gjw]
