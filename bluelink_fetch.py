@@ -10,6 +10,79 @@ import json
 import traceback
 from datetime import datetime, timezone
 
+REGION = 5   # Australia
+BRAND = 2    # Hyundai
+
+# 20260926 gjw Hyundai's CCSP signin endpoint answers HTTP 200 with
+# {"step": N} and NO redirectUrl when the account authenticated fine but must
+# do something in the app or web portal before OAuth will hand over a code.
+# KiaUvoApiAU.login() wraps that call in a bare `except Exception`, logs it at
+# DEBUG without exc_info, and raises AuthenticationError("Login Failed") — so
+# the step number is thrown away and the real reason never reaches us.
+# These numbers are decoded in hyundai_kia_connect_api/HyundaiBlueLinkApiBR.py,
+# which reads the same endpoint on the same platform for the Brazilian region.
+SIGNIN_STEPS = {
+    0: "the account must accept the terms of service",
+    3: "the account must accept the data-access agreement",
+    4: "the account must re-accept updated terms of service",
+    # 20260926 gjw Step 5 is the one seen in the wild, and it is not obvious
+    # from the app: Hyundai appears to expire a Bluelink password after about
+    # six months, so a login that has worked for months starts failing with
+    # nothing having changed at this end. Opening the Bluelink app on the
+    # phone prompts for a new password; setting one there and updating it in
+    # Settings restores the connection.
+    5: "the password has expired and must be reset",
+    6: "the account is not activated yet",
+    7: "identity verification is required",
+    8: "identity verification is required",
+    9: "the account is blocked",
+    10: "email verification is required",
+    11: "the account email must be changed",
+    12: "identity verification is required",
+    13: "email verification is required",
+}
+
+
+def diagnose_login(username, password):
+    """Ask the signin endpoint directly why it refused, after a failed login.
+
+    Repeats the two calls KiaUvoApiAU.login() makes before it gives up, and
+    reads the step code out of the response it discarded. Only ever runs on
+    the failure path, so the happy path still signs in exactly once.
+
+    Returns (step, reason); either may be None if the cause is something else.
+    """
+    try:
+        import requests
+        from hyundai_kia_connect_api.KiaUvoApiAU import KiaUvoApiAU
+
+        api = KiaUvoApiAU(region=REGION, brand=BRAND, language="en")
+        authorize = (
+            api.USER_API_URL + "oauth2/authorize?response_type=code&client_id="
+            + api.CLIENT_ID + "&redirect_uri=https://" + api.BASE_URL
+            + "/api/v1/user/oauth2/redirect&lang=en"
+        )
+        session = requests.Session()
+        session.get(authorize, timeout=20)
+        body = session.post(
+            api.USER_API_URL + "signin",
+            json={"email": username, "password": password},
+            headers={"Content-type": "application/json"},
+            cookies=session.cookies.get_dict(),
+            timeout=20,
+        ).json()
+    except Exception:
+        # Network, JSON or import trouble — the original error stands.
+        return None, None
+
+    if "redirectUrl" in body:
+        # Signin works on its own, so the failure was later in the OAuth
+        # exchange and the original traceback is the better evidence.
+        return None, None
+
+    step = body.get("step")
+    return step, SIGNIN_STEPS.get(step)
+
 
 def safe(val):
     """Recursively convert any value to a JSON-serialisable primitive.
@@ -82,7 +155,7 @@ def main():
         sys.exit(1)
 
     try:
-        vm = VehicleManager(region=5, brand=2,
+        vm = VehicleManager(region=REGION, brand=BRAND,
                             username=username, password=password, pin=pin)
         vm.check_and_refresh_token()
         vm.update_all_vehicles_with_cached_state()
@@ -109,10 +182,26 @@ def main():
             print(json.dumps({"vehicles": vehicles}))
 
     except Exception as e:
-        print(json.dumps({
+        out = {
             "error": str(e),
             "traceback": traceback.format_exc()
-        }))
+        }
+
+        # "Login Failed" is the library's placeholder, not a diagnosis. Go
+        # back and ask the server what it actually objected to.
+        if type(e).__name__ == "AuthenticationError":
+            step, reason = diagnose_login(username, password)
+            if reason is not None:
+                out["error"] = f"Login refused: {reason}."
+                out["signinStep"] = step
+                out["fix"] = ("Sign in to the Bluelink app or the MyHyundai "
+                              "portal, complete that step, then retry.")
+            elif step is not None:
+                out["error"] = (f"Login refused at signin step {step}, which "
+                                "is not a step this script knows about.")
+                out["signinStep"] = step
+
+        print(json.dumps(out))
         sys.exit(1)
 
 

@@ -30,10 +30,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:konapod/screens/settings_diagnostics.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/error_dialog.dart';
 import 'package:konapod/widgets/setup_dialog.dart';
 
 /// Settings screen — Bluelink credentials and app preferences.
@@ -50,6 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _obscurePass = true;
   bool _obscurePin = true;
   bool _saved = false;
+  bool _loggingIn = false;
 
   @override
   void initState() {
@@ -79,6 +82,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
       const Duration(seconds: 2),
       () => mounted ? setState(() => _saved = false) : null,
     );
+  }
+
+  // 20260926 gjw Saving alone only writes the keyring. It does not
+  // authenticate, so isAuthenticated stays false and the app-bar refresh —
+  // gated on it in AppProvider.refresh() — does nothing. Until this button
+  // existed the only way to pick up a changed password was to restart, where
+  // tryAutoLogin() reads the keyring. Save first so a failed login still
+  // leaves the new credentials on disk to correct.
+
+  Future<void> _login() async {
+    await _save();
+    if (!mounted) return;
+    // A Bluelink login runs the Python script and can take most of a minute,
+    // so the button reports progress and refuses a second tap meanwhile.
+    setState(() => _loggingIn = true);
+    final ok = await context.read<AppProvider>().login(
+          username: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+          pin: _pinCtrl.text.trim(),
+        );
+    if (!mounted) return;
+    setState(() => _loggingIn = false);
+    if (!ok) {
+      await showErrorDialog(
+        context,
+        title: 'Login failed',
+        message: context.read<AppProvider>().errorMessage ??
+            'Could not log in to Bluelink.',
+      );
+      return;
+    }
+    showPositiveSnackBar(context, 'Logged in to Bluelink.');
   }
 
   Future<void> _clearAndLogout() async {
@@ -160,7 +195,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const Gap(20),
-          Row(
+          // Wrap rather than Row: three buttons overflow a phone-width screen.
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
             children: [
               ElevatedButton.icon(
                 onPressed: _save,
@@ -172,7 +210,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   foregroundColor: Colors.white,
                 ),
               ),
-              const Gap(12),
+              ElevatedButton.icon(
+                onPressed: _loggingIn ? null : _login,
+                icon: Icon(
+                  _loggingIn ? Icons.hourglass_top : Icons.login,
+                  size: 18,
+                ),
+                label: Text(_loggingIn ? 'Logging in…' : 'Log In'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: HyundaiColors.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
               OutlinedButton.icon(
                 onPressed: _clearAndLogout,
                 icon: const Icon(Icons.logout, size: 18),

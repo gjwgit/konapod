@@ -488,6 +488,17 @@ The system keyring is not unlocked. Install Seahorse and unlock the default
 keyring — see [Keyring issues](#keyring-issues-on-a-fresh-linux-install).
 The app will continue to load; enter credentials manually in Settings.
 
+**"Login refused: the password has expired and must be reset."**
+Hyundai expires a Bluelink password after about six months, so a login that
+worked for months stops without anything having changed at your end. Open the
+Bluelink app on your phone, which will prompt for a new password, set one, then
+update it in **Settings** here and tap **Save Credentials**.
+
+Other wording after "Login refused" — terms of service to accept, email to
+verify, account blocked — means the same thing: the account authenticated, but
+Hyundai wants something done in the Bluelink app before it will hand this app a
+token. Do what it asks there, then retry.
+
 **"Timed out after 90s" from Bluelink.**
 The Hyundai API is slow or temporarily unavailable. Try again after a few
 minutes. If it consistently times out, check that your Bluelink account is

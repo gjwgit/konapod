@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Support Saving and Loading Status/History
 
++ Log in from Settings, and say why a Bluelink login failed [0.2.61 20260926 gjw]
 + Revert to skia for rendering not impeller [0.2.60 20260915 gjw]
 + Split the Bluelink end readings fetch into its own file [0.2.59 20260914 gjw]
 + Estimate missing kWh readings from the battery % [0.2.58 20260914 gjw]
