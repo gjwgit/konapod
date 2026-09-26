@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 
 import 'package:emacs_text_field/emacs_text_field.dart';
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
 import 'package:uuid/uuid.dart';
@@ -302,6 +303,24 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
     Navigator.of(context).pop();
   }
 
+  /// Close the editor, offering to save first when there are edits that
+  /// closing would otherwise discard.
+  ///
+  /// Reuses the window-close resolver, so Cancel, the close button and the
+  /// back gesture ask exactly what quitting the app asks — and so a save that
+  /// fails, or that cannot run yet because the title is empty, leaves the
+  /// editor open with the work intact instead of closing over the top of it.
+
+  Future<void> _requestClose() async {
+    // A save is already under way and closes the editor itself once the
+    // write lands. Prompting now would ask about edits already on their way.
+
+    if (_saving) return;
+    if (!await resolveUnsavedOnWindowClose()) return;
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
   /// Refresh from Bluelink and populate end readings with current vehicle
   /// state.
 
@@ -324,178 +343,183 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
     }
   }
 
-  Future<void> _pickDateTime() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _timestamp,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 1)),
-    );
-    if (date == null) return;
-    if (!mounted) return;
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_timestamp),
-    );
-    if (time == null) return;
-    setState(() {
-      _timestamp = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isWide = MediaQuery.of(context).size.width > 600;
 
-    return Dialog(
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: isWide ? 60 : 12,
-        vertical: 16,
-      ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ── Header ──────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
-              child: Row(
-                children: [
-                  Text(
-                    _isNew ? 'New Log Entry' : 'Edit Log Entry',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-            ),
-            // ── Form ────────────────────────────────────────────────────
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return PopScope(
+      // 20260927 gjw The Android back button, the predictive back gesture
+      // and any other maybePop all go through [_requestClose], so none of
+      // them can throw edits away without asking. The editor's own
+      // Navigator.pop calls are unaffected: an explicit pop is not a
+      // maybePop and so does not consult canPop.
+      //
+      // The barrier and the Escape key are already inert, because both call
+      // sites show this dialog with barrierDismissible: false.
+
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _requestClose();
+      },
+      child: Dialog(
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: isWide ? 60 : 12,
+          vertical: 16,
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Header ──────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 12, 0),
+                child: Row(
                   children: [
-                    // Title
-                    LogSectionLabel('Title', cs),
-                    const Gap(8),
-                    TextField(
-                      controller: _title,
-                      autofocus: _isNew,
-                      onChanged: (_) {
-                        // 20260724 gjw Clear the error once the user types.
-                        if (_titleError != null) {
-                          setState(() => _titleError = null);
-                        }
-                      },
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        isDense: true,
-                        hintText: 'e.g. Charged at shopping centre',
-                        errorText: _titleError,
-                      ),
+                    Text(
+                      _isNew ? 'New Log Entry' : 'Edit Log Entry',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    const Gap(16),
-                    // Date & time
-                    LogTimestampField(
-                      cs: cs,
-                      timestamp: _timestamp,
-                      onTap: _pickDateTime,
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: _requestClose,
                     ),
-                    const Gap(16),
-                    // Location
-                    LogSectionLabel('Location', cs),
-                    const Gap(8),
-                    LogLocationSection(
-                      key: _locationKey,
-                      entry: widget.entry,
-                      initialLatitude: widget.vehicle?.latitude,
-                      initialLongitude: widget.vehicle?.longitude,
-                      initialAddress: widget.vehicle?.locationAddress,
-                    ),
-                    const Gap(16),
-                    const Gap(16),
-                    // ── Start readings ───────────────────────────────────
-                    LogSectionLabel('Start Readings', cs),
-                    const Gap(8),
-                    LogReadingsGrid(
-                      odoCtrl: _startOdometer,
-                      battCtrl: _startBatteryLevelCtrl,
-                      remainCtrl: _startBatteryRemainCtrl,
-                      rangeCtrl: _startEvRangeCtrl,
-                      remainFiller: _startRemainFiller,
-                    ),
-                    // Charging session + end readings
-                    const Gap(16),
-                    LogChargeSection(
-                      key: _chargeKey,
-                      entry: widget.entry,
-                      startTimestamp: _timestamp,
-                      startRemainCtrl: _startBatteryRemainCtrl,
-                      endRemainCtrl: _batteryRemainCtrl,
-                      endReadingsContent: LogEndReadingsSection(
-                        cs: cs,
-                        fetching: _fetchingEnd,
-                        onFetch: context.watch<AppProvider>().isAuthenticated
-                            ? _fetchEndReadings
-                            : null,
-                        odoCtrl: _odometer,
-                        battCtrl: _batteryLevelCtrl,
-                        remainCtrl: _batteryRemainCtrl,
-                        rangeCtrl: _evRangeCtrl,
-                        remainFiller: _endRemainFiller,
-                      ),
-                    ),
-                    const Gap(16),
-                    // Note
-                    LogSectionLabel('Notes', cs),
-                    const Gap(8),
-                    EmacsTextField(
-                      controller: _note,
-                      minLines: 3,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                        hintText: 'Details, observations, reminders...',
-                        alignLabelWithHint: true,
-                      ),
-                    ),
-                    const Gap(8),
                   ],
                 ),
               ),
-            ),
-            // ── Actions ─────────────────────────────────────────────────
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+              // ── Form ────────────────────────────────────────────────────
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      LogSectionLabel('Title', cs),
+                      const Gap(8),
+                      TextField(
+                        controller: _title,
+                        autofocus: _isNew,
+                        onChanged: (_) {
+                          // 20260724 gjw Clear the error once the user types.
+                          if (_titleError != null) {
+                            setState(() => _titleError = null);
+                          }
+                        },
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          isDense: true,
+                          hintText: 'e.g. Charged at shopping centre',
+                          errorText: _titleError,
+                        ),
+                      ),
+                      const Gap(16),
+                      // Date & time
+                      LogTimestampField(
+                        cs: cs,
+                        timestamp: _timestamp,
+                        onChanged: (dt) => setState(() => _timestamp = dt),
+                      ),
+                      const Gap(16),
+                      // Location
+                      LogSectionLabel('Location', cs),
+                      const Gap(8),
+                      LogLocationSection(
+                        key: _locationKey,
+                        entry: widget.entry,
+                        initialLatitude: widget.vehicle?.latitude,
+                        initialLongitude: widget.vehicle?.longitude,
+                        initialAddress: widget.vehicle?.locationAddress,
+                      ),
+                      const Gap(16),
+                      const Gap(16),
+                      // ── Start readings ───────────────────────────────────
+                      LogSectionLabel('Start Readings', cs),
+                      const Gap(8),
+                      LogReadingsGrid(
+                        odoCtrl: _startOdometer,
+                        battCtrl: _startBatteryLevelCtrl,
+                        remainCtrl: _startBatteryRemainCtrl,
+                        rangeCtrl: _startEvRangeCtrl,
+                        remainFiller: _startRemainFiller,
+                      ),
+                      // Charging session + end readings
+                      const Gap(16),
+                      LogChargeSection(
+                        key: _chargeKey,
+                        entry: widget.entry,
+                        startTimestamp: _timestamp,
+                        startRemainCtrl: _startBatteryRemainCtrl,
+                        endRemainCtrl: _batteryRemainCtrl,
+                        endReadingsContent: LogEndReadingsSection(
+                          cs: cs,
+                          fetching: _fetchingEnd,
+                          onFetch: context.watch<AppProvider>().isAuthenticated
+                              ? _fetchEndReadings
+                              : null,
+                          odoCtrl: _odometer,
+                          battCtrl: _batteryLevelCtrl,
+                          remainCtrl: _batteryRemainCtrl,
+                          rangeCtrl: _evRangeCtrl,
+                          remainFiller: _endRemainFiller,
+                        ),
+                      ),
+                      const Gap(16),
+                      // Note
+                      LogSectionLabel('Notes', cs),
+                      const Gap(8),
+                      EmacsTextField(
+                        controller: _note,
+                        minLines: 3,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          hintText: 'Details, observations, reminders...',
+                          alignLabelWithHint: true,
+                        ),
+                      ),
+                      const Gap(8),
+                    ],
                   ),
-                  const Spacer(),
-                  FilledButton(
-                    onPressed: _saving ? null : _saveAndClose,
-                    child: Text(_isNew ? 'Add Entry' : 'Save'),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+              // ── Actions ─────────────────────────────────────────────────
+              const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: Row(
+                  children: [
+                    TextButton(
+                      onPressed: _requestClose,
+                      child: const Text('Cancel'),
+                    ),
+                    const Spacer(),
+                    MarkdownTooltip(
+                      message: _fetchingEnd
+                          ? '**Fetching Readings**\n\n'
+                              'Unavailable while the end readings are being '
+                              'fetched from Bluelink. Closing the editor now '
+                              'would discard the values on their way in, so '
+                              'Save returns once the fetch has finished.'
+                          : '**Save**\n\n'
+                              'Write this entry to your Pod and close the '
+                              'editor.\n\n'
+                              'Cancel and the close button both offer to save '
+                              'first, so edits are never thrown away without '
+                              'asking.',
+                      child: FilledButton(
+                        onPressed:
+                            (_saving || _fetchingEnd) ? null : _saveAndClose,
+                        child: Text(_isNew ? 'Add Entry' : 'Save'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

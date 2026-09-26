@@ -75,10 +75,13 @@ class LogLocationSectionState extends State<LogLocationSection> {
     _latitude = e?.latitude ?? widget.initialLatitude;
     _longitude = e?.longitude ?? widget.initialLongitude;
     _address = e?.locationAddress ?? widget.initialAddress;
+    // 20260927 gjw Without coordinates the address is only ever what the
+    // user typed here, and [currentValues] reads this field back, so seed it
+    // with any address there already is — otherwise editing an entry that
+    // has an address but no coordinates would drop it on the next save.
+
     _manualAddress = TextEditingController(
-      text: (_latitude == null && e?.locationAddress != null)
-          ? e!.locationAddress
-          : '',
+      text: _latitude == null ? (_address ?? '') : '',
     );
   }
 
@@ -88,11 +91,24 @@ class LogLocationSectionState extends State<LogLocationSection> {
     super.dispose();
   }
 
-  LocationValues get currentValues => LocationValues(
+  /// The location as it would be saved.
+  ///
+  /// With no coordinates the typed address IS the location, taken straight
+  /// from the field: pressing Save without first pressing Find has to keep
+  /// what the user typed rather than silently discard it.
+
+  LocationValues get currentValues {
+    if (_latitude != null && _longitude != null) {
+      return LocationValues(
         latitude: _latitude,
         longitude: _longitude,
         address: _address,
       );
+    }
+    final typed = _manualAddress.text.trim();
+
+    return LocationValues(address: typed.isEmpty ? null : typed);
+  }
 
   Future<void> _geocode() async {
     final addr = _manualAddress.text.trim();

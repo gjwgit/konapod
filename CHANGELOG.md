@@ -35,7 +35,11 @@ This app is pair programmed by [Graham
 Williams](https://togaware.com/Graham.Williams.html) and [Claude
 Code](https://claude.com/product/claude-code).
 
-## 0.3 Support Saving and Loading Status/History
+## 1.0 Consolidate
+
++ Do not lose log entry edits on Save, Cancel or Close [1.0.0 20260927 gjw]
+
+## 0.2 Support Saving and Loading Status/History
 
 + Log in from Settings, and say why a Bluelink login failed [0.2.61 20260926 gjw]
 + Revert to skia for rendering not impeller [0.2.60 20260915 gjw]
@@ -98,9 +102,6 @@ Code](https://claude.com/product/claude-code).
 + Write and read now working [0.2.3 20260316 gjw]
 + Add Version Widget [0.2.2 20260316 gjw]
 + Add dark/light mode [0.2.1 20260316 gjw]
-
-## 0.2 Add SolidLogin and SolidScaffold
-
 + Initial solid implementation without save [0.2.0 20260316 gjw]
 
 ## 0.1 Initial App

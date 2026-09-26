@@ -17,19 +17,43 @@ import 'package:gap/gap.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 
 /// The labelled, read-only date and time of a log book entry. Tapping it
-/// calls [onTap], which the editor uses to run the date and time pickers.
+/// runs the date and time pickers and reports the result to [onChanged].
 
 class LogTimestampField extends StatelessWidget {
   final ColorScheme cs;
   final DateTime timestamp;
-  final VoidCallback onTap;
+
+  /// Called with the new date and time once both pickers have been answered.
+  /// Cancelling either picker leaves [timestamp] alone.
+  final ValueChanged<DateTime> onChanged;
 
   const LogTimestampField({
     super.key,
     required this.cs,
     required this.timestamp,
-    required this.onTap,
+    required this.onChanged,
   });
+
+  /// Run the date picker then the time picker, starting from the current
+  /// value.
+
+  Future<void> _pick(BuildContext context) async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: timestamp,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 1)),
+    );
+    if (date == null || !context.mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(timestamp),
+    );
+    if (time == null) return;
+    onChanged(
+      DateTime(date.year, date.month, date.day, time.hour, time.minute),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Column(
@@ -38,7 +62,7 @@ class LogTimestampField extends StatelessWidget {
           LogSectionLabel('Date & Time', cs),
           const Gap(8),
           InkWell(
-            onTap: onTap,
+            onTap: () => _pick(context),
             borderRadius: BorderRadius.circular(4),
             child: InputDecorator(
               decoration: const InputDecoration(
