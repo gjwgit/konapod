@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:konapod/models/battery_observation.dart';
+import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 import 'package:konapod/pages/remain_kwh_filler.dart';
 import 'package:konapod/services/battery_kwh_estimator.dart';
@@ -197,6 +198,57 @@ void main() {
       pct.text = '50';
       expect(remain.text, isEmpty);
       bare.dispose();
+    });
+
+    test('adopts a saved estimate, which then follows the percentage', () {
+      // A reopened entry: both fields already hold what was saved.
+
+      final reopened = RemainKwhFiller(pctCtrl: pct, remainCtrl: remain);
+      filler.dispose();
+      pct.text = '50';
+      remain.text = '32.0';
+      expect(reopened.isEstimate, isFalse);
+
+      reopened.adoptAsEstimate();
+      expect(reopened.isEstimate, isTrue);
+      reopened.estimator = estimator;
+      pct.text = '75';
+      expect(remain.text, '48.0');
+      reopened.dispose();
+    });
+
+    test('will not adopt an empty field', () {
+      final blank = RemainKwhFiller(pctCtrl: pct, remainCtrl: remain);
+      filler.dispose();
+      blank.adoptAsEstimate();
+      expect(blank.isEstimate, isFalse);
+      blank.dispose();
+    });
+  });
+
+  group('LogEntry estimated flags', () {
+    test('survive a JSON round trip', () {
+      final entry = LogEntry(
+        id: 'a',
+        timestamp: DateTime(2026, 9, 27),
+        title: 'Drive',
+        startBatteryRemainKwh: 32.0 * 3600,
+        startBatteryRemainEstimated: true,
+        batteryRemainKwh: 24.0 * 3600,
+      );
+      final back = LogEntry.fromJson(entry.toJson());
+      expect(back.startBatteryRemainEstimated, isTrue);
+      expect(back.batteryRemainEstimated, isFalse);
+    });
+
+    test('are absent from the JSON of a reading', () {
+      final entry = LogEntry(
+        id: 'a',
+        timestamp: DateTime(2026, 9, 27),
+        title: 'Drive',
+        batteryRemainKwh: 24.0 * 3600,
+      );
+      expect(entry.toJson().containsKey('batteryRemainEstimated'), isFalse);
     });
   });
 }

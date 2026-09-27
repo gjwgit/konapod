@@ -66,6 +66,19 @@ class RemainKwhFiller {
         'Type over it if you have a reading from the car.';
   }
 
+  /// Take the figure already in the field as one of ours.
+  ///
+  /// A saved entry comes back with its estimate in place but as a plain
+  /// number. Without this the note is lost on reopening, the figure stops
+  /// following the percentage, and a stand-in reads as a figure from the
+  /// car. Call it before the fit arrives, from the entry's own record of
+  /// which readings were estimated.
+
+  void adoptAsEstimate() {
+    if (remainCtrl.text.trim().isEmpty) return;
+    _written = remainCtrl.text;
+  }
+
   /// Take up the fit, once the observations have loaded, and fill straight
   /// away.
 

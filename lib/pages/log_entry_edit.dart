@@ -155,6 +155,14 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
       remainCtrl: _batteryRemainCtrl,
       onChanged: _estimateChanged,
     );
+    // 20260927 gjw The entry remembers which of its energy figures the app
+    // estimated, so say so before the fit lands. Otherwise reopening an
+    // entry turns a stand-in into what looks like a reading from the car.
+
+    if (e?.startBatteryRemainEstimated ?? false) {
+      _startRemainFiller.adoptAsEstimate();
+    }
+    if (e?.batteryRemainEstimated ?? false) _endRemainFiller.adoptAsEstimate();
     BatteryObservationService.load()
         .then((obs) => _applyEstimator(BatteryKwhEstimator.fit(obs)));
 
@@ -248,12 +256,14 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
             double.tryParse(_startBatteryRemainCtrl.text.trim()) != null
                 ? double.parse(_startBatteryRemainCtrl.text.trim()) * 3600
                 : null,
+        startBatteryRemainEstimated: _startRemainFiller.isEstimate,
         batteryLevelPercent: double.tryParse(_batteryLevelCtrl.text.trim()),
         evRangeKm: double.tryParse(_evRangeCtrl.text.trim()),
         batteryRemainKwh:
             double.tryParse(_batteryRemainCtrl.text.trim()) != null
                 ? double.parse(_batteryRemainCtrl.text.trim()) * 3600
                 : null,
+        batteryRemainEstimated: _endRemainFiller.isEstimate,
         latitude: _locationKey.currentState!.currentValues.latitude,
         longitude: _locationKey.currentState!.currentValues.longitude,
         locationAddress: _locationKey.currentState!.currentValues.address,

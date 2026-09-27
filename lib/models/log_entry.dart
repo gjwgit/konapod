@@ -27,12 +27,21 @@ class LogEntry {
   final double? startEvRangeKm;
   final double? startBatteryRemainKwh;
 
+  /// Whether [startBatteryRemainKwh] was estimated from the battery
+  /// percentage because the car reported no energy figure. An estimate is
+  /// shown faintly and is refreshed while the entry is open; a reading is
+  /// left exactly as it came.
+  final bool startBatteryRemainEstimated;
+
   // ── End vehicle state ─────────────────────────────────────────────────────
 
   final double? odometerKm;
   final double? batteryLevelPercent;
   final double? evRangeKm;
   final double? batteryRemainKwh;
+
+  /// As [startBatteryRemainEstimated], for [batteryRemainKwh].
+  final bool batteryRemainEstimated;
 
   // ── Location ──────────────────────────────────────────────────────────────
 
@@ -58,10 +67,12 @@ class LogEntry {
     this.startBatteryLevelPercent,
     this.startEvRangeKm,
     this.startBatteryRemainKwh,
+    this.startBatteryRemainEstimated = false,
     this.odometerKm,
     this.batteryLevelPercent,
     this.evRangeKm,
     this.batteryRemainKwh,
+    this.batteryRemainEstimated = false,
     this.latitude,
     this.longitude,
     this.locationAddress,
@@ -109,11 +120,13 @@ class LogEntry {
         if (startEvRangeKm != null) 'startEvRangeKm': startEvRangeKm,
         if (startBatteryRemainKwh != null)
           'startBatteryRemainKwh': startBatteryRemainKwh,
+        if (startBatteryRemainEstimated) 'startBatteryRemainEstimated': true,
         if (odometerKm != null) 'odometerKm': odometerKm,
         if (batteryLevelPercent != null)
           'batteryLevelPercent': batteryLevelPercent,
         if (evRangeKm != null) 'evRangeKm': evRangeKm,
         if (batteryRemainKwh != null) 'batteryRemainKwh': batteryRemainKwh,
+        if (batteryRemainEstimated) 'batteryRemainEstimated': true,
         if (latitude != null) 'latitude': latitude,
         if (longitude != null) 'longitude': longitude,
         if (locationAddress != null) 'locationAddress': locationAddress,
@@ -136,10 +149,13 @@ class LogEntry {
             (j['startBatteryLevelPercent'] as num?)?.toDouble(),
         startEvRangeKm: (j['startEvRangeKm'] as num?)?.toDouble(),
         startBatteryRemainKwh: (j['startBatteryRemainKwh'] as num?)?.toDouble(),
+        startBatteryRemainEstimated:
+            j['startBatteryRemainEstimated'] as bool? ?? false,
         odometerKm: (j['odometerKm'] as num?)?.toDouble(),
         batteryLevelPercent: (j['batteryLevelPercent'] as num?)?.toDouble(),
         evRangeKm: (j['evRangeKm'] as num?)?.toDouble(),
         batteryRemainKwh: (j['batteryRemainKwh'] as num?)?.toDouble(),
+        batteryRemainEstimated: j['batteryRemainEstimated'] as bool? ?? false,
         latitude: (j['latitude'] as num?)?.toDouble(),
         longitude: (j['longitude'] as num?)?.toDouble(),
         locationAddress: j['locationAddress'] as String?,
@@ -160,10 +176,12 @@ class LogEntry {
     Object? startBatteryLevelPercent = _sentinel,
     Object? startEvRangeKm = _sentinel,
     Object? startBatteryRemainKwh = _sentinel,
+    bool? startBatteryRemainEstimated,
     Object? odometerKm = _sentinel,
     Object? batteryLevelPercent = _sentinel,
     Object? evRangeKm = _sentinel,
     Object? batteryRemainKwh = _sentinel,
+    bool? batteryRemainEstimated,
     Object? latitude = _sentinel,
     Object? longitude = _sentinel,
     Object? locationAddress = _sentinel,
@@ -191,6 +209,8 @@ class LogEntry {
         startBatteryRemainKwh: startBatteryRemainKwh == _sentinel
             ? this.startBatteryRemainKwh
             : startBatteryRemainKwh as double?,
+        startBatteryRemainEstimated:
+            startBatteryRemainEstimated ?? this.startBatteryRemainEstimated,
         odometerKm:
             odometerKm == _sentinel ? this.odometerKm : odometerKm as double?,
         batteryLevelPercent: batteryLevelPercent == _sentinel
@@ -201,6 +221,8 @@ class LogEntry {
         batteryRemainKwh: batteryRemainKwh == _sentinel
             ? this.batteryRemainKwh
             : batteryRemainKwh as double?,
+        batteryRemainEstimated:
+            batteryRemainEstimated ?? this.batteryRemainEstimated,
         latitude: latitude == _sentinel ? this.latitude : latitude as double?,
         longitude:
             longitude == _sentinel ? this.longitude : longitude as double?,

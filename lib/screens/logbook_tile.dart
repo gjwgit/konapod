@@ -197,6 +197,7 @@ class LogEntryTile extends StatelessWidget {
                       odo: entry.hasChargeData ? null : entry.startOdometerKm,
                       batt: entry.startBatteryLevelPercent,
                       remain: entry.startBatteryRemainKwh,
+                      remainEstimated: entry.startBatteryRemainEstimated,
                       range: entry.startEvRangeKm,
                       cs: cs,
                     ),
@@ -217,6 +218,7 @@ class LogEntryTile extends StatelessWidget {
                       odo: entry.hasChargeData ? null : entry.odometerKm,
                       batt: entry.batteryLevelPercent,
                       remain: entry.batteryRemainKwh,
+                      remainEstimated: entry.batteryRemainEstimated,
                       range: entry.evRangeKm,
                       cs: cs,
                     ),
@@ -370,20 +372,29 @@ class LogMiniChip extends StatelessWidget {
   final String label;
   final ColorScheme cs;
 
-  const LogMiniChip(this.icon, this.label, this.cs, {super.key});
+  /// Washes the chip out, for a figure the app estimated rather than read.
+  final bool faint;
+
+  const LogMiniChip(
+    this.icon,
+    this.label,
+    this.cs, {
+    super.key,
+    this.faint = false,
+  });
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: cs.onSurfaceVariant),
-          const Gap(2),
-          Text(
-            label,
-            style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
-          ),
-        ],
-      );
+  Widget build(BuildContext context) {
+    final color = cs.onSurfaceVariant.withValues(alpha: faint ? 0.5 : 1.0);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 11, color: color),
+        const Gap(2),
+        Text(label, style: TextStyle(fontSize: 11, color: color)),
+      ],
+    );
+  }
 }
 
 // ── Reading row (start or end) ────────────────────────────────────────────────
@@ -394,6 +405,7 @@ class _ReadingRow extends StatelessWidget {
   final double? odo;
   final double? batt;
   final double? remain;
+  final bool remainEstimated;
   final double? range;
   final ColorScheme cs;
 
@@ -403,6 +415,7 @@ class _ReadingRow extends StatelessWidget {
     required this.odo,
     required this.batt,
     required this.remain,
+    required this.remainEstimated,
     required this.range,
     required this.cs,
   });
@@ -449,6 +462,7 @@ class _ReadingRow extends StatelessWidget {
                     Icons.bolt,
                     '${(remain! / 3600).toStringAsFixed(1)} kWh',
                     cs,
+                    faint: remainEstimated,
                   ),
                 if (range != null)
                   LogMiniChip(
