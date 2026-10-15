@@ -1,6 +1,6 @@
 /// App entry point: initialises providers, theme and SolidLogin wrapper.
 ///
-// Time-stamp: <Wednesday 2026-06-10 15:07:23 +1000 Graham Williams>
+// Time-stamp: <Friday 2026-10-16 09:57:59 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -109,7 +109,6 @@ class _KonapodAppState extends State<KonapodApp> {
       themeMode: _themeNotifier.themeMode,
       // debugShowCheckedModeBanner: false,
       home: SolidLogin(
-        required: false,
         appDirectory: appDirectory,
         title: appName.toUpperCase().replaceAll(' - ', '\n'),
         image: const AssetImage('assets/images/app_image.jpg'),
