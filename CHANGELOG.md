@@ -37,6 +37,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Consolidate
 
++ Bump to the latest solidui and solid pod [1.0.2 20261016 gjw]
 + A log entry remembers which kWh figures were estimated [1.0.1 20260927 gjw]
 + Do not lose log entry edits on Save, Cancel or Close [1.0.0 20260927 gjw]
 
