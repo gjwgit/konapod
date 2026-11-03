@@ -1,0 +1,44 @@
+# Changes here will be overwritten by Copier. Change a value with
+# `copier update --data key=value` or by editing it here and running
+# `copier update`.
+_commit: v0.8.6
+_src_path: gh:gjwgit/fluttertmpl
+kind: app
+android: true
+app: konapod
+owner: gjwgit
+copyright: 2026, Togaware Pty Ltd
+publisher: Togaware Pty Ltd
+name: KonaPod
+summary: A privacy preserving Hyundai Kona EV monitor
+comment: Monitor your Hyundai Kona EV with your data kept in your Pod
+categories:
+- Utility
+keywords:
+- hyundai
+- kona
+- ev
+- vehicle
+- battery
+- solid
+- pod
+build: {}
+deb:
+  section: utils
+snap: {}
+flatpak: null
+windows:
+  appid: 2ACE37C3-53F4-47ED-8BBC-9B251CEC4281
+install:
+  folder: /var/www/html/web/installers/
+  host: solidcommunity.au
+  prod: true
+  url: https://solidcommunity.au/installers/
+stores: {}
+description: |
+  KonaPod monitors your Hyundai Kona EV: live vehicle status from the
+  Bluelink API, a logbook for recording charges and drives, battery
+  history charts, and driving efficiency statistics.
+
+  All data is stored encrypted in your own personal online data store
+  (Pod) on the Solid server of your choice, under your control.

@@ -1,6 +1,6 @@
-/// A Bluelink app for Hyundai
+/// A privacy preserving Hyundai Kona EV monitor
 ///
-// Time-stamp: <Monday 2026-09-21 17:03:18 +1000 Graham Williams>
+// Time-stamp: <>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
