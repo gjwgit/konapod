@@ -51,8 +51,6 @@ class LogbookExport {
       final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save Log Book as JSON',
         fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['json'],
         bytes: utf8.encode(json),
       );
       if (savedUri == null) return;
@@ -326,8 +324,6 @@ class LogbookExport {
       final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save Log Book as PDF',
         fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
         bytes: pdfBytes,
       );
       if (savedUri == null) return;

@@ -76,8 +76,6 @@ class _BackupScreenState extends State<BackupScreen> {
       final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save konapod backup',
         fileName: 'konapod-backup-$stamp.json',
-        type: FileType.custom,
-        allowedExtensions: ['json'],
         bytes: utf8.encode(json),
       );
       if (savedUri == null) {

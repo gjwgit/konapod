@@ -224,20 +224,26 @@ class LogEntryTile extends StatelessWidget {
                     ),
                   ],
                   // Location chip
+                  //
+                  // 20261116 gjw The coordinates, then the address they
+                  // geocode to, rather than one or the other.
+
                   if (entry.latitude != null && entry.longitude != null) ...[
                     const Gap(4),
                     Wrap(
                       children: [
                         LogMiniChip(
                           Icons.location_on_outlined,
-                          entry.locationAddress?.isNotEmpty == true
-                              ? entry.locationAddress!
+                          [
+                            '${entry.latitude!.toStringAsFixed(3)}, '
+                                '${entry.longitude!.toStringAsFixed(3)}',
+                            if (entry.locationAddress?.isNotEmpty == true)
+                              entry.locationAddress!
                                   .split(',')
                                   .take(3)
                                   .map((s) => s.trim())
-                                  .join(', ')
-                              : '${entry.latitude!.toStringAsFixed(3)}, '
-                                  '${entry.longitude!.toStringAsFixed(3)}',
+                                  .join(', '),
+                          ].join(' · '),
                           cs,
                         ),
                       ],
@@ -391,7 +397,16 @@ class LogMiniChip extends StatelessWidget {
       children: [
         Icon(icon, size: 11, color: color),
         const Gap(2),
-        Text(label, style: TextStyle(fontSize: 11, color: color)),
+        // 20261116 gjw Ellipsis rather than overflow on a narrow window, now
+        // that the location chip carries both coordinates and address.
+
+        Flexible(
+          child: Text(
+            label,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 11, color: color),
+          ),
+        ),
       ],
     );
   }

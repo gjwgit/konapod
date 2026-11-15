@@ -20,6 +20,10 @@ import 'package:http/http.dart' as http;
 import 'package:konapod/models/log_entry.dart';
 import 'package:konapod/pages/log_entry_widgets.dart';
 
+/// Nominatim's usage policy asks every request to identify the app.
+
+const _headers = {'User-Agent': 'KonaPod/1.0 (konapod@togaware.com)'};
+
 /// Holds lat/lon/address values read from [LogLocationSection].
 
 class LocationValues {
@@ -48,12 +52,17 @@ class LogLocationSection extends StatefulWidget {
   final double? initialLongitude;
   final String? initialAddress;
 
+  /// Called with a function that applies an address looked up for the
+  /// coordinates, so the editor can decide whether that counts as an edit.
+  final void Function(VoidCallback apply) onAddressFound;
+
   const LogLocationSection({
     super.key,
     this.entry,
     this.initialLatitude,
     this.initialLongitude,
     this.initialAddress,
+    required this.onAddressFound,
   });
 
   @override
@@ -83,6 +92,14 @@ class LogLocationSectionState extends State<LogLocationSection> {
     _manualAddress = TextEditingController(
       text: _latitude == null ? (_address ?? '') : '',
     );
+
+    // 20261116 gjw Coordinates from the vehicle usually come without an
+    // address, so look one up for them.
+
+    if (_latitude != null && _longitude != null && (_address ?? '').isEmpty) {
+      _geocoding = true;
+      _reverseGeocode(_latitude!, _longitude!);
+    }
   }
 
   @override
@@ -123,10 +140,7 @@ class LogLocationSectionState extends State<LogLocationSection> {
         '/search',
         {'q': addr, 'format': 'json', 'limit': '1'},
       );
-      final response = await http.get(
-        uri,
-        headers: {'User-Agent': 'KonaPod/1.0 (konapod@togaware.com)'},
-      );
+      final response = await http.get(uri, headers: _headers);
       if (response.statusCode != 200) {
         setState(() {
           _geocodeError = 'Geocoding request failed (${response.statusCode}).';
@@ -158,6 +172,38 @@ class LogLocationSectionState extends State<LogLocationSection> {
     }
   }
 
+  /// Look up the address at [lat], [lon].
+  ///
+  /// A failed lookup is only logged: the coordinates are still the location,
+  /// and the entry saves without an address as it always has.
+
+  Future<void> _reverseGeocode(double lat, double lon) async {
+    String? found;
+    try {
+      final uri = Uri.https('nominatim.openstreetmap.org', '/reverse', {
+        'lat': '$lat',
+        'lon': '$lon',
+        'format': 'json',
+      });
+      final response = await http.get(uri, headers: _headers);
+      if (response.statusCode == 200) {
+        final place = jsonDecode(response.body) as Map<String, dynamic>;
+        found = place['display_name'] as String?;
+      } else {
+        debugPrint('[LogLocation] reverse geocode: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('[LogLocation] reverse geocode failed: $e');
+    }
+    if (!mounted) return;
+    setState(() => _geocoding = false);
+
+    // The user may have cleared the coordinates while the lookup ran.
+
+    if (found == null || _latitude != lat || _longitude != lon) return;
+    widget.onAddressFound(() => setState(() => _address = found));
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -169,7 +215,7 @@ class LogLocationSectionState extends State<LogLocationSection> {
             child: LogLocationDisplay(
               latitude: _latitude!,
               longitude: _longitude!,
-              address: _address,
+              address: _geocoding ? 'Looking up the address…' : _address,
               cs: cs,
             ),
           ),

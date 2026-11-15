@@ -192,6 +192,16 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
     if (wasClean) _snapshotSavedState();
   }
 
+  /// Take up the address looked up for the coordinates. Like the estimate
+  /// above it is not a user edit, so a form nobody has touched stays
+  /// untouched; Save still writes it.
+
+  void _addressFound(VoidCallback apply) {
+    final wasClean = _saved != null && !_hasChanges;
+    apply();
+    if (wasClean) _snapshotSavedState();
+  }
+
   /// Record the current field values as the last-saved baseline.
 
   void _snapshotSavedState() {
@@ -442,6 +452,7 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
                         initialLatitude: widget.vehicle?.latitude,
                         initialLongitude: widget.vehicle?.longitude,
                         initialAddress: widget.vehicle?.locationAddress,
+                        onAddressFound: _addressFound,
                       ),
                       const Gap(16),
                       const Gap(16),
