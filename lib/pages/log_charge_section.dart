@@ -324,18 +324,14 @@ class LogChargeSectionState extends State<LogChargeSection> {
             ),
           ),
           const Gap(10),
-          // Energy + Rate
+          // Rate + Energy
+          //
+          // 20261116 gjw The rate comes first: it is the charger's setting,
+          // and the energy delivered is the outcome of charging at it.
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Flexible(
-                child: LabeledValueField(
-                  labelText: 'Energy delivered',
-                  unit: 'kWh',
-                  controller: _energy,
-                ),
-              ),
-              const Gap(16),
               Flexible(
                 child: LabeledValueField(
                   labelText: 'Charge rate',
@@ -343,14 +339,32 @@ class LogChargeSectionState extends State<LogChargeSection> {
                   controller: _rate,
                 ),
               ),
+              const Gap(16),
+              Flexible(
+                child: LabeledValueField(
+                  labelText: 'Energy delivered',
+                  unit: 'kWh',
+                  controller: _energy,
+                ),
+              ),
             ],
           ),
           const Gap(10),
-          // Duration (split into hours + minutes) + the finish time it
+          // The finish time + the duration (split into hours + minutes) it
           // implies, either of which can be edited to set the other.
+          //
+          // 20261116 gjw The finish time now comes first, then the duration.
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Expanded(
+                child: LogFinishTimeField(
+                  finish: _finish,
+                  onTap: _pickFinish,
+                ),
+              ),
+              const Gap(16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -371,13 +385,6 @@ class LogChargeSectionState extends State<LogChargeSection> {
                     fieldWidth: 56,
                   ),
                 ],
-              ),
-              const Gap(16),
-              Expanded(
-                child: LogFinishTimeField(
-                  finish: _finish,
-                  onTap: _pickFinish,
-                ),
               ),
             ],
           ),

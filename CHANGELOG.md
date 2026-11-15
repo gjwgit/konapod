@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ Charge rate before energy, finish time before duration [1.1.1 20261116 gjw]
+
 + Move to copier [1.1.0 20261103 gjw]
 
 ## 1.0 Consolidate
