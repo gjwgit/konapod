@@ -182,9 +182,10 @@ void main() {
       expect(find.text('32.0'), findsOneWidget);
       expect(find.text(RemainKwhFiller.noteLabel), findsOneWidget);
 
-      // The Remaining field is the second of the three in the grid.
+      // 20261116 gjw The Remaining field is the third of the three in the
+      // grid, now that EV Range comes before it.
 
-      await tester.enterText(find.byType(TextField).at(1), '41.3');
+      await tester.enterText(find.byType(TextField).at(2), '41.3');
       await tester.pump();
       expect(find.text(RemainKwhFiller.noteLabel), findsNothing);
 

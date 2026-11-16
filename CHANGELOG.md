@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ Start and End readings on one line, EV Range before Remaining [1.1.6 20261116 gjw]
+
 + Max charge rate and calculated average charge rate [1.1.5 20261116 gjw]
 
 + Busy animation on Save while the entry is saving [1.1.4 20261116 gjw]

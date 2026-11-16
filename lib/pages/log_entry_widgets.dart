@@ -111,58 +111,49 @@ class LogReadingsGrid extends StatelessWidget {
     this.remainFiller,
   });
 
+  /// Width of each input box: narrower than the default so all four
+  /// readings fit across the editor on one line.
+
+  static const _fieldWidth = 80.0;
+
+  // 20261116 gjw All four readings on a single line rather than two rows of
+  // two. A Wrap rather than a Row so that on a narrow window the later
+  // readings drop to the next line instead of overflowing.
+
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => Wrap(
+        spacing: 12,
+        runSpacing: 8,
         children: [
-          // First row: odo + battery (or just battery if no odo)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (odoCtrl != null) ...[
-                Flexible(
-                  child: LabeledValueField(
-                    labelText: 'Odometer',
-                    unit: 'km',
-                    controller: odoCtrl!,
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                const Gap(16),
-              ],
-              Flexible(
-                child: LabeledValueField(
-                  labelText: 'Battery',
-                  unit: '%',
-                  controller: battCtrl,
-                ),
-              ),
-            ],
+          if (odoCtrl != null)
+            LabeledValueField(
+              labelText: 'Odometer',
+              unit: 'km',
+              controller: odoCtrl!,
+              keyboardType: TextInputType.number,
+              fieldWidth: _fieldWidth,
+            ),
+          LabeledValueField(
+            labelText: 'Battery',
+            unit: '%',
+            controller: battCtrl,
+            fieldWidth: _fieldWidth,
           ),
-          const Gap(8),
-          // Second row: remaining + range
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                child: LabeledValueField(
-                  labelText: 'Remaining',
-                  unit: 'kWh',
-                  controller: remainCtrl,
-                  note: remainFiller != null && remainFiller!.isEstimate
-                      ? RemainKwhFiller.noteLabel
-                      : null,
-                  noteTooltip: remainFiller?.noteTooltip,
-                ),
-              ),
-              const Gap(16),
-              Flexible(
-                child: LabeledValueField(
-                  labelText: 'EV Range',
-                  unit: 'km',
-                  controller: rangeCtrl,
-                ),
-              ),
-            ],
+          LabeledValueField(
+            labelText: 'EV Range',
+            unit: 'km',
+            controller: rangeCtrl,
+            fieldWidth: _fieldWidth,
+          ),
+          LabeledValueField(
+            labelText: 'Remaining',
+            unit: 'kWh',
+            controller: remainCtrl,
+            fieldWidth: _fieldWidth,
+            note: remainFiller != null && remainFiller!.isEstimate
+                ? RemainKwhFiller.noteLabel
+                : null,
+            noteTooltip: remainFiller?.noteTooltip,
           ),
         ],
       );
