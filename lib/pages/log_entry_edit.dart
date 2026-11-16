@@ -530,10 +530,21 @@ class _LogEntryEditState extends State<LogEntryEdit> with UnsavedChangesMixin {
                               'Cancel and the close button both offer to save '
                               'first, so edits are never thrown away without '
                               'asking.',
-                      child: FilledButton(
+                      // 20261116 gjw Show the busy animation while the entry
+                      // is being written to the Pod, as todopod does.
+
+                      child: FilledButton.icon(
                         onPressed:
                             (_saving || _fetchingEnd) ? null : _saveAndClose,
-                        child: Text(_isNew ? 'Add Entry' : 'Save'),
+                        icon: _saving
+                            ? const SizedBox.square(
+                                dimension: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : null,
+                        label: Text(_isNew ? 'Add Entry' : 'Save'),
                       ),
                     ),
                   ],

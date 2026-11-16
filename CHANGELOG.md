@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ Busy animation on Save while the entry is saving [1.1.4 20261116 gjw]
+
 + Log book PDF shows coordinates and address [1.1.3 20261116 gjw]
 
 + Look up the address for log coordinates, show both in list [1.1.2 20261116 gjw]
