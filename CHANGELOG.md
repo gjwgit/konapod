@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ Cost per kWh or total cost worked out from the other, noted as calculated [1.1.7 20261116 gjw]
+
 + Start and End readings on one line, EV Range before Remaining [1.1.6 20261116 gjw]
 
 + Max charge rate and calculated average charge rate [1.1.5 20261116 gjw]

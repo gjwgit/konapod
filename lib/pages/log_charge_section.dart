@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import 'package:konapod/models/log_entry.dart';
+import 'package:konapod/pages/log_cost_row.dart';
 import 'package:konapod/pages/log_finish_time_field.dart';
 import 'package:konapod/widgets/labeled_value_field.dart';
 
@@ -112,6 +113,18 @@ class LogChargeSectionState extends State<LogChargeSection> {
   /// The average charge rate, worked out by [_recalcAvgRate] and not saved.
   final _avgRate = TextEditingController();
 
+  /// The cost per kWh last worked out by [_recalcCostPerKwh], or null. While
+  /// the field still shows it, it is calculated rather than entered.
+  String? _calculatedCostPerKwh;
+
+  bool get _costPerKwhCalculated =>
+      _calculatedCostPerKwh != null &&
+      _costPerKwh.text == _calculatedCostPerKwh;
+
+  /// The total cost last worked out by [_recalcTotalCost], or null; shown as
+  /// calculated while the field still holds it.
+  String? _calculatedTotalCost;
+
   @override
   void initState() {
     super.initState();
@@ -147,6 +160,14 @@ class LogChargeSectionState extends State<LogChargeSection> {
     widget.startRemainCtrl?.addListener(_recalcTotalCost);
     widget.endRemainCtrl?.addListener(_recalcTotalCost);
 
+    // 20261116 gjw And the other way: a total cost with no cost per kWh
+    // works out the cost per kWh, again as the energy changes.
+
+    for (final c in _costPerKwhInputs) {
+      c?.addListener(_recalcCostPerKwh);
+    }
+    _recalcCostPerKwh();
+
     // The finish time is displayed beside the duration, so it has to be
     // redrawn whenever the duration is edited.
     _durationHours.addListener(_durationChanged);
@@ -171,10 +192,22 @@ class LogChargeSectionState extends State<LogChargeSection> {
         widget.endRemainCtrl,
       ];
 
+  /// The fields the cost per kWh is worked out from.
+
+  List<Listenable?> get _costPerKwhInputs => [
+        _totalCost,
+        _energy,
+        widget.startRemainCtrl,
+        widget.endRemainCtrl,
+      ];
+
   @override
   void dispose() {
     for (final c in _avgRateInputs) {
       c?.removeListener(_recalcAvgRate);
+    }
+    for (final c in _costPerKwhInputs) {
+      c?.removeListener(_recalcCostPerKwh);
     }
     _energy.removeListener(_recalcTotalCost);
     _costPerKwh.removeListener(_recalcTotalCost);
@@ -260,13 +293,36 @@ class LogChargeSectionState extends State<LogChargeSection> {
   /// when both inputs are present and the energy is positive.
 
   void _recalcTotalCost() {
-    final costPerKwh = double.tryParse(_costPerKwh.text.trim());
-    if (costPerKwh == null || costPerKwh <= 0) return;
+    // 20261116 gjw A calculated cost per kWh came from the total, so working
+    // the total back out from it would only overwrite what the user entered
+    // with a rounded copy.
 
+    if (_costPerKwhCalculated) return;
+    final costPerKwh = double.tryParse(_costPerKwh.text.trim());
     final energy = _energyKwh;
-    if (energy == null || energy <= 0) return;
+
+    // 20261116 gjw A calculated total goes with what it was worked out from,
+    // just as a calculated cost per kWh does. A total the user entered stays.
+
+    if (costPerKwh == null ||
+        costPerKwh <= 0 ||
+        energy == null ||
+        energy <= 0) {
+      if (_calculatedTotalCost != null &&
+          _totalCost.text == _calculatedTotalCost) {
+        _totalCost.text = '';
+      }
+      return;
+    }
 
     final newTotal = (energy * costPerKwh).toStringAsFixed(2);
+
+    // 20261116 gjw Noted as calculated, as the cost per kWh is when worked
+    // out the other way.
+
+    if (_calculatedTotalCost != newTotal) {
+      setState(() => _calculatedTotalCost = newTotal);
+    }
     if (_totalCost.text != newTotal) {
       _totalCost.text = newTotal;
     }
@@ -287,6 +343,27 @@ class LogChargeSectionState extends State<LogChargeSection> {
     final endRemain = double.tryParse(widget.endRemainCtrl?.text.trim() ?? '');
     if (startRemain == null || endRemain == null) return null;
     return endRemain - startRemain;
+  }
+
+  /// Work out the cost per kWh as the total cost over the energy charged,
+  /// but only while the user has not entered a cost per kWh of their own.
+  /// Cleared again when the total or the energy goes.
+
+  void _recalcCostPerKwh() {
+    if (_costPerKwh.text.trim().isNotEmpty && !_costPerKwhCalculated) return;
+    final total = double.tryParse(_totalCost.text.trim());
+    final energy = _energyKwh;
+    final value = (total == null || total <= 0 || energy == null || energy <= 0)
+        ? null
+        : (total / energy).toStringAsFixed(2);
+
+    // Recorded before the field is written, so [_recalcTotalCost], which the
+    // write fires, already sees the value as calculated.
+
+    if (value != _calculatedCostPerKwh) {
+      setState(() => _calculatedCostPerKwh = value);
+    }
+    _costPerKwh.text = value ?? '';
   }
 
   /// Work out the average charge rate as the energy charged over the
@@ -446,39 +523,11 @@ class LogChargeSectionState extends State<LogChargeSection> {
           ),
           const Gap(10),
           // Cost per kWh + total cost
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _costPerKwh,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    labelText: 'Cost per kWh',
-                    prefixText: r'$ ',
-                  ),
-                ),
-              ),
-              const Gap(16),
-              Expanded(
-                child: TextField(
-                  controller: _totalCost,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    labelText: 'Total cost',
-                    prefixText: r'$ ',
-                  ),
-                ),
-              ),
-            ],
+          LogCostRow(
+            costPerKwh: _costPerKwh,
+            totalCost: _totalCost,
+            calculatedCostPerKwh: _calculatedCostPerKwh,
+            calculatedTotalCost: _calculatedTotalCost,
           ),
         ],
       ],
