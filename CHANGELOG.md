@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ Max charge rate and calculated average charge rate [1.1.5 20261116 gjw]
+
 + Busy animation on Save while the entry is saving [1.1.4 20261116 gjw]
 
 + Log book PDF shows coordinates and address [1.1.3 20261116 gjw]

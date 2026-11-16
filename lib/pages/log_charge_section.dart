@@ -109,6 +109,9 @@ class LogChargeSectionState extends State<LogChargeSection> {
   late final TextEditingController _costPerKwh;
   late final TextEditingController _totalCost;
 
+  /// The average charge rate, worked out by [_recalcAvgRate] and not saved.
+  final _avgRate = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -148,10 +151,31 @@ class LogChargeSectionState extends State<LogChargeSection> {
     // redrawn whenever the duration is edited.
     _durationHours.addListener(_durationChanged);
     _durationMinutes.addListener(_durationChanged);
+
+    // 20261116 gjw Keep the average charge rate up to date with the energy
+    // charged and the duration it took.
+
+    for (final c in _avgRateInputs) {
+      c?.addListener(_recalcAvgRate);
+    }
+    _recalcAvgRate();
   }
+
+  /// The fields the average charge rate is worked out from.
+
+  List<Listenable?> get _avgRateInputs => [
+        _energy,
+        _durationHours,
+        _durationMinutes,
+        widget.startRemainCtrl,
+        widget.endRemainCtrl,
+      ];
 
   @override
   void dispose() {
+    for (final c in _avgRateInputs) {
+      c?.removeListener(_recalcAvgRate);
+    }
     _energy.removeListener(_recalcTotalCost);
     _costPerKwh.removeListener(_recalcTotalCost);
     widget.startRemainCtrl?.removeListener(_recalcTotalCost);
@@ -165,6 +189,7 @@ class LogChargeSectionState extends State<LogChargeSection> {
     _durationMinutes.dispose();
     _costPerKwh.dispose();
     _totalCost.dispose();
+    _avgRate.dispose();
     super.dispose();
   }
 
@@ -238,23 +263,41 @@ class LogChargeSectionState extends State<LogChargeSection> {
     final costPerKwh = double.tryParse(_costPerKwh.text.trim());
     if (costPerKwh == null || costPerKwh <= 0) return;
 
-    var energy = double.tryParse(_energy.text.trim());
-    if (energy == null) {
-      final startRemain = double.tryParse(
-        widget.startRemainCtrl?.text.trim() ?? '',
-      );
-      final endRemain = double.tryParse(
-        widget.endRemainCtrl?.text.trim() ?? '',
-      );
-      if (startRemain == null || endRemain == null) return;
-      energy = endRemain - startRemain;
-    }
-    if (energy <= 0) return;
+    final energy = _energyKwh;
+    if (energy == null || energy <= 0) return;
 
     final newTotal = (energy * costPerKwh).toStringAsFixed(2);
     if (_totalCost.text != newTotal) {
       _totalCost.text = newTotal;
     }
+  }
+
+  /// The energy charged: the energy delivered field, or while that is blank
+  /// the battery remaining delta. Null when neither is known.
+  ///
+  /// 20261116 gjw Shared by the total cost and the average charge rate so
+  /// the two always work from the same figure.
+
+  double? get _energyKwh {
+    final delivered = double.tryParse(_energy.text.trim());
+    if (delivered != null) return delivered;
+    final startRemain = double.tryParse(
+      widget.startRemainCtrl?.text.trim() ?? '',
+    );
+    final endRemain = double.tryParse(widget.endRemainCtrl?.text.trim() ?? '');
+    if (startRemain == null || endRemain == null) return null;
+    return endRemain - startRemain;
+  }
+
+  /// Work out the average charge rate as the energy charged over the
+  /// duration, left blank until both are known and positive.
+
+  void _recalcAvgRate() {
+    final energy = _energyKwh;
+    final mins = _readDurationMinutes();
+    _avgRate.text = (energy == null || energy <= 0 || mins == null || mins == 0)
+        ? ''
+        : (energy * 60 / mins).toStringAsFixed(1);
   }
 
   /// Read current values from the form. Returns null fields for empty inputs.
@@ -327,25 +370,38 @@ class LogChargeSectionState extends State<LogChargeSection> {
           // Rate + Energy
           //
           // 20261116 gjw The rate comes first: it is the charger's setting,
-          // and the energy delivered is the outcome of charging at it.
+          // and the energy delivered is the outcome of charging at it. It is
+          // the maximum rate; the average follows the energy.
+          //
+          // 20261116 gjw The average charge rate, worked out from the energy
+          // charged and the duration, ends the line. A Wrap rather than a
+          // Row so that on a narrow window it drops to the next line instead
+          // of overflowing.
 
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Wrap(
+            spacing: 16,
+            runSpacing: 10,
             children: [
-              Flexible(
-                child: LabeledValueField(
-                  labelText: 'Charge rate',
-                  unit: 'kW',
-                  controller: _rate,
-                ),
+              LabeledValueField(
+                labelText: 'Max charge rate',
+                unit: 'kW',
+                controller: _rate,
               ),
-              const Gap(16),
-              Flexible(
-                child: LabeledValueField(
-                  labelText: 'Energy delivered',
-                  unit: 'kWh',
-                  controller: _energy,
-                ),
+              LabeledValueField(
+                labelText: 'Energy delivered',
+                unit: 'kWh',
+                controller: _energy,
+              ),
+              LabeledValueField(
+                labelText: 'Average charge rate',
+                unit: 'kW',
+                controller: _avgRate,
+                readOnly: true,
+                note: 'calculated',
+                noteTooltip: '**Average Charge Rate**\n\n'
+                    'The energy delivered divided by the duration, or the '
+                    'rise in battery remaining while energy delivered is '
+                    'blank. It is worked out each time and not saved.',
               ),
             ],
           ),

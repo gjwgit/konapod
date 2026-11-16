@@ -40,6 +40,9 @@ class LabeledValueField extends StatelessWidget {
   /// Markdown tooltip explaining [note].
   final String? noteTooltip;
 
+  /// Show a value the app works out, which the user cannot edit.
+  final bool readOnly;
+
   const LabeledValueField({
     super.key,
     required this.labelText,
@@ -49,6 +52,7 @@ class LabeledValueField extends StatelessWidget {
     this.fieldWidth = 96,
     this.note,
     this.noteTooltip,
+    this.readOnly = false,
   });
 
   @override
@@ -72,6 +76,7 @@ class LabeledValueField extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 keyboardType: keyboardType,
+                readOnly: readOnly,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   isDense: true,
