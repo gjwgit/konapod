@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ Log book PDF shows coordinates and address [1.1.3 20261116 gjw]
+
 + Look up the address for log coordinates, show both in list [1.1.2 20261116 gjw]
 
 + Charge rate before energy, finish time before duration [1.1.1 20261116 gjw]

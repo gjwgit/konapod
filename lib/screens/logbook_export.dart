@@ -219,6 +219,16 @@ class LogbookExport {
               if (endParts.isNotEmpty) 'End: $endParts',
             ].join('    ');
 
+            // 20261116 gjw Location line: the coordinates, then the address,
+            // as in the logbook list, rather than one or the other.
+
+            final locationParts = [
+              if (e.latitude != null && e.longitude != null)
+                '${e.latitude!.toStringAsFixed(5)}, '
+                    '${e.longitude!.toStringAsFixed(5)}',
+              if (e.locationAddress?.isNotEmpty == true) e.locationAddress!,
+            ].join(' · ');
+
             // Charge details line: Tesla | 58.0 kW | 25.7 kWh x 0.51/kWh = $13.10
             final chargeEnergy = e.chargeEnergyKwh != null
                 ? '${e.chargeEnergyKwh!.toStringAsFixed(1)} kWh'
@@ -272,23 +282,11 @@ class LogbookExport {
                       ),
                     ),
                   ),
-                if (e.locationAddress != null && e.locationAddress!.isNotEmpty)
+                if (locationParts.isNotEmpty)
                   pw.Padding(
                     padding: const pw.EdgeInsets.only(left: 8, top: 2),
                     child: pw.Text(
-                      e.locationAddress!,
-                      style: const pw.TextStyle(
-                        fontSize: 10,
-                        color: PdfColors.grey700,
-                      ),
-                    ),
-                  )
-                else if (e.latitude != null && e.longitude != null)
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.only(left: 8, top: 2),
-                    child: pw.Text(
-                      '${e.latitude!.toStringAsFixed(5)}, '
-                      '${e.longitude!.toStringAsFixed(5)}',
+                      locationParts,
                       style: const pw.TextStyle(
                         fontSize: 10,
                         color: PdfColors.grey700,
