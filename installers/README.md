@@ -97,8 +97,8 @@ Then set up your local installation (only required once):
 ln -s ${HOME}/.local/share/konapod/konapod ${HOME}/.local/bin/
 wget https://raw.githubusercontent.com/gjwgit/konapod/dev/installers/app.desktop -O ${HOME}/.local/share/applications/konapod.desktop
 sed -i "s/USER/$(whoami)/g" ${HOME}/.local/share/applications/konapod.desktop
-mkdir -p ${HOME}/.local/share/icons/hicolor/256x256/apps/
-wget https://github.com/gjwgit/konapod/raw/dev/installers/app.png -O ${HOME}/.local/share/icons/hicolor/256x256/apps/konapod.png
+mkdir -p ${HOME}/.local/share/icons/hicolor/512x512/apps/
+wget https://github.com/gjwgit/konapod/raw/dev/assets/images/app_icon_square.png -O ${HOME}/.local/share/icons/hicolor/512x512/apps/konapod.png
 ```
 
 To install for any user on the computer:
@@ -107,7 +107,7 @@ To install for any user on the computer:
 sudo unzip konapod-linux.zip -d /opt/konapod
 sudo ln -s /opt/konapod/konapod /usr/local/bin/
 wget https://raw.githubusercontent.com/gjwgit/konapod/dev/installers/app.desktop -O ${HOME}/usr/local/share/applications/konapod.desktop
-wget https://github.com/gjwgit/konapod/raw/dev/installers/app.png -O ${HOME}/use/local/share/icons/konapod.png
+wget https://github.com/gjwgit/konapod/raw/dev/assets/images/app_icon_square.png -O ${HOME}/use/local/share/icons/konapod.png
 ```
 
 Once installed you can run the app from the GNOME desktop through
