@@ -24,6 +24,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Migrate to using Copier for Templates
 
++ New log entry queries the car for current readings [1.1.8 20261120 gjw]
+
 + Cost per kWh or total cost calculated from the other [1.1.7 20261116 gjw]
 
 + Readings on one line, EV Range before Remaining [1.1.6 20261116 gjw]

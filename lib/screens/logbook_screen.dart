@@ -22,6 +22,7 @@ import 'package:konapod/screens/logbook_export.dart';
 import 'package:konapod/screens/logbook_tile.dart';
 import 'package:konapod/services/app_provider.dart';
 import 'package:konapod/theme/hyundai_theme.dart';
+import 'package:konapod/widgets/error_dialog.dart';
 
 class LogbookScreen extends StatefulWidget {
   const LogbookScreen({super.key});
@@ -98,7 +99,7 @@ class _LogbookScreenState extends State<LogbookScreen> {
                   ),
                 ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _addEntry(context, provider),
+        onPressed: _busy ? null : () => _addEntry(context, provider),
         tooltip: 'New log entry',
         backgroundColor: HyundaiColors.accent,
         child: const Icon(Icons.add, color: Colors.white),
@@ -110,9 +111,31 @@ class _LogbookScreenState extends State<LogbookScreen> {
     BuildContext context,
     AppProvider provider,
   ) async {
+    if (_busy) return;
     final messenger = ScaffoldMessenger.of(context);
+
+    // 20261120 gjw Query the car for its current state so a new entry's
+    // start readings are not those from when the app started. On failure
+    // say so, then carry on with the last known snapshot.
+
+    if (provider.dataSource == DataSource.bluelink) {
+      setState(() => _busy = true);
+      await provider.refresh();
+      if (!mounted) return;
+      setState(() => _busy = false);
+      final error = provider.errorMessage;
+      if (error != null) {
+        await showErrorDialog(
+          this.context,
+          title: 'Could not query the car',
+          message: '$error\n\nThe new entry starts from the last known '
+              'readings.',
+        );
+        if (!mounted) return;
+      }
+    }
     await showDialog<void>(
-      context: context,
+      context: this.context,
       barrierDismissible: false,
       builder: (_) => LogEntryEdit(
         vehicle: provider.selectedVehicle,
